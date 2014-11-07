@@ -5,18 +5,19 @@ Files to do parameter scans using [NMSSMTools](http://www.th.u-psud.fr/NMHDECAY/
 ##Setup
 
 ###This repository
-- Clone me: ``
+- Clone me: `git clone git@github.com:raggleton/NMSSM-Scan.git`
 
 ###NMSSMTools
 - Download latest version from webiste: http://www.th.u-psud.fr/NMHDECAY/nmssmtools.html
-- Put this folder in `NMSSMTools_x.y.z` folder (or sym-link it incase you want to update in future)
+- Extract with `tar -xvzf NMSSMTools_x.y.z.tgz`
+- Put the cloned `NMSSM-Scan` folder in `NMSSMTools_x.y.z` folder (or sym-link it incase you want to update in future)
 - Look at `README` in NMSSMTools folder
 - Compile:
     ```shell
     make init
     make
     ```
--
+- Also look at (README_Daniele)
 
 
 ## Notes:
