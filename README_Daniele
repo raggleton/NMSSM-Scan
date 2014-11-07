@@ -1,0 +1,29 @@
+Hi Robin,
+
+I am attaching here a piece of code with which I have scanned on the NMSSM parameter space.
+You have to put the folder, Daniele_scan, in the main directory of NMSSMTools.
+
+The folder contain three subdirectory and one file.
+
+The file is a perl script, NMSSM_scan.pl, which basically does in loop what you have to do to run NMSSMTools.
+Don't know if you ever run NMSSMTools but basically what you have to do is to provide an input card with all the model parameter and run the tool, which then gives you in output the tables with the spectrum and the decay rates.
+My perl script just automatize this process in the following way.
+
+In the Proto_files directory there is a prototype input card with all the parameters fixed except the ones on which I am scanning on (labelled with a SED_ string, like SED_TGBETAD0 for scanning on tan beta).
+
+My perl script essentially just generate random numbers (line 53-70 and 86-87) in the range given (line 12-28).
+Then it copy the prototype substituting the SED_variables with the random variables generated and copy the input card in the input directory (line 108-121) and then it runs NMSSMtoosl (line 125).
+
+Line 123-134 are operations to find out how many lines there are between BLOSK SPINFO and BLOCK MODSEL. If the lines are 3 there are no errors and warning, otherwise some pheno or theory constraints are violated and I didn't collect this points (of course one can adapt this to save points that not satisfy some, or all, the constraints).
+
+Finally from line 144-218 I am collecting the info (masses, widths, BRs and couplings) that I want to save into
+my results file and I print to file from line 222-275 (in this case just when a1 is lighter than 10 GeV), where the output file has been open at line 76.
+
+This is more or less all, but of course to make a huge scan I had to do something different.
+In practise what I have done I have transform NMMSM_scan.pl in a prototype itself changing, at line 34,36 and 37,
+the initial point and final point to dummy variables (SED_NINIT, SED_NFINAL like).
+Then I wrote a script that copy this prototype into, say, 100 perl script each of which runs a scan so I manage to parallelize by hand 100 times (not really elegant but is the only way I manage to do it).
+Of course in this case I needed to install 100 version of NMMSMTools (with like a sequential number on it) and each of this pl script generated was acting to a different NMSSM Tools program.
+
+I am pretty sure that there is a smarter and more elegant way to do this scan, but this was working for my purpose so I didn't spend too much time to change it :-)
+
