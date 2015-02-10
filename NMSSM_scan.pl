@@ -348,7 +348,7 @@ open(JOB, ">$ScriptPath/$job_dir/runScan.condor") or die;
   while(<JOB_PROTO>) {
     $_ =~ s/SED_INPUT/$ScriptPath\/$job_dir\/input.tgz/g;
     $_ =~ s/SED_ARG/\$(process) $batchsize/g;
-    $_ =~ s/SED_INITIAL/$job_dir/g;
+    $_ =~ s/SED_INITIAL/$ScriptPath\/$job_dir/g;
     $_ =~ s/SED_JOB/queue $nbatch/g;
     print(JOB);
   }
