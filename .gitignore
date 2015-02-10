@@ -1,0 +1,6 @@
+.DS_Store
+jobs_*
+inp_*.dat
+*.log
+*.out
+*.err
