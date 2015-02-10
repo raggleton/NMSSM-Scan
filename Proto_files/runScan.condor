@@ -1,0 +1,18 @@
+Executable = SED_INITIAL/setupRun.sh
+Universe = vanilla
+Output = job.$(cluster).$(process).out
+Error = job.$(cluster).$(process).err
+Log = job.$(cluster).$(process).log
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT_OR_EVICT
+
+request_cpus = 1
+request_memory=2
+
+# use the ENV that is provided
+getenv = true
+initialdir = SED_INITIAL
+transfer_input_files = /users/ra12451/NMSSMTools_4.5.0/NMSSMTOOLS.tgz,SED_INPUT
+arguments = SED_ARG
+
+SED_JOB
