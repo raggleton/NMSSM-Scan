@@ -17,5 +17,5 @@ ls
 START=$(($1*$2))
 END=$(( (($1+1)*$2)-1 ))
 for inp in $(eval echo "{$START..$END}"); do
-    echo "./run inp_${inp}.dat"
+    ./run inp_${inp}.dat
 done
