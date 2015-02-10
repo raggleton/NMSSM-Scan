@@ -5,9 +5,10 @@ Error = job.$(cluster).$(process).err
 Log = job.$(cluster).$(process).log
 should_transfer_files = YES
 when_to_transfer_output = ON_EXIT_OR_EVICT
+notify_user = robin.aggleton@bristol.ac.uk
 
 request_cpus = 1
-request_memory=2
+request_memory = 500
 
 # use the ENV that is provided
 getenv = true
