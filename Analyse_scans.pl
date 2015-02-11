@@ -185,6 +185,10 @@ foreach $file (@spectrFiles) {
   } # end good points
 
 } # end loop on number of random points to scan
+close(OUTPUT);
+# copy output file to main output folder
+$spectrDir =~ s/\.*\///;
+system("cp $ScriptPath/$spectrDir/output.dat $ScriptPath/output/output_$spectrDir.dat");
 
 # printing stats
 my $itotal = @spectrFiles;
@@ -197,4 +201,3 @@ print("### N. good points   =   $igood          \n");
 print("### Fraction good    =   $fracGood       \n");
 print("#########################################\n");
 
-close(OUTPUT);
