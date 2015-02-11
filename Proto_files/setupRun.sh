@@ -11,7 +11,7 @@ echo "With parameters: $@"
 # Setup NMSSMTools on execute machine
 tar -xvzf NMSSMTOOLS.tgz
 # Setup our input files
-tar -xvzf input.tgz
+tar -xvzf input$1.tgz
 ls
 # Run over all relevant input files
 START=$(($1*$2))
