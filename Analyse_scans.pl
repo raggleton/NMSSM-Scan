@@ -27,7 +27,8 @@ my @spectrFiles = glob("$spectrDir/spectr_*");
 # file to write results to
 my $outFile = "$ScriptPath/$spectrDir/output.dat";
 print "Writing results to $outFile\n";
-open(OUTPUT,">>$outFile") or die;
+open(OUTPUT, ">$outFile") or die;
+print OUTPUT "mh1 mh2 mh3 ma1 ma2 mhc Brh1a1a1 Brh2a1a1 tgbeta mueff lambda alambda akappa h1u h1d h1V h1A h2u h2d h2V h2G h2A";
 
 # count number of good points
 my $igood;
@@ -128,7 +129,6 @@ foreach $file (@spectrFiles) {
 
 #    system("cp $ScriptPath/input/spectr.dat $ScriptPath/output/spectr_${icount}");
 #    system("cp $ScriptPath/input/decay.dat $ScriptPath/output/decay_${icount}");
-    print OUTPUT "mh1 mh2 mh3 ma1 ma2 mhc Brh1a1a1 Brh2a1a1 tgbeta mueff lambda alambda akappa h1u h1d h1V h1A h2u h2d h2V h2G h2A";
     if($ma1<100){
       print OUTPUT $mh1;
       print OUTPUT " ";
