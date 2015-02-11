@@ -26,7 +26,7 @@ make
 ```shell
 cd NMSSMTools_*
 tar -cvzf NMSSMTOOLS.tgz --exclude="NMSSM-Scan" --exclude="*DS_Store" --exclude="*.tgz" --exclude="SAMPLES" .
-cp NMSSMTOOLS.tgz NMSSM-Scan/
+cp NMSSMTOOLS.tgz <wherever you cloned NMSSM-Scan >
 ```
 - Edit the `transfer_input_files` line in [Proto_files/runScan.condor](Proto_files/runScan.condor) to the path of your tgz (don't delete the `SED_INPUT`)
 - Running batch jobs requires 2 files: a job file, and a script file.
@@ -35,8 +35,14 @@ cp NMSSMTOOLS.tgz NMSSM-Scan/
 - [NMSSM_scan.pl](NMSSM_scan.pl) will setup input files for NMSSMTools to use, as well as the job and script files
     + it will output everything needed in a new directory, `job_<description>_<date>_<time>`
     + this will contain all the `inp_*.dat` files, a job file (`runScan.condor`) and a setup script file (`setupRun.sh`).
-- Run with `perl NMSSM_scan.pl`
-- Submit jobs with `condor_submit <job dir>/runScan.condor`
+- Run with
+```
+perl NMSSM_scan.pl
+```
+- Submit jobs with
+```
+condor_submit <job dir>/runScan.condor
+```
 
 ###Analysis
 - To analyse the output `spectr_*.dat` files, we first run over them and find all parameter points that pass experimental constraints, then pull the relevant masses/BRs/couplings, etc. This is done by [Analyse_scans.pl](Analyse_scans.pl):
