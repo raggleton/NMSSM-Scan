@@ -1,5 +1,6 @@
 # Input file for NMSSMTools
 # Based on SUSY LES HOUCHES ACCORD II
+SED_COMMENTS
 
 BLOCK MODSEL
 	3	1		# NMSSM particle content
