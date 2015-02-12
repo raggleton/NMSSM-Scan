@@ -28,7 +28,8 @@ my @spectrFiles = glob("$spectrDir/spectr_*");
 my $outFile = "$ScriptPath/$spectrDir/output.dat";
 print "Writing results to $outFile\n";
 open(OUTPUT, ">$outFile") or die;
-print OUTPUT "mh1 mh2 mh3 ma1 ma2 mhc Brh1a1a1 Brh2a1a1 tgbeta mueff lambda alambda akappa h1u h1d h1V h1A h2u h2d h2V h2G h2A";
+
+print OUTPUT "mh1 mh2 mh3 ma1 ma2 mhc Brh1a1a1 Brh2a1a1 Bra1tautau tgbeta mueff lambda kappa alambda akappa h1u h1d h1V h1G h1A h2u h2d h2V h2G h2A\n";
 
 # count number of good points
 my $igood;
