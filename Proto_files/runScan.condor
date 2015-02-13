@@ -13,7 +13,7 @@ request_memory = 500
 # use the ENV that is provided
 getenv = true
 initialdir = SED_INITIAL
-transfer_input_files = /users/ra12451/NMSSMTools_4.5.0/NMSSMTOOLS.tgz,SED_INPUT
+transfer_input_files = /storage/ra12451/NMSSM-Scan/NMSSMTOOLS.tgz,SED_INPUT
 arguments = SED_ARG
 
 SED_JOB
