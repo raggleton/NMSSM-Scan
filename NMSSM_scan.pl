@@ -210,6 +210,12 @@ foreach my $inpFile(@inpFilelist) {
 }
 
 
+# make a note of what param range we ran over
+open(NOTES, ">$ScriptPath/$jobDir/runParams.txt") or die;
+print NOTES $comments;
+close(NOTES);
+
+
 # make HTCondor job file
 open(JOB_PROTO, "$ScriptPath/Proto_files/runScan.condor") or die;
 open(JOB, ">$ScriptPath/$jobDir/runScan.condor") or die;
