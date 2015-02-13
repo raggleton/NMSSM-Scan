@@ -5,3 +5,5 @@ inp_*.dat
 *.log
 *.out
 *.err
+*BK
+
