@@ -29,7 +29,20 @@ my $outFile = "$ScriptPath/$spectrDir/output.dat";
 print "Writing results to $outFile\n";
 open(OUTPUT, ">$outFile") or die;
 
-print OUTPUT "mh1 mh2 mh3 ma1 ma2 mhc Brh1a1a1 Brh2a1a1 Bra1tautau tgbeta mueff lambda kappa alambda akappa h1u h1d h1V h1G h1A h2u h2d h2V h2G h2A\n";
+# print OUTPUT "mh1 mh2 mh3 ma1 ma2 mhc Brh1a1a1 Brh2a1a1 Bra1tautau tgbeta mueff lambda kappa alambda akappa h1u h1d h1V h1G h1A h2u h2d h2V h2G h2A\n";
+
+# store results in hash to auto do column titles
+my @header = ("mh1", 0.0, "mh2", 0.0, "mh3", 0.0, "ma1", 0.0, "ma2", 0.0,
+              "mhc", 0.0, "Brh1a1a1", 0.0, "Brh2a1a1", 0.0, "Bra1tautau", 0.0,
+              "tgbeta", 0.0, "mueff", 0.0, "lambda", 0.0, "kappa", 0.0,
+              "alambda", 0.0, "akappa", 0.0, "h1u", 0.0, "h1d", 0.0,
+              "h1V", 0.0, "h1G", 0.0, "h1A", 0.0, "h2u", 0.0, "h2d", 0.0,
+              "h2V", 0.0, "h2G", 0.0, "h2A", 0.0);
+my %results = @header;
+my $columnHeader = join(" ", keys %results);
+$columnHeader .= "\n";
+print $columnHeader;
+print OUTPUT $columnHeader;
 
 # count number of good points
 my $igood;
@@ -131,56 +144,88 @@ foreach $file (@spectrFiles) {
 #    system("cp $ScriptPath/input/spectr.dat $ScriptPath/output/spectr_${icount}");
 #    system("cp $ScriptPath/input/decay.dat $ScriptPath/output/decay_${icount}");
     if($ma1<100){
-      print OUTPUT $mh1;
-      print OUTPUT " ";
-      print OUTPUT $mh2;
-      print OUTPUT " ";
-      print OUTPUT $mh3;
-      print OUTPUT " ";
-      print OUTPUT $ma1;
-      print OUTPUT " ";
-      print OUTPUT $ma2;
-      print OUTPUT " ";
-      print OUTPUT $mhc;
-      print OUTPUT " ";
-      print OUTPUT $Brh1a1a1;
-      print OUTPUT " ";
-      print OUTPUT $Brh2a1a1;
-      print OUTPUT " ";
-      print OUTPUT $Bra1tautau;
-      print OUTPUT " ";
-      print OUTPUT "$tgbeta";
-      print OUTPUT " ";
-      print OUTPUT "$mueff";
-      print OUTPUT " ";
-      print OUTPUT "$lambda";
-      print OUTPUT " ";
-      print OUTPUT "$kappa";
-      print OUTPUT " ";
-      print OUTPUT "$alambda";
-      print OUTPUT " ";
-      print OUTPUT "$akappa";
-      print OUTPUT " ";
-      print OUTPUT "$h1u";
-      print OUTPUT " ";
-      print OUTPUT "$h1d";
-      print OUTPUT " ";
-      print OUTPUT "$h1V";
-      print OUTPUT " ";
-      print OUTPUT "$h1G";
-      print OUTPUT " ";
-      print OUTPUT "$h1A";
-      print OUTPUT " ";
-      print OUTPUT "$h2u";
-      print OUTPUT " ";
-      print OUTPUT "$h2d";
-      print OUTPUT " ";
-      print OUTPUT "$h2V";
-      print OUTPUT " ";
-      print OUTPUT "$h2G";
-      print OUTPUT " ";
-      print OUTPUT "$h2A";
-      print OUTPUT "\n";
+      $results{"mh1"} = $mh1;
+      $results{"mh2"} = $mh2;
+      $results{"mh3"} = $mh3;
+      $results{"ma1"} = $ma1;
+      $results{"ma2"} = $ma2;
+      $results{"mhc"} = $mhc;
+      $results{"Brh1a1a1"} = $Brh1a1a1;
+      $results{"Brh2a1a1"} = $Brh2a1a1;
+      $results{"Bra1tautau"} = $Bra1tautau;
+      $results{"tgbeta"} = $tgbeta;
+      $results{"mueff"} = $mueff;
+      $results{"lambda"} = $lambda;
+      $results{"kappa"} = $kappa;
+      $results{"kappa"} = $kappa;
+      $results{"alambda"} = $alambda;
+      $results{"akappa"} = $akappa;
+      $results{"h1u"} = $h1u;
+      $results{"h1d"} = $h1d;
+      $results{"h1V"} = $h1V;
+      $results{"h1G"} = $h1G;
+      $results{"h1A"} = $h1A;
+      $results{"h2u"} = $h2u;
+      $results{"h2d"} = $h2d;
+      $results{"h2V"} = $h2V;
+      $results{"h2G"} = $h2G;
+      $results{"h2A"} = $h2A;
+
+      my @nums = values % results;
+      my $numStr = join(" ", @nums);
+      $numStr .= "\n";
+      print OUTPUT $numStr
+
+      # print OUTPUT $mh1;
+      # print OUTPUT " ";
+      # print OUTPUT $mh2;
+      # print OUTPUT " ";
+      # print OUTPUT $mh3;
+      # print OUTPUT " ";
+      # print OUTPUT $ma1;
+      # print OUTPUT " ";
+      # print OUTPUT $ma2;
+      # print OUTPUT " ";
+      # print OUTPUT $mhc;
+      # print OUTPUT " ";
+      # print OUTPUT $Brh1a1a1;
+      # print OUTPUT " ";
+      # print OUTPUT $Brh2a1a1;
+      # print OUTPUT " ";
+      # print OUTPUT $Bra1tautau;
+      # print OUTPUT " ";
+      # print OUTPUT "$tgbeta";
+      # print OUTPUT " ";
+      # print OUTPUT "$mueff";
+      # print OUTPUT " ";
+      # print OUTPUT "$lambda";
+      # print OUTPUT " ";
+      # print OUTPUT "$kappa";
+      # print OUTPUT " ";
+      # print OUTPUT "$alambda";
+      # print OUTPUT " ";
+      # print OUTPUT "$akappa";
+      # print OUTPUT " ";
+      # print OUTPUT "$h1u";
+      # print OUTPUT " ";
+      # print OUTPUT "$h1d";
+      # print OUTPUT " ";
+      # print OUTPUT "$h1V";
+      # print OUTPUT " ";
+      # print OUTPUT "$h1G";
+      # print OUTPUT " ";
+      # print OUTPUT "$h1A";
+      # print OUTPUT " ";
+      # print OUTPUT "$h2u";
+      # print OUTPUT " ";
+      # print OUTPUT "$h2d";
+      # print OUTPUT " ";
+      # print OUTPUT "$h2V";
+      # print OUTPUT " ";
+      # print OUTPUT "$h2G";
+      # print OUTPUT " ";
+      # print OUTPUT "$h2A";
+      # print OUTPUT "\n";
     }
 
   } # end good points
