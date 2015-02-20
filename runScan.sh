@@ -41,18 +41,8 @@ cp Proto_files/runScan.condor $JOBDIR/runScan.condor
 # Need the @ instead of usual / since we're dealing with paths
 sed -i "s@SEDINITIAL@$FULLPATH@g" "$JOBDIR/runScan.condor"
 
-# args=""
-# sed -i "s@SEDARG@$args@g" "$JOBDIR/runScan.condor"
-
 JOBS="queue $NJOBS"
 sed -i "s@SEDJOB@$JOBS@g" "$JOBDIR/runScan.condor"
-
-OUTPUT="spectr0.tgz"
-for i in $(eval echo "{1..$(($NJOBS-1))}"); do
-    OUTPUT="$OUTPUT,spectr$i.tgz"
-done
-sed -i "s@SEDOUTPUT@$OUTPUT@g" "$JOBDIR/runScan.condor"
-
 
 # Submit jobs
 echo "Submitting jobs to condor..."

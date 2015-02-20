@@ -9,7 +9,8 @@ tar -xvzf NMSSMTOOLS.tgz
 ls
 
 # Run NMSSMTools over parameter points
-perl NMSSM_scan.pl
+perl NMSSM_scan.pl $1
 
 # Zip up spectrum files to transfer back
 tar -cvzf spectr$1.tgz spectr*.dat paramRange.txt
+ls

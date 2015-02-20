@@ -7,10 +7,13 @@ use File::Path qw/make_path/;
 
 ###################################################################
 # This script runs NMSSMTools over many parameter points.
-# The output "spectr_X.dat" files are produced in $PWD
+# The output "spectr_X_Y.dat" files are produced in $PWD
 #
 # Usage:
-# perl NMSSM_scan.pl
+# perl NMSSM_scan.pl X
+#
+# where X is a unique identifier for these spectrum files
+# e.g. $(process) for HTcondor jobs
 #
 ####################################################################
 
@@ -21,6 +24,9 @@ print("ScriptPath: ", $ScriptPath, "\n");
 # --- find NMSSM tools dir ---#
 # $ENV{PWD} =~ m@^(.*)(/[^/]+){1}$@; $NMSSMtoolsPath = $1;
 # print "NMSSMtoolsPath: ", $NMSSMtoolsPath, "\n";
+
+# Unique identifier for the set of spectrum files from this script
+my ${unique} = $ARGV[0];
 
 ###########################################
 # select max and min range for parameters
@@ -118,7 +124,7 @@ for(my $icount = 0; $icount < $nfinal; $icount++){
   }
   
   # writing the input files
-  my $newInput = "inp_$icount.dat";
+  my $newInput = "inp_${unique}_${icount}.dat";
   open(INPUT,	  ">$ScriptPath/$newInput") or die;
 
   if ($icount % 500 == 0) {

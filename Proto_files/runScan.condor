@@ -13,8 +13,8 @@ request_memory = 500
 # use the ENV that is provided
 getenv = true
 initialdir = SEDINITIAL
-transfer_input_files = /storage/ra12451/NMSSM-Scan/NMSSMTOOLS.tgz,/storage/ra12451/NMSSM-Scan/NMSSM_scan.pl
-transfer_output_files = SEDOUTPUT
+transfer_input_files = /storage/ra12451/NMSSM-Scan/NMSSMTOOLS.tgz,/storage/ra12451/NMSSM-Scan/NMSSM_scan.pl,/storage/ra12451/NMSSM-Scan/Proto_files/inp_PROTO.dat
+transfer_output_files = spectr$(process).tgz
 arguments = $(process)
 
 SEDJOB
