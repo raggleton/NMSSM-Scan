@@ -18,7 +18,7 @@
 #
 
 # Number of parallel jobs to run
-NJOBS=10
+NJOBS=1
 
 # Make new job directory
 DESCRIPTION=$NJOBS
@@ -43,6 +43,9 @@ sed -i "s@SEDINITIAL@$FULLPATH@g" "$JOBDIR/runScan.condor"
 
 JOBS="queue $NJOBS"
 sed -i "s@SEDJOB@$JOBS@g" "$JOBDIR/runScan.condor"
+
+# To store .out .log .err files
+mkdir $JOBDIR/logFiles
 
 # Submit jobs
 echo "Submitting jobs to condor..."
