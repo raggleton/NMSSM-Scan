@@ -1,4 +1,4 @@
-Executable = SED_INITIAL/setupRun.sh
+Executable = /storage/ra12451/NMSSM-Scan/Proto_files/setupRun.sh
 Universe = vanilla
 Output = job.$(cluster).$(process).out
 Error = job.$(cluster).$(process).err
@@ -12,8 +12,9 @@ request_memory = 500
 
 # use the ENV that is provided
 getenv = true
-initialdir = SED_INITIAL
-transfer_input_files = /storage/ra12451/NMSSM-Scan/NMSSMTOOLS.tgz,SED_INPUT
-arguments = SED_ARG
+initialdir = SEDINITIAL
+transfer_input_files = /storage/ra12451/NMSSM-Scan/NMSSMTOOLS.tgz,/storage/ra12451/NMSSM-Scan/NMSSM_scan.pl
+transfer_output_files = SEDOUTPUT
+arguments = $(process)
 
-SED_JOB
+SEDJOB

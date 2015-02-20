@@ -5,33 +5,22 @@ use Archive::Tar;
 use File::Basename;
 use File::Path qw/make_path/;
 
-#######################################################
-# This script makes lots of input files, and sets up
-# for batch running on HTCondor system at Bristol
+###################################################################
+# This script runs NMSSMTools over many parameter points.
+# The output "spectr_X.dat" files are produced in $PWD
 #
 # Usage:
-# perl NMSSM_scan.pl [submit]
+# perl NMSSM_scan.pl
 #
-# The last argument is optional - if you include the
-# word "submit", it will automatically condor_submit
-# your jobs.
-#######################################################
+####################################################################
 
 # ---- find PWD ---- #
 my $ScriptPath = $ENV{PWD};
 print("ScriptPath: ", $ScriptPath, "\n");
 
-my $sub = lc$ARGV[0];
-if ($sub eq "submit") {
-  print "Will auto-submit when all input files created\n";
-}
-
 # --- find NMSSM tools dir ---#
 # $ENV{PWD} =~ m@^(.*)(/[^/]+){1}$@; $NMSSMtoolsPath = $1;
 # print "NMSSMtoolsPath: ", $NMSSMtoolsPath, "\n";
-
-# Optional description for this set of jobs (to remind you in 6 months time :D)
-my $desc = "1M"; ## EDITME
 
 ###########################################
 # select max and min range for parameters
@@ -64,22 +53,10 @@ my $userbounds=0;
 ###########################################
 
 my $ninit = 1;
-my $nfinal = 1000000; ## EDITME - number of points to scan over
+my $nfinal = 10; ## EDITME - number of points to scan over
 
 my $npoints = $nfinal - $ninit + 1;
 print("Running over $npoints points\n");
-
-###########################################
-# determine how many points / batch job, and how many batch jobs
-###########################################
-
-my $batchsize = 10000;  ## EDITME - number of points per batch job
-my $nbatchJobs = $npoints / $batchsize; ## EDITME - number of batch jobs
-if ($npoints % $batchsize != 0) {
-  $nbatchJobs += 1;
-}
-print("Doing points in $nbatchJobs batches of $batchsize\n");
-
 
 ######################################################
 #####         SCRIPT STARTING                   ######
@@ -94,162 +71,87 @@ $comments .= "# kappa: $kappamin -> $kappamax\n";
 $comments .= "# A_lambda: $alambdamin -> $alambdamax\n";
 $comments .= "# A_kappa: $akappamin -> $akappamax\n";
 
-# Get date and time for unique folder name
-my @months = qw( Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec );
-my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime();
-$year -= 100;
-$mon = $months[$mon];
-my $date = "${mday}_${mon}_${year}";
-# Fix bug in localtime - if 0 minutes past the hour, localtime returns 0, not 00
-if ($min == "0") {
-  $min = "00";
-}
-my $time = "$hour$min";
-
-# make directory to hold input and output
-my $jobDir = "jobs_${desc}_${date}_${time}";
-print("Input files going into: ", $jobDir, "\n");
-
-unless (make_path($jobDir)) {
-  die "Cannot create directory $jobDir - already exists?";
-}
-
 # computing range for random generator
-my $deltatgbeta=($tgbetamax-$tgbetamin);
-my $x0tgbeta=$tgbetamin;
+my $deltatgbeta = ($tgbetamax - $tgbetamin);
+my $x0tgbeta = $tgbetamin;
 
-my $deltalambda=($lambdamax-$lambdamin);
-my $x0lambda=$lambdamin;
+my $deltalambda = ($lambdamax - $lambdamin);
+my $x0lambda = $lambdamin;
 
-my $deltakappa=($kappamax-$kappamin);
-my $x0kappa=$kappamin;
+my $deltakappa = ($kappamax - $kappamin);
+my $x0kappa = $kappamin;
 
-my $deltaalambda=($alambdamax-$alambdamin);
-my $x0alambda=$alambdamin;
+my $deltaalambda = ($alambdamax - $alambdamin);
+my $x0alambda = $alambdamin;
 
-my $deltaakappa=($akappamax-$akappamin);
-my $x0akappa=$akappamin;
+my $deltaakappa = ($akappamax - $akappamin);
+my $x0akappa = $akappamin;
 
-my $deltamueff=($mueffmax-$mueffmin);
-my $x0mueff=$mueffmin;
+my $deltamueff = ($mueffmax - $mueffmin);
+my $x0mueff = $mueffmin;
 
-# keep a list of input files to be tar'd, and tar filenames
-my @inpFilelist = ();
-my $batchCounter = 0;
-my @tarList = ();
+# Read prototype input file into array so quicker
+open(INPUT_PROTO, "$ScriptPath/inp_PROTO.dat") or die;
+chomp (my @proto = (<INPUT_PROTO>));
+close(INPUT_PROTO);
 
+# Run parameter points - make an input file, run it, delete it
 for(my $icount = 0; $icount < $nfinal; $icount++){
 
   # generating random points within the range
-  my $tgbeta=rand($deltatgbeta)+$x0tgbeta;
-  my $lambda=rand($deltalambda)+$x0lambda;
-  my $kappa=rand($deltakappa)+$x0kappa;
-  my $alambda=rand($deltaalambda)+$x0alambda;
-  my $akappa=rand($deltaakappa)+$x0akappa;
-  my $mueff=rand($deltamueff)+$x0mueff;
+  my $tgbeta = rand($deltatgbeta) + $x0tgbeta;
+  my $lambda = rand($deltalambda) + $x0lambda;
+  my $kappa = rand($deltakappa) + $x0kappa;
+  my $alambda = rand($deltaalambda) + $x0alambda;
+  my $akappa = rand($deltaakappa) + $x0akappa;
+  my $mueff = rand($deltamueff) + $x0mueff;
   
   # in case of different and dependent range, write it here
   # my scan 2
   if($userbounds==1){
     # Make sure you add any condition to the comments string!
-    $kappa=rand((200*$lambda)/$mueff);
+    $kappa = rand((200*$lambda)/$mueff);
     $comments .= "kappa: rand(200 * lambda / mu_eff\n";
 #    $deltaakappa=3;
 #    $x0akappa=30*$lambda*$lambda-3;
 #    $akappa=rand($deltaakappa)+$x0akappa;
   }
   
-  # writing the input files to job folder
-  open(INPUT_PROTO, "$ScriptPath/Proto_files/inp_PROTO.dat") or die;
-  my $newInput = "$jobDir/inp_$icount.dat";
-  open(INPUT,	  ">$ScriptPath/${newInput}") or die;
-    if ($icount % 500 == 0 || $icount == $nfinal) {
-      print("Making input card $ScriptPath/${newInput}\n");
-    }
-    while(<INPUT_PROTO>) {
-      $_ =~ s/SED_TGBETA/$tgbeta/g;
-      $_ =~ s/SED_LAMBDA/$lambda/g;
-      $_ =~ s/SED_KAPPA/$kappa/g;
-      $_ =~ s/SED_ALAMBDA/$alambda/g;
-      $_ =~ s/SED_AKAPPA/$akappa/g;
-      $_ =~ s/SED_MUEFF/$mueff/g;
-      $_ =~ s/SED_COMMENTS/$comments/g;
-      print(INPUT);
-    }
-  close(INPUT_PROTO);
-  close(INPUT);
-  push(@inpFilelist, "inp_$icount.dat");
+  # writing the input files
+  my $newInput = "inp_$icount.dat";
+  open(INPUT,	  ">$ScriptPath/$newInput") or die;
 
-  # tar up if we have batchSize new input files and delete originals since the
-  # tarring only works with find, and we don't want to use lots of disk space
-  if (@inpFilelist == $batchsize) {
-    my $fileString = join('\n', @inpFilelist);
-    $fileString .= "\n";
-    my $tarName = "input${batchCounter}.tgz";
-    system("cd $jobDir && find . -name \"inp*.dat\" | tar -cvzf $tarName --files-from - && cd ../..");
-    push(@tarList, "$tarName");
-    # don't use unlink as inpFileList hasn't got jobDir in it
-    foreach my $inpFile(@inpFilelist) {
-      system("rm $jobDir/$inpFile");
-    }
-    undef @inpFilelist;
-    $batchCounter += 1;
+  if ($icount % 500 == 0) {
+    print("Making input card $ScriptPath/$newInput\n");
   }
+
+  foreach my $line (@proto) {
+    my $newline = $line;
+    $newline =~ s/SED_TGBETA/$tgbeta/g;
+    $newline =~ s/SED_LAMBDA/$lambda/g;
+    $newline =~ s/SED_KAPPA/$kappa/g;
+    $newline =~ s/SED_ALAMBDA/$alambda/g;
+    $newline =~ s/SED_AKAPPA/$akappa/g;
+    $newline =~ s/SED_MUEFF/$mueff/g;
+    # $_ =~ s/SED_COMMENTS/$comments/g;
+    $newline .= "\n";
+    print INPUT $newline;
+  }
+  close(INPUT);
+
+  # run NMSSM Tools with new input file
+  system("./run $newInput");
+
+  # remove input file to save space
+  unlink "$ScriptPath/$newInput";
 
 } # end loop on number of random points to scan
 
 
-# tar up input files for easy transport
-my $fileString = join('\n', @inpFilelist);
-$fileString .= "\n";
-my $tarName = "input${batchCounter}.tgz";
-system("cd $jobDir && find . -name \"inp*.dat\" | tar -cvzf $tarName --files-from - && cd ../..");
-push(@tarList, "$tarName");
-foreach my $inpFile(@inpFilelist) {
-  system("rm $jobDir/$inpFile");
-}
-
-
 # make a note of what param range we ran over
-open(NOTES, ">$ScriptPath/$jobDir/runParams.txt") or die;
+open(NOTES, ">$ScriptPath/paramRange.txt") or die;
 print NOTES $comments;
 close(NOTES);
-
-
-# make HTCondor job file
-open(JOB_PROTO, "$ScriptPath/Proto_files/runScan.condor") or die;
-open(JOB, ">$ScriptPath/$jobDir/runScan.condor") or die;
-  print("Making HTCondor job description $ScriptPath/$jobDir/runScan.condor\n");
-  my $tarFiles = join(",", @tarList);
-  while(<JOB_PROTO>) {
-    $_ =~ s/SED_INPUT/$tarFiles/g;
-    $_ =~ s/SED_ARG/\$(process) $batchsize/g;
-    $_ =~ s/SED_INITIAL/$ScriptPath\/$jobDir/g;
-    $_ =~ s/SED_JOB/queue $nbatchJobs/g;
-    print(JOB);
-  }
-close(JOB_PROTO);
-close(JOB);
-
-
-# make shell script to setup run
-open(SETUP_SCRIPT_PROTO, "$ScriptPath/Proto_files/setupRun.sh") or die;
-open(SETUP_SCRIPT, ">$ScriptPath/$jobDir/setupRun.sh") or die;
-  print("Making run setup script $ScriptPath/$jobDir/setupRun.sh\n");
-  while(<SETUP_SCRIPT_PROTO>) {
-    # $_ =~ s///g;
-    print(SETUP_SCRIPT);
-  }
-close(SETUP_SCRIPT_PROTO);
-close(SETUP_SCRIPT);
-print("\n");
-print("Can now run jobs with\ncondor_submit $jobDir/runScan.condor\n");
-
-
-# automatically run condor_submit, if you want to
-if ($sub eq "submit") {
-  system("condor_submit $jobDir/runScan.condor");
-}
 
 # printing scan statement
 print("\n");
