@@ -59,7 +59,7 @@ my $userbounds=0;
 ###########################################
 
 my $ninit = 1;
-my $nfinal = 10; ## EDITME - number of points to scan over
+my $nfinal = 10000; ## EDITME - number of points to scan over
 
 my $npoints = $nfinal - $ninit + 1;
 print("Running over $npoints points\n");

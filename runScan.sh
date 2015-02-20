@@ -18,7 +18,7 @@
 #
 
 # Number of parallel jobs to run
-NJOBS=1
+NJOBS=50
 
 # Make new job directory
 DESCRIPTION=$NJOBS
