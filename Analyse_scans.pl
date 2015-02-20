@@ -44,14 +44,17 @@ $columnHeader .= "\n";
 print $columnHeader;
 print OUTPUT $columnHeader;
 
-# count number of good points
+# count number of points passing constraints
 my $igood;
+# count number of points with acceptable ma1
+my $iuseful;
 
 # Now loop over sctrum files, check if point satisfies experimental constraints
 # and if so, pull BR/masses/etc from it
 foreach $file (@spectrFiles) {
 
   # checking warning on exp. constraints and higgs mass
+  # keep any failures and store
   undef @concheck;
   open(CONSTRAINT_CHECK, $file) or die;
   while(<CONSTRAINT_CHECK>){
@@ -62,12 +65,44 @@ foreach $file (@spectrFiles) {
       }
     }
   }
+  # remove standard first 2 lines (boring)
+  unshift(@concheck);
+  unshift(@concheck);
   $check=@concheck;
 
   # saving informations for good points
-  if($check==3){
+  if(passExpCheck(@concheck)){
+    # reset values
+    # important otherwise get repeated points
+    my $mtau = 0.0;
+    my $mh1 = 0.0;
+    my $mh2 = 0.0;
+    my $mh3 = 0.0;
+    my $ma1 = 0.0;
+    my $ma2 = 0.0;
+    my $mhc = 0.0;
+    my $tgbeta = 0.0;
+    my $mueff = 0.0;
+    my $lambda = 0.0;
+    my $kappa = 0.0;
+    my $alambda = 0.0;
+    my $akappa = 0.0;
+    my $h1u = 0.0;
+    my $h1d = 0.0;
+    my $h1V = 0.0;
+    my $h1G = 0.0;
+    my $h1A = 0.0;
+    my $h2u = 0.0;
+    my $h2d = 0.0;
+    my $h2V = 0.0;
+    my $h2G = 0.0;
+    my $h2A = 0.0;
+    my $Brh1a1a1 = 0.0;
+    my $Brh2a1a1 = 0.0;
+    my $Bra1tautau = 0.0;
 
     # Get masses, parameters, etc
+    # Note, the inline "comments" are NOT perl comments - part of matching string!
     open(DATASPECTR, $file) or die;
     while(<DATASPECTR>){
 
@@ -103,6 +138,7 @@ foreach $file (@spectrFiles) {
       $Brh1a1a1=$1 if /     (.*)    2          36        36   # BR\(H_1 -> A_1 A_1\)/;
       $Brh2a1a1=$1 if /     (.*)    2          36        36   # BR\(H_2 -> A_1 A_1\)/;
       $Bra1tautau=$1 if /     (.*)    2          15       -15   # BR\(A_1 -> tau tau\)/;
+      $Bra1bb=$1 if /     (.*)    2          5       -5   # BR\(A_1 -> b bbar\)/;
 
     } #end while
     close(DATASPECTR);
@@ -143,7 +179,7 @@ foreach $file (@spectrFiles) {
 
 #    system("cp $ScriptPath/input/spectr.dat $ScriptPath/output/spectr_${icount}");
 #    system("cp $ScriptPath/input/decay.dat $ScriptPath/output/decay_${icount}");
-    if($ma1<100){
+    if($ma1 < 100 && $ma1 > 0){
       $results{"mh1"} = $mh1;
       $results{"mh2"} = $mh2;
       $results{"mh3"} = $mh3;
@@ -174,58 +210,9 @@ foreach $file (@spectrFiles) {
       my @nums = values % results;
       my $numStr = join(" ", @nums);
       $numStr .= "\n";
-      print OUTPUT $numStr
+      print OUTPUT $numStr;
+      $iuseful++;
 
-      # print OUTPUT $mh1;
-      # print OUTPUT " ";
-      # print OUTPUT $mh2;
-      # print OUTPUT " ";
-      # print OUTPUT $mh3;
-      # print OUTPUT " ";
-      # print OUTPUT $ma1;
-      # print OUTPUT " ";
-      # print OUTPUT $ma2;
-      # print OUTPUT " ";
-      # print OUTPUT $mhc;
-      # print OUTPUT " ";
-      # print OUTPUT $Brh1a1a1;
-      # print OUTPUT " ";
-      # print OUTPUT $Brh2a1a1;
-      # print OUTPUT " ";
-      # print OUTPUT $Bra1tautau;
-      # print OUTPUT " ";
-      # print OUTPUT "$tgbeta";
-      # print OUTPUT " ";
-      # print OUTPUT "$mueff";
-      # print OUTPUT " ";
-      # print OUTPUT "$lambda";
-      # print OUTPUT " ";
-      # print OUTPUT "$kappa";
-      # print OUTPUT " ";
-      # print OUTPUT "$alambda";
-      # print OUTPUT " ";
-      # print OUTPUT "$akappa";
-      # print OUTPUT " ";
-      # print OUTPUT "$h1u";
-      # print OUTPUT " ";
-      # print OUTPUT "$h1d";
-      # print OUTPUT " ";
-      # print OUTPUT "$h1V";
-      # print OUTPUT " ";
-      # print OUTPUT "$h1G";
-      # print OUTPUT " ";
-      # print OUTPUT "$h1A";
-      # print OUTPUT " ";
-      # print OUTPUT "$h2u";
-      # print OUTPUT " ";
-      # print OUTPUT "$h2d";
-      # print OUTPUT " ";
-      # print OUTPUT "$h2V";
-      # print OUTPUT " ";
-      # print OUTPUT "$h2G";
-      # print OUTPUT " ";
-      # print OUTPUT "$h2A";
-      # print OUTPUT "\n";
     }
 
   } # end good points
@@ -239,11 +226,103 @@ system("cp $ScriptPath/$spectrDir/output.dat $ScriptPath/output/output_$spectrDi
 # printing stats
 my $itotal = @spectrFiles;
 my $fracGood = sprintf "%.4f", $igood / $itotal;
+my $fracUseful = sprintf "%.4f", $iuseful / $itotal;
 print("\n");
 print("\n");
 print("#########################################\n");
 print("### N. input points  =   $itotal          \n");
 print("### N. good points   =   $igood          \n");
+print("### N. useful points =   $iuseful        \n");
 print("### Fraction good    =   $fracGood       \n");
+print("### Fraction useful  =   $fracUseful       \n");
 print("#########################################\n");
 
+
+sub passExpCheck {
+  # Check parameter point passes various experimental limits.
+  # If you don't want to test against a certain experimental constraint,
+  # comment out that constraint in the array below.
+  # Plucked from nmhdecay.f, so need to add in new ones manually!
+  # For any numerical parameters (e.g. Higgs mass) replace with "\\d+\\.?\\d*"
+  # This will catch 5, 123.5, etc
+  my @expConstraints = (
+    "Chargino too light",
+    "Neutralinos too light",
+    "Charged Higgs too light",
+    "Excluded by ee -> hZ, ind. of h decay",
+    "Excluded by ee -> hZ, h -> bb",
+    "Excluded by ee -> hZ, h -> tautau",
+    "Excluded by ee -> hZ, h -> invisible",
+    "Excluded by ee -> hZ, h -> 2jets",
+    "Excluded by ee -> hZ, h -> 2photons",
+    "Excluded by ee -> hZ, h -> AA -> 4bs",
+    "Excluded by ee -> hZ, h -> AA -> 4taus",
+    "Excluded by ee -> hZ, h -> AA -> 2bs 2taus",
+    "Excluded by ee -> hZ, h -> AA,A -> light pair",
+    "Excluded by ee -> Z -> hA (Z width)",
+    "Excluded by ee -> hA -> 4bs",
+    "Excluded by ee -> hA -> 4taus",
+    "Excluded by ee -> hA -> 2bs 2taus",
+    "Excluded by ee -> hA -> AAA -> 6bs",
+    "Excluded by ee -> hA -> AAA -> 6taus",
+    "Excluded by stop -> b l sneutrino",
+    "Excluded by stop -> neutralino c",
+    "Excluded by sbottom -> neutralino b",
+    "Squark/gluino too light",
+    "Selectron/smuon too light",
+    "Stau too light",
+    "Lightest neutralino is not the LSP",
+    "Mass of the lightest neutralino < 511 keV",
+    "Landau Pole below MGUT",
+    "Unphysical global minimum",
+    "Higgs soft masses >> Msusy",
+    "Relic density too large (Planck)",
+    "Relic density too small (Planck)",
+    "Problem in micrOMEGAs",
+    "Excluded by LUX",
+    "b -> s gamma more than 2 sigma away",
+    "Delta M_s more than 2 sigma away",
+    "Delta M_d more than 2 sigma away",
+    "B_s -> mu+ mu- more than 2 sigma away",
+    "B+ -> tau nu_tau more than 2 sigma away",
+    "Muon magn. mom. more than 2 sigma away",
+    "Excluded by Upsilon(1S) -> A gamma (CLEO)",
+    "(but A width> 10 MeV)",
+    "Excluded etab(1S) mass difference (BABAR - theory)",
+    "Excluded by BR(B -> X_s mu +mu-)",
+    "Excluded by top -> b H+, H+ -> c s",
+    "Excluded by top -> b H+, H+ -> tau nu_tau",
+    "Excluded by top -> b H+, H+ -> W+ A1, A1 -> 2taus",
+    "Excluded by t -> bH+ (LHC)",
+    "No Higgs in the \\d+\\.?\\d*-\\d+\\.?\\d* GeV mass range",
+    "chi2(H->gg) > \\d+\\.?\\d*",
+    "chi2(H->bb) > \\d+\\.?\\d*",
+    "chi2(H->ZZ) > \\d+\\.?\\d*",
+    # "Excluded by sparticle searches at the LHC",
+    # "Excluded by ggF/bb->H/A->tautau at the LHC",
+    # "Excluded H_125->AA->4mu (CMS)",
+    "Branching ratios of Higgs states < 1 GeV not reliable",
+    "M_H1^2<1",
+    "M_A1^2<1",
+    "M_HC^2<1",
+    "Negative sfermion mass squared",
+    "Disallowed parameters: lambda, kappa, tan(beta) or mu=0",
+    "Integration problem in RGES",
+    "Integration problem in RGESOFT",
+    "Convergence Problem"
+  );
+
+  my @list = @_;
+
+  # remove junk at start of line & check if in list - if so point failed!
+  foreach $check(@list) {
+    $check =~ s/^\s*\d\s*#\s//g;
+    foreach $exp (@expConstraints) {
+      if (grep(/$exp/, $check)) {
+        return 0;
+      }
+    }
+  }
+  return 1;
+
+}
