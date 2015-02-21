@@ -29,29 +29,37 @@ my $outFile = "$ScriptPath/$spectrDir/output.dat";
 print "Writing results to $outFile\n";
 open(OUTPUT, ">$outFile") or die;
 
-# print OUTPUT "mh1 mh2 mh3 ma1 ma2 mhc Brh1a1a1 Brh2a1a1 Bra1tautau tgbeta mueff lambda kappa alambda akappa h1u h1d h1V h1G h1A h2u h2d h2V h2G h2A\n";
+# list any results that you want to store here. will be used as column headers.
+# then make sure you assign it further down.
+my @columns = ("mtau", "mh1", "mh2", "mh3", "ma1", "ma2", "mhc",
+              "tgbeta", "mueff", "lambda", "kappa", "alambda", "akappa",
+              "h1u", "h1d", "h1b", "h1V", "h1G", "h1A",
+              "h2u", "h2d", "h2b", "h2V", "h2G", "h2A",
+              "Brh1a1a1", "Brh2a1a1", "Bra1tautau", "Bra1bb", "Brh1bb",
+              "h1ggrc2", "h2ggrc2", "h1bbrc2", "h2bbrc2");
 
-# store results in hash to auto do column titles
-my @header = ("mh1", 0.0, "mh2", 0.0, "mh3", 0.0, "ma1", 0.0, "ma2", 0.0,
-              "mhc", 0.0, "Brh1a1a1", 0.0, "Brh2a1a1", 0.0, "Bra1tautau", 0.0,
-              "tgbeta", 0.0, "mueff", 0.0, "lambda", 0.0, "kappa", 0.0,
-              "alambda", 0.0, "akappa", 0.0, "h1u", 0.0, "h1d", 0.0,
-              "h1V", 0.0, "h1G", 0.0, "h1A", 0.0, "h2u", 0.0, "h2d", 0.0,
-              "h2V", 0.0, "h2G", 0.0, "h2A", 0.0);
-my %results = @header;
+# Make hash to hold results - need to do here and not in loop to ensure that
+# column headers are in right order as order in @columns != order in %results
+my %results = map { $_ => 0.0 } @columns;
+
+# Print column headers to file
 my $columnHeader = join(" ", keys %results);
 $columnHeader .= "\n";
 print $columnHeader;
 print OUTPUT $columnHeader;
 
 # count number of points passing constraints
-my $igood;
+my $igood = 0;
 # count number of points with acceptable ma1
-my $iuseful;
+my $iuseful = 0;
 
-# Now loop over sctrum files, check if point satisfies experimental constraints
+my $counter = 0; my $last = 15000000;
+# Now loop over spectrum files, check if point satisfies experimental constraints
 # and if so, pull BR/masses/etc from it
 foreach $file (@spectrFiles) {
+  if ($counter > $last){
+    last;
+  }
 
   # checking warning on exp. constraints and higgs mass
   # keep any failures and store
@@ -68,160 +76,94 @@ foreach $file (@spectrFiles) {
   # remove standard first 2 lines (boring)
   unshift(@concheck);
   unshift(@concheck);
+  unshift(@concheck);
   $check=@concheck;
 
   # saving informations for good points
   if(passExpCheck(@concheck)){
-    # reset values
-    # important otherwise get repeated points
-    my $mtau = 0.0;
-    my $mh1 = 0.0;
-    my $mh2 = 0.0;
-    my $mh3 = 0.0;
-    my $ma1 = 0.0;
-    my $ma2 = 0.0;
-    my $mhc = 0.0;
-    my $tgbeta = 0.0;
-    my $mueff = 0.0;
-    my $lambda = 0.0;
-    my $kappa = 0.0;
-    my $alambda = 0.0;
-    my $akappa = 0.0;
-    my $h1u = 0.0;
-    my $h1d = 0.0;
-    my $h1V = 0.0;
-    my $h1G = 0.0;
-    my $h1A = 0.0;
-    my $h2u = 0.0;
-    my $h2d = 0.0;
-    my $h2V = 0.0;
-    my $h2G = 0.0;
-    my $h2A = 0.0;
-    my $Brh1a1a1 = 0.0;
-    my $Brh2a1a1 = 0.0;
-    my $Bra1tautau = 0.0;
+    $igood++;
+
+    # Reset hash to null values
+    %results = map { $_ => 0.0 } @columns;
 
     # Get masses, parameters, etc
-    # Note, the inline "comments" are NOT perl comments - part of matching string!
     open(DATASPECTR, $file) or die;
     while(<DATASPECTR>){
+      # some regex goodness here to grab relevant lines
+      # Note, the inline "comments" are NOT perl comments - part of matching string!
+      # For future me:
+      # "[E\d\.\-\+]+" matches a scientific number (so can be negative, have an exponent, decimal place)
+      # " +" matches at least one space
 
-      $mtau=$1 if /     7     (.\S+..)   \# MTAU/;
-      $mh1=$1 if /        25     (.\S+..)   \# lightest neutral scalar/;
-      $mh2=$1 if /        35     (.\S+..)   \# second neutral scalar/;
-      $mh3=$1 if /        45     (.\S+..)   \# third neutral scalar/;
-      $ma1=$1 if /        36     (.\S+..)   \# lightest pseudoscalar/;
-      $ma2=$1 if /        46     (.\S+..)   \# second pseudoscalar/;
-      $mhc=$1 if /        37     (.\S+..)   \# charged Higgs/;
+      # masses
+      $results{"mtau"} = $1 if / +7 +([E\d\.\-\+]+) +\# MTAU/;
+      $results{"mh1"} = $1 if / +25 +([E\d\.\-\+]+) +\# lightest neutral scalar/;
+      $results{"mh2"} = $1 if / +35 +([E\d\.\-\+]+) +\# second neutral scalar/;
+      $results{"mh3"} = $1 if / +45 +([E\d\.\-\+]+) +\# third neutral scalar/;
+      $results{"ma1"} = $1 if / +36 +([E\d\.\-\+]+) +\# lightest pseudoscalar/;
+      $results{"ma2"} = $1 if / +46 +([E\d\.\-\+]+) +\# second pseudoscalar/;
+      $results{"mhc"} = $1 if / +37 +([E\d\.\-\+]+) +\# charged Higgs/;
+
       # parameters
-      $tgbeta=$1 if /     3     (.\S+..)   \# TANBETA\(MZ\)/;
-      $mueff=$1 if /    65     (.\S+..)   \# MUEFF/;
-      $lambda=$1 if /    61     (.\S+..)   \# LAMBDA/;
-      $kappa=$1 if /    62     (.\S+..)   \# KAPPA/;
-      $alambda=$1 if /    63    *(.\S+..)   \# ALAMBDA/;
-      $akappa=$1 if /    64   *(.\S+..)   \# AKAPPA/;
+      $results{"tgbeta"} = $1 if / +3 +([E\d\.\-\+]+) +\# TANBETA\(MZ\)/;
+      $results{"mueff"} = $1 if / +65 +([E\d\.\-\+]+) +\# MUEFF/;
+      $results{"lambda"} = $1 if / +61 +([E\d\.\-\+]+) +\# LAMBDA/;
+      $results{"kappa"} = $1 if / +62 +([E\d\.\-\+]+) +\# KAPPA/;
+      $results{"alambda"} = $1 if / +63 +([E\d\.\-\+]+) +\# ALAMBDA/;
+      $results{"akappa"} = $1 if / +64 +([E\d\.\-\+]+) +\# AKAPPA/;
 
-      #higgs reduced couplings
-      $h1u=$1 if /  1  1     *(.\S+..)   \# U-type fermions/;
-      $h1d=$1 if /  1  2     *(.\S+..)   \# D-type fermions/;
-      $h1V=$1 if /  1  3     *(.\S+..)   \# W,Z bosons/;
-      $h1G=$1 if /  1  4     *(.\S+..)   \# Gluons/;
-      $h1A=$1 if /  1  5     *(.\S+..)   \# Photons/;
+      # higgs reduced couplings
+      $results{"h1u"} = $1 if / +1  1 +([E\d\.\-\+]+) +\# U\-type fermions/;
+      $results{"h1d"} = $1 if / +1  2 +([E\d\.\-\+]+) +\# D\-type fermions/;
+      $results{"h1b"} = $1 if / +1  3 +([E\d\.\-\+]+) +\# b\-quarks/;
+      $results{"h1V"} = $1 if / +1  4 +([E\d\.\-\+]+) +\# W,Z bosons/;
+      $results{"h1G"} = $1 if / +1  5 +([E\d\.\-\+]+) +\# Gluons/;
+      $results{"h1A"} = $1 if / +1  6 +([E\d\.\-\+]+) +\# Photons/;
 
-      $h2u=$1 if /  2  1     *(.\S+..)   \# U-type fermions/;
-      $h2d=$1 if /  2  2     *(.\S+..)   \# D-type fermions/;
-      $h2V=$1 if /  2  3     *(.\S+..)   \# W,Z bosons/;
-      $h2G=$1 if /  2  4     *(.\S+..)   \# Gluons/;
-      $h2A=$1 if /  2  5     *(.\S+..)   \# Photons/;
+      $results{"h2u"} = $1 if / +2  1 +([E\d\.\-\+]+) +\# U\-type fermions/;
+      $results{"h2d"} = $1 if / +2  2 +([E\d\.\-\+]+) +\# D\-type fermions/;
+      $results{"h2b"} = $1 if / +2  3 +([E\d\.\-\+]+) +\# b\-quarks/;
+      $results{"h2V"} = $1 if / +2  4 +([E\d\.\-\+]+) +\# W,Z bosons/;
+      $results{"h2G"} = $1 if / +2  5 +([E\d\.\-\+]+) +\# Gluons/;
+      $results{"h2A"} = $1 if / +2  6 +([E\d\.\-\+]+) +\# Photons/;
 
       # Higgs branching ratios
-      $Brh1a1a1=$1 if /     (.*)    2          36        36   # BR\(H_1 -> A_1 A_1\)/;
-      $Brh2a1a1=$1 if /     (.*)    2          36        36   # BR\(H_2 -> A_1 A_1\)/;
-      $Bra1tautau=$1 if /     (.*)    2          15       -15   # BR\(A_1 -> tau tau\)/;
-      $Bra1bb=$1 if /     (.*)    2          5       -5   # BR\(A_1 -> b bbar\)/;
+      $results{"Brh1a1a1"} = $1 if / +([E\d\.\-\+]+) +2 +36 +36 +\# BR\(H_1 -> A_1 A_1\)/;
+      $results{"Brh2a1a1"} = $1 if / +([E\d\.\-\+]+) +2 +36 +36 +\# BR\(H_2 -> A_1 A_1\)/;
+      $results{"Bra1tautau"} = $1 if / +([E\d\.\-\+]+) +2 +15 +-15 +\# BR\(A_1 -> tau tau\)/;
+      $results{"Bra1bb"} = $1 if / +([E\d\.\-\+]+) +2 +5 +-5 +\# BR\(A_1 -> b bbar\)/;
+      $results{"Brh1bb"} = $1 if / +([E\d\.\-\+]+) +2 +5 +-5 +\# BR\(H_1 -> b bbar\)/;
+
+      # Input Higgs Couplings Bosons
+      $results{"h1ggrc2"} = $1 if / +([E\d\.\-\+]+) +3 +25 +21 +21 \# Higgs\(1\)\-gluon\-gluon reduced coupling\^2/;
+      $results{"h2ggrc2"} = $1 if / +([E\d\.\-\+]+) +3 +35 +21 +21 \# Higgs\(2\)\-gluon\-gluon reduced coupling\^2/;
+      $results{"h1bbrc2"} = $1 if / +([E\d\.\-\+]+) +[E\d\.\-\+]+ +3 +25 +5 +5 \# Higgs\(1\)\-b\-b red\. coupling\^2/;
+      $results{"h2bbrc2"} = $1 if / +([E\d\.\-\+]+) +[E\d\.\-\+]+ +3 +35 +5 +5 \# Higgs\(2\)\-b\-b red\. coupling\^2/;
 
     } #end while
     close(DATASPECTR);
 
-    # Convert to ???
-    $mtau=$mtau*1.0;
-    $mh1=$mh1*1.0;
-    $mh2=$mh2*1.0;
-    $mh3=$mh3*1.0;
-    $ma1=$ma1*1.0;
-    $ma2=$ma2*1.0;
-    $mhc=$mhc*1.0;
+    # Convert to number for testing
+    $results{"ma1"} = $results{"ma1"}*1.0;
+    $results{"Brh1bb"} = $results{"Brh1bb"}*1.0;
 
-    $tgbeta=$tgbeta*1.0;
-    $mueff=$mueff*1.0;
-    $lambda=$lambda*1.0;
-    $kappa=$kappa*1.0;
-    $alambda=$alambda*1.0;
-    $akappa=$akappa*1.0;
-
-    $h1u=$h1u*1.0;
-    $h1d=$h1d*1.0;
-    $h1V=$h1V*1.0;
-    $h1G=$h1G*1.0;
-    $h1A=$h1A*1.0;
-
-    $h2u=$h2u*1.0;
-    $h2d=$h2d*1.0;
-    $h2V=$h2V*1.0;
-    $h2G=$h2G*1.0;
-    $h2A=$h2A*1.0;
-
-    $Brh1a1a1=$Brh1a1a1*1.0;
-    $Brh2a1a1=$Brh2a1a1*1.0;
-    $Bra1tautau=$Bra1tautau*1.0;
-
-    $igood++;
-
-#    system("cp $ScriptPath/input/spectr.dat $ScriptPath/output/spectr_${icount}");
-#    system("cp $ScriptPath/input/decay.dat $ScriptPath/output/decay_${icount}");
-    if($ma1 < 100 && $ma1 > 0){
-      $results{"mh1"} = $mh1;
-      $results{"mh2"} = $mh2;
-      $results{"mh3"} = $mh3;
-      $results{"ma1"} = $ma1;
-      $results{"ma2"} = $ma2;
-      $results{"mhc"} = $mhc;
-      $results{"Brh1a1a1"} = $Brh1a1a1;
-      $results{"Brh2a1a1"} = $Brh2a1a1;
-      $results{"Bra1tautau"} = $Bra1tautau;
-      $results{"tgbeta"} = $tgbeta;
-      $results{"mueff"} = $mueff;
-      $results{"lambda"} = $lambda;
-      $results{"kappa"} = $kappa;
-      $results{"kappa"} = $kappa;
-      $results{"alambda"} = $alambda;
-      $results{"akappa"} = $akappa;
-      $results{"h1u"} = $h1u;
-      $results{"h1d"} = $h1d;
-      $results{"h1V"} = $h1V;
-      $results{"h1G"} = $h1G;
-      $results{"h1A"} = $h1A;
-      $results{"h2u"} = $h2u;
-      $results{"h2d"} = $h2d;
-      $results{"h2V"} = $h2V;
-      $results{"h2G"} = $h2G;
-      $results{"h2A"} = $h2A;
-
+    # Write values to file if we're happy with them
+    if($results{"ma1"} < 100 && $results{"ma1"} > 0){
       my @nums = values % results;
       my $numStr = join(" ", @nums);
       $numStr .= "\n";
       print OUTPUT $numStr;
       $iuseful++;
-
     }
 
   } # end good points
-
+  $counter++;
 } # end loop on number of random points to scan
 close(OUTPUT);
 # copy output file to main output folder
 $spectrDir =~ s/\.*\///;
 system("cp $ScriptPath/$spectrDir/output.dat $ScriptPath/output/output_$spectrDir.dat");
+print "Copied output to $ScriptPath/output/output_$spectrDir.dat\n";
 
 # printing stats
 my $itotal = @spectrFiles;
