@@ -36,14 +36,14 @@ my @columns = ("mtau", "mh1", "mh2", "mh3", "ma1", "ma2", "mhc",
               "h1u", "h1d", "h1b", "h1V", "h1G", "h1A",
               "h2u", "h2d", "h2b", "h2V", "h2G", "h2A",
               "Brh1a1a1", "Brh2a1a1", "Bra1tautau", "Bra1bb", "Brh1bb",
-              "h1ggrc2", "h2ggrc2", "h1bbrc2", "h2bbrc2");
+              "h1ggrc2", "h2ggrc2", "h1bbrc2", "h2bbrc2", "file");
 
 # Make hash to hold results - need to do here and not in loop to ensure that
 # column headers are in right order as order in @columns != order in %results
 my %results = map { $_ => 0.0 } @columns;
 
 # Print column headers to file
-my $columnHeader = join(" ", keys %results);
+my $columnHeader = join(" ", @columns);
 $columnHeader .= "\n";
 print $columnHeader;
 print OUTPUT $columnHeader;
@@ -53,7 +53,7 @@ my $igood = 0;
 # count number of points with acceptable ma1
 my $iuseful = 0;
 
-my $counter = 0; my $last = 15000000;
+my $counter = 0; my $last = 1500000;
 # Now loop over spectrum files, check if point satisfies experimental constraints
 # and if so, pull BR/masses/etc from it
 foreach $file (@spectrFiles) {
@@ -95,6 +95,8 @@ foreach $file (@spectrFiles) {
       # "[E\d\.\-\+]+" matches a scientific number (so can be negative, have an exponent, decimal place)
       # " +" matches at least one space
 
+      $results{"file"} = $file;
+
       # masses
       $results{"mtau"} = $1 if / +7 +([E\d\.\-\+]+) +\# MTAU/;
       $results{"mh1"} = $1 if / +25 +([E\d\.\-\+]+) +\# lightest neutral scalar/;
@@ -128,32 +130,38 @@ foreach $file (@spectrFiles) {
       $results{"h2A"} = $1 if / +2  6 +([E\d\.\-\+]+) +\# Photons/;
 
       # Higgs branching ratios
-      $results{"Brh1a1a1"} = $1 if / +([E\d\.\-\+]+) +2 +36 +36 +\# BR\(H_1 -> A_1 A_1\)/;
-      $results{"Brh2a1a1"} = $1 if / +([E\d\.\-\+]+) +2 +36 +36 +\# BR\(H_2 -> A_1 A_1\)/;
-      $results{"Bra1tautau"} = $1 if / +([E\d\.\-\+]+) +2 +15 +-15 +\# BR\(A_1 -> tau tau\)/;
-      $results{"Bra1bb"} = $1 if / +([E\d\.\-\+]+) +2 +5 +-5 +\# BR\(A_1 -> b bbar\)/;
-      $results{"Brh1bb"} = $1 if / +([E\d\.\-\+]+) +2 +5 +-5 +\# BR\(H_1 -> b bbar\)/;
+      $results{"Brh1a1a1"} = $1 if / +([E\d\.\-\+]+) +2 +36 +36 +\# BR\(H_1 \-> A_1 A_1\)/;
+      $results{"Brh2a1a1"} = $1 if / +([E\d\.\-\+]+) +2 +36 +36 +\# BR\(H_2 \-> A_1 A_1\)/;
+      $results{"Bra1tautau"} = $1 if / +([E\d\.\-\+]+) +2 +15 +\-15 +\# BR\(A_1 \-> tau tau\)/;
+      $results{"Bra1bb"} = $1 if / +([E\d\.\-\+]+) +2 +5 +\-5 +\# BR\(A_1 \-> b bbar\)/;
+      $results{"Brh1bb"} = $1 if / +([E\d\.\-\+]+) +2 +5 +\-5 +\# BR\(H_1 \-> b bbar\)/;
 
       # Input Higgs Couplings Bosons
-      $results{"h1ggrc2"} = $1 if / +([E\d\.\-\+]+) +3 +25 +21 +21 \# Higgs\(1\)\-gluon\-gluon reduced coupling\^2/;
-      $results{"h2ggrc2"} = $1 if / +([E\d\.\-\+]+) +3 +35 +21 +21 \# Higgs\(2\)\-gluon\-gluon reduced coupling\^2/;
-      $results{"h1bbrc2"} = $1 if / +([E\d\.\-\+]+) +[E\d\.\-\+]+ +3 +25 +5 +5 \# Higgs\(1\)\-b\-b red\. coupling\^2/;
-      $results{"h2bbrc2"} = $1 if / +([E\d\.\-\+]+) +[E\d\.\-\+]+ +3 +35 +5 +5 \# Higgs\(2\)\-b\-b red\. coupling\^2/;
+      $results{"h1ggrc2"} = $1 if / +([E\d\.\-\+]+) +3 +25 +21 +21 \# Higgs\(1\)-gluon-gluon reduced coupling\^2/;
+      $results{"h2ggrc2"} = $1 if / +([E\d\.\-\+]+) +3 +35 +21 +21 \# Higgs\(2\)-gluon-gluon reduced coupling\^2/;
+      $results{"h1bbrc2"} = $1 if / +([E\d\.\-\+]+) +[E\d\.\-\+]+ +3 +25 +5 +5 \# Higgs\(1\)-b-b red\. coupling\^2/;
+      $results{"h2bbrc2"} = $1 if / +([E\d\.\-\+]+) +[E\d\.\-\+]+ +3 +35 +5 +5 \# Higgs\(2\)-b-b red\. coupling\^2/;
 
     } #end while
     close(DATASPECTR);
+    # print $file, "\n";
+    # print %results, "\n";
 
     # Convert to number for testing
     $results{"ma1"} = $results{"ma1"}*1.0;
-    $results{"Brh1bb"} = $results{"Brh1bb"}*1.0;
 
     # Write values to file if we're happy with them
+    # Must do it liek this - looping through @columns, otherwise order will muck up
     if($results{"ma1"} < 100 && $results{"ma1"} > 0){
-      my @nums = values % results;
-      my $numStr = join(" ", @nums);
-      $numStr .= "\n";
-      print OUTPUT $numStr;
+      my $outStr = "";
+      foreach my $col (@columns){
+        $outStr .= $results{$col};
+        $outStr .= " ";
+      }
+      $outStr.= "\n";
+      print OUTPUT $outStr;
       $iuseful++;
+
     }
 
   } # end good points
