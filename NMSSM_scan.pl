@@ -52,7 +52,7 @@ my $akappamin=-30;
 
 # imposing dependant bounds on min or max parameters
 # (edit corresponding part in loop overicount)
-my $userbounds=0;
+my $userbounds=1;
 
 ###########################################
 # select number of random points to generate:
@@ -113,11 +113,10 @@ for(my $icount = 0; $icount < $nfinal; $icount++){
   my $mueff = rand($deltamueff) + $x0mueff;
   
   # in case of different and dependent range, write it here
-  # my scan 2
   if($userbounds==1){
     # Make sure you add any condition to the comments string!
     $kappa = rand((200*$lambda)/$mueff);
-    $comments .= "kappa: rand(200 * lambda / mu_eff\n";
+    $comments .= "kappa: rand(200 * lambda / mu_eff)\n";
 #    $deltaakappa=3;
 #    $x0akappa=30*$lambda*$lambda-3;
 #    $akappa=rand($deltaakappa)+$x0akappa;

@@ -21,7 +21,7 @@
 NJOBS=50
 
 # Make new job directory
-DESCRIPTION=$NJOBS
+DESCRIPTION=$NJOBS_"depKappa"
 DATE=$(date +"%d_%b_%y_%k%M")
 JOBDIR="jobs_${DESCRIPTION}_${DATE}"
 
