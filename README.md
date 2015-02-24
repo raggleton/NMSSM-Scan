@@ -36,24 +36,28 @@ cp NMSSMTOOLS.tgz <wherever you cloned NMSSM-Scan >
     1. Edit [NMSSM_scan.pl](NMSSM_scan.pl). This is the script that generates input files (using [Proto_files/inp_PROTO.dat](Proto_files/inp_PROTO.dat) as a template) for paramter space points, and runs NMSSMTools on them. Edit the boundaries for parameters, and the number of points to run over (for 1 job). Can also choose to have dependant parameters, e.g. set kappa based on mu and lambda.
     2. Edit [runScan.sh](runScan.sh). Set the number of jobs you want to run in parallel, and optionally a description for this set of jobs.
     3. Edit [Proto_files/runScan.condor](Proto_files/runScan.condor), changing the paths of `NMSSMTOOLS.tgz`, `NMSSM_scan.pl`, `setupRun.sh` and `inp_PROTO.dat`
-    4. Can now submit jobs by doing `./runScan.sh`. This will create a directory, `jobs_<DESCRIPTION>_<date>_<month>_<year>_<hour><min>`, where all your spectrum files will be placed, along with a copy of your input parameter scan range, and the log files from HTCondor (in subdirectory `logFiles`).
-- Check status of your jobs with
+    4. Can now submit jobs by doing
+```shell
+./runScan.sh
 ```
+    This will create a directory, `jobs_<DESCRIPTION>_<date>_<month>_<year>_<hour><min>`, where all your spectrum files will be placed, along with a copy of your input parameter scan range, and the log files from HTCondor (in subdirectory `logFiles`).
+- Check status of your jobs with
+```shell
 condor_queue `whoami`
 ```
 
 ###Analysis of spectrum files
 - First untar all the spectrum tarballs (**warning**, output will be large!):
-```
+```shell
 cd <dir>
 for f in *.tgz; do tar -xvzf $f; done
 ```
 - To analyse the output `spectr_*.dat` files, we first run over them and find all parameter points that pass experimental constraints, then pull the relevant masses/BRs/couplings, etc. and put them into a file. This is done by [Analyse_scans.pl](Analyse_scans.pl), which you can run with:
-```
+```shell
 perl Analyse_scans.pl <dir with spectr_* files>
 ```
 - If you want to do this to several folders simultaneously, there's a script [analyse.sh](analyse.sh) to do so:
-```
+```shell
 ./analyse.sh <dir 1> <dir 2> ...
 ```
 - The `Analyse_scans.pl` will create a CSV file with space-delimited values of interesting masses, BRs, parameters, etc, for all parameter points passing experimental constraints. To see what constraints we check against, see the function `passExpCheck` in [Analyse_scans.pl](Analyse_scans.pl). These are pulled from `nmhdecay.f`.
