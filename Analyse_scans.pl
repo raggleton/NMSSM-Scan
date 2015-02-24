@@ -35,7 +35,7 @@ my @columns = ("mtau", "mh1", "mh2", "mh3", "ma1", "ma2", "mhc",
               "tgbeta", "mueff", "lambda", "kappa", "alambda", "akappa",
               "h1u", "h1d", "h1b", "h1V", "h1G", "h1A",
               "h2u", "h2d", "h2b", "h2V", "h2G", "h2A",
-              "Brh1a1a1", "Brh2a1a1", "Bra1tautau", "Bra1bb", "Brh1bb",
+              "Brh1a1a1", "Brh2a1a1", "Bra1tautau", "Brh1tautau", "Bra1bb", "Brh1bb", "Brh2h1h1",
               "h1ggrc2", "h2ggrc2", "h1bbrc2", "h2bbrc2", "file");
 
 # Make hash to hold results - need to do here and not in loop to ensure that
@@ -132,7 +132,9 @@ foreach $file (@spectrFiles) {
       # Higgs branching ratios
       $results{"Brh1a1a1"} = $1 if / +([E\d\.\-\+]+) +2 +36 +36 +\# BR\(H_1 \-> A_1 A_1\)/;
       $results{"Brh2a1a1"} = $1 if / +([E\d\.\-\+]+) +2 +36 +36 +\# BR\(H_2 \-> A_1 A_1\)/;
+      $results{"Brh2h1h1"} = $1 if / +([E\d\.\-\+]+) +2 +25 +25 +\# BR\(H_2 \-> H_1 H_1\)/;
       $results{"Bra1tautau"} = $1 if / +([E\d\.\-\+]+) +2 +15 +\-15 +\# BR\(A_1 \-> tau tau\)/;
+      $results{"Brh1tautau"} = $1 if / +([E\d\.\-\+]+) +2 +15 +\-15 +\# BR\(H_1 \-> tau tau\)/;
       $results{"Bra1bb"} = $1 if / +([E\d\.\-\+]+) +2 +5 +\-5 +\# BR\(A_1 \-> b bbar\)/;
       $results{"Brh1bb"} = $1 if / +([E\d\.\-\+]+) +2 +5 +\-5 +\# BR\(H_1 \-> b bbar\)/;
 
