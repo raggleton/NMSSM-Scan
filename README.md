@@ -1,6 +1,6 @@
 #NMSSM-Scan
 
-Files to do parameter scans using [NMSSMTools](http://www.th.u-psud.fr/NMHDECAY/nmssmtools.html). Based on Daniele Barducci's code (see [README_Daniele](README_Daniele) for instructions).
+Files to do parameter scans using [NMSSMTools](http://www.th.u-psud.fr/NMHDECAY/nmssmtools.html). Based on Daniele Barducci's code.
 
 ##Setup & Running
 
@@ -11,7 +11,7 @@ Files to do parameter scans using [NMSSMTools](http://www.th.u-psud.fr/NMHDECAY/
 ```
 git clone git@github.com:raggleton/NMSSM-Scan.git
 ```
-- Compile:
+- Compile NMSMTools (can take a little while):
 ```shell
 make init
 make
@@ -33,7 +33,7 @@ cp NMSSMTOOLS.tgz <wherever you cloned NMSSM-Scan >
     - **setup script file**: setup NMSSMTools and run the input file(s) on the worker node. This is [Proto_files/setupRun.sh](Proto_files/setupRun.sh).
 - Since making and copying the input files for NMSSMTools is time consuming and results in lots of large files, it's easier to make them on the worker node as part of the batch system.
 - So if you want to run over a set of parameter points, do the following:
-    1. Edit [NMSSM_scan.pl](NMSSM_scan.pl]). This is the script that generates input files (using [Proto_files/inp_PROTO.dat](Proto_files/inp_PROTO.dat) as a template) for paramter space points, and runs NMSSMTools on them. Edit the boundaries for parameters, and the number of points to run over (for 1 job). Can also choose to have dependant parameters, e.g. set kappa based on mu and lambda.
+    1. Edit [NMSSM_scan.pl](NMSSM_scan.pl). This is the script that generates input files (using [Proto_files/inp_PROTO.dat](Proto_files/inp_PROTO.dat) as a template) for paramter space points, and runs NMSSMTools on them. Edit the boundaries for parameters, and the number of points to run over (for 1 job). Can also choose to have dependant parameters, e.g. set kappa based on mu and lambda.
     2. Edit [runScan.sh](runScan.sh). Set the number of jobs you want to run in parallel, and optionally a description for this set of jobs.
     3. Edit [Proto_files/runScan.condor](Proto_files/runScan.condor), changing the paths of `NMSSMTOOLS.tgz`, `NMSSM_scan.pl`, `setupRun.sh` and `inp_PROTO.dat`
     4. Can now submit jobs by doing `./runScan.sh`. This will create a directory, `jobs_<DESCRIPTION>_<date>_<month>_<year>_<hour><min>`, where all your spectrum files will be placed, along with a copy of your input parameter scan range, and the log files from HTCondor (in subdirectory `logFiles`).
@@ -62,11 +62,11 @@ perl Analyse_scans.pl <dir with spectr_* files>
 ###Plotting
 - At the moment, plotting and tinkering is done via iPython + pandas + matplotlib + numpy. Make sure these are installed first using `pip`. You may also need to install `texlive-latex-extra` via MacPorts (or similar in TexLive utility?) for latex fonts.
 - This may change in future to ROOT (bluergh), but for now it's a handy way to play around with settings, without having to re-run everything necessarily. See the [iPython](iPython) folder for some iPython scripts.
-- - Easiest to copy the output*.dat files locally, then run iPython on them.
+- Easiest to copy the output*.dat files locally, then run iPython on them.
 
 ## Notes:
 
-- NMSSMTools contains NMHDECAY, NMSPEC, NMGMSB and NMSDECAY. From the webiste:
+- NMSSMTools contains NMHDECAY, NMSPEC, NMGMSB and NMSDECAY. From the website:
 
 __NMHDECAY__:
 
