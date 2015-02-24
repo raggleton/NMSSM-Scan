@@ -36,11 +36,11 @@ cp NMSSMTOOLS.tgz <wherever you cloned NMSSM-Scan >
     1. Edit [NMSSM_scan.pl](NMSSM_scan.pl). This is the script that generates input files (using [Proto_files/inp_PROTO.dat](Proto_files/inp_PROTO.dat) as a template) for paramter space points, and runs NMSSMTools on them. Edit the boundaries for parameters, and the number of points to run over (for 1 job). Can also choose to have dependant parameters, e.g. set kappa based on mu and lambda.
     2. Edit [runScan.sh](runScan.sh). Set the number of jobs you want to run in parallel, and optionally a description for this set of jobs.
     3. Edit [Proto_files/runScan.condor](Proto_files/runScan.condor), changing the paths of `NMSSMTOOLS.tgz`, `NMSSM_scan.pl`, `setupRun.sh` and `inp_PROTO.dat`
-    4. Can now submit jobs by doing
+    4. Can now submit jobs with:
 ```shell
 ./runScan.sh
 ```
-    This will create a directory, `jobs_<DESCRIPTION>_<date>_<month>_<year>_<hour><min>`, where all your spectrum files will be placed, along with a copy of your input parameter scan range, and the log files from HTCondor (in subdirectory `logFiles`).
+This will create a directory, `jobs_<DESCRIPTION>_<date>_<month>_<year>_<hour><min>`, where all your spectrum files will be placed, along with a copy of your input parameter scan range, and the log files from HTCondor (in subdirectory `logFiles`).
 - Check status of your jobs with
 ```shell
 condor_queue `whoami`
