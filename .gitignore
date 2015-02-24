@@ -6,4 +6,5 @@ inp_*.dat
 *.out
 *.err
 *BK
-
+output
+.ipynb_checkpoints/
