@@ -21,7 +21,12 @@
 NJOBS=50
 
 # Make new job directory
+# EDIT ME
+# DESCRIPTION=$NJOBS
 DESCRIPTION=$NJOBS_"depKappa"
+
+###########################################
+# Don't touch anything below here
 DATE=$(date +"%d_%b_%y_%k%M")
 JOBDIR="jobs_${DESCRIPTION}_${DATE}"
 
