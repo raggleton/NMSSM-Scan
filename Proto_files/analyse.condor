@@ -1,8 +1,8 @@
 Executable = /storage/ra12451/NMSSM-Scan/analyse_condor.sh
 Universe = vanilla
-Output = logFiles/job.$(cluster).$(process).out
-Error = logFiles/job.$(cluster).$(process).err
-Log = logFiles/job.$(cluster).$(process).log
+Output = logFiles/analyse.$(cluster).$(process).out
+Error = logFiles/analyse.$(cluster).$(process).err
+Log = logFiles/analyse.$(cluster).$(process).log
 should_transfer_files = YES
 when_to_transfer_output = ON_EXIT_OR_EVICT
 notify_user = robin.aggleton@bristol.ac.uk
@@ -15,6 +15,6 @@ getenv = true
 initialdir = /storage/ra12451/NMSSM-Scan/SEDJOBDIR
 transfer_input_files = /storage/ra12451/NMSSM-Scan/Analyse_scans.pl,spectr$(process).tgz
 transfer_output_files = SEDJOBDIR/output$(process).dat
-arguments = SEDJOBDIR,$(process)
+arguments = SEDJOBDIR $(process)
 
 queue SEDNUM
