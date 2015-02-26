@@ -1,8 +1,8 @@
 Executable = /storage/ra12451/NMSSM-Scan/Proto_files/setupRun.sh
 Universe = vanilla
-Output = logFiles/job.$(cluster).$(process).out
-Error = logFiles/job.$(cluster).$(process).err
-Log = logFiles/job.$(cluster).$(process).log
+Output = logFiles/scan.$(cluster).$(process).out
+Error = logFiles/scan.$(cluster).$(process).err
+Log = logFiles/scan.$(cluster).$(process).log
 should_transfer_files = YES
 when_to_transfer_output = ON_EXIT_OR_EVICT
 notify_user = robin.aggleton@bristol.ac.uk

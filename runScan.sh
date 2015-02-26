@@ -27,7 +27,7 @@ DESCRIPTION=$NJOBS_"depKappa"
 
 ###########################################
 # Don't touch anything below here
-DATE=$(date +"%d_%b_%y_%k%M")
+DATE=$(date +"%d_%b_%y_%H%M")
 JOBDIR="jobs_${DESCRIPTION}_${DATE}"
 
 if [ ! -d "$JOBDIR" ]; then
