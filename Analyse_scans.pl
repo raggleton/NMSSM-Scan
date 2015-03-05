@@ -47,6 +47,8 @@ my @columns = ("mtau", "mh1", "mh2", "mh3", "ma1", "ma2", "mhc",
               "Brh2h1h1", "Brh2a1a1",
               "Bra1mumu", "Bra1tautau", "Bra1bb",
               "h1ggrc2", "h2ggrc2", "h1bbrc2", "h2bbrc2",
+              "S11", "S12", "S13", "S21", "S22", "S23", "S31", "S32", "S33",
+              "P11", "P12", "P13", "P21", "P22", "P23",
               "file", "constraints");
 
 # Make hash to hold results - need to do here and not in loop to ensure that
@@ -67,7 +69,7 @@ my $counter = 0; my $last = 5000; # can limit number of files run over
 # Now loop over spectrum files, check if point satisfies experimental constraints
 # and if so, pull BR/masses/etc from it
 foreach $file (@spectrFiles) {
-  print $file, "\n";
+  # print $file, "\n";
   if ($counter > $last){
     last;
   }
@@ -164,6 +166,25 @@ foreach $file (@spectrFiles) {
     $results{"h2ggrc2"} = $1 if / +([E\d\.\-\+]+) +3 +35 +21 +21 \# Higgs\(2\)-gluon-gluon reduced coupling\^2/;
     $results{"h1bbrc2"} = $1 if / +([E\d\.\-\+]+) +[E\d\.\-\+]+ +3 +25 +5 +5 \# Higgs\(1\)-b-b red\. coupling\^2/;
     $results{"h2bbrc2"} = $1 if / +([E\d\.\-\+]+) +[E\d\.\-\+]+ +3 +35 +5 +5 \# Higgs\(2\)-b-b red\. coupling\^2/;
+
+    # 3x3 Higgs mixing matrix
+    $results{"S11"} = $1 if /  1  1 +([E\d\.\-\+]+) +\# S_\(1,1\)/;
+    $results{"S12"} = $1 if /  1  2 +([E\d\.\-\+]+) +\# S_\(1,2\)/;
+    $results{"S13"} = $1 if /  1  3 +([E\d\.\-\+]+) +\# S_\(1,3\)/;
+    $results{"S21"} = $1 if /  2  1 +([E\d\.\-\+]+) +\# S_\(2,1\)/;
+    $results{"S22"} = $1 if /  2  2 +([E\d\.\-\+]+) +\# S_\(2,2\)/;
+    $results{"S23"} = $1 if /  2  3 +([E\d\.\-\+]+) +\# S_\(2,3\)/;
+    $results{"S31"} = $1 if /  3  1 +([E\d\.\-\+]+) +\# S_\(3,1\)/;
+    $results{"S32"} = $1 if /  3  2 +([E\d\.\-\+]+) +\# S_\(3,2\)/;
+    $results{"S33"} = $1 if /  3  3 +([E\d\.\-\+]+) +\# S_\(3,3\)/;
+
+    # 2x3 Pseudoscalar higgs mixing matrix
+    $results{"P11"} = $1 if /  1  1 +([E\d\.\-\+]+) +\# P_\(1,1\)/;
+    $results{"P12"} = $1 if /  1  2 +([E\d\.\-\+]+) +\# P_\(1,2\)/;
+    $results{"P13"} = $1 if /  1  3 +([E\d\.\-\+]+) +\# P_\(1,3\)/;
+    $results{"P21"} = $1 if /  2  1 +([E\d\.\-\+]+) +\# P_\(2,1\)/;
+    $results{"P22"} = $1 if /  2  2 +([E\d\.\-\+]+) +\# P_\(2,2\)/;
+    $results{"P23"} = $1 if /  2  3 +([E\d\.\-\+]+) +\# P_\(2,3\)/;
 
   } #end while
   close(DATASPECTR);
