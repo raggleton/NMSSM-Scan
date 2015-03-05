@@ -64,7 +64,7 @@ print OUTPUT $columnHeader;
 my $igood = 0; # count number of points passing experimental constraints
 my $iuseful = 0; # count number of points that also have acceptable ma1
 
-my $counter = 0; my $last = 5000; # can limit number of files run over
+my $counter = 0; my $last = 50000000; # can limit number of files run over
 
 # Now loop over spectrum files, check if point satisfies experimental constraints
 # and if so, pull BR/masses/etc from it
