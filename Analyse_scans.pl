@@ -9,7 +9,7 @@ use File::Path qw/make_path/;
 ########################################################
 # This script analyses the output spectrum files.
 #
-# usage: perl Analyse_scans.pl <dir with spectrum files>
+# usage: perl Analyse_scans.pl <dir with spectrum files> <optional unique identifier for this set of output files>
 ########################################################
 
 
@@ -25,7 +25,11 @@ print "Getting spectrum files from ${spectrDir}\n";
 my @spectrFiles = glob("$spectrDir/spectr_*");
 
 # unique identifier for this output file
-my $ID = $ARGV[1];
+my $ID = "";
+my $num_args = $#ARGV + 1;
+if ($num_args == 2) {
+  $ID = $ARGV[1];
+}
 
 # CSV file to write results to
 # my $outFile = "$ScriptPath/$spectrDir/output.dat";
