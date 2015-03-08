@@ -13,7 +13,7 @@ request_memory = 500
 # use the ENV that is provided
 getenv = true
 initialdir = SEDINITIAL
-transfer_input_files = /storage/ra12451/NMSSM-Scan/NMSSMTOOLS.tgz,/storage/ra12451/NMSSM-Scan/NMSSM_scan.pl,/storage/ra12451/NMSSM-Scan/Proto_files/inp_PROTO.dat
+transfer_input_files = /storage/ra12451/NMSSMTools_4.5.1.tgz,/storage/ra12451/NMSSM-Scan/NMSSM_scan.pl,/storage/ra12451/NMSSM-Scan/Proto_files/inp_PROTO.dat
 transfer_output_files = spectr$(process).tgz
 arguments = $(process)
 

@@ -1,4 +1,4 @@
-Executable = /storage/ra12451/NMSSM-Scan/analyse_condor.sh
+Executable = /storage/ra12451/NMSSM-Scan/Proto_files/analyse_condor.sh
 Universe = vanilla
 Output = logFiles/analyse.$(cluster).$(process).out
 Error = logFiles/analyse.$(cluster).$(process).err
