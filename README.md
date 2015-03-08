@@ -6,7 +6,6 @@ Files to do parameter scans using [NMSSMTools](http://www.th.u-psud.fr/NMHDECAY/
 
 ###NMSSMTools
 
-*Note - not necessary if you're just running it on worker node, but handly to check it compiles correctly*
 
 - Download latest version from website: http://www.th.u-psud.fr/NMHDECAY/nmssmtools.html
 - Extract with `tar -xvzf NMSSMTools_x.y.z.tgz`
@@ -16,6 +15,9 @@ git clone git@github.com:raggleton/NMSSM-Scan.git # ssh
 # or
 git clone https://github.com/raggleton/NMSSM-Scan.git
 ```
+
+*Note - extraction & compilation not necessary if you're just running it on worker node, but handly to check it compiles correctly*
+
 - Compile NMSMTools (can take a little while):
 ```shell
 make init
