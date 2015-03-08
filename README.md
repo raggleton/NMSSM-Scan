@@ -14,18 +14,17 @@ Files to do parameter scans using [NMSSMTools](http://www.th.u-psud.fr/NMHDECAY/
 ```
 git clone git@github.com:raggleton/NMSSM-Scan.git # ssh
 # or
-git clone
+git clone https://github.com/raggleton/NMSSM-Scan.git
 ```
 - Compile NMSMTools (can take a little while):
 ```shell
 make init
 make
 ```
-- Look at `README` in NMSSMTools folder
 
 ###Running batch jobs (on HTCondor)
-- We will run NMSSMTools lot of times, for single points in parameter space. To do this, each paramter point requires a separate input file, to specify all the value sof the paramters at that point.
-    - Don't use the grip scan options for now... more info in `spectr_*.dat` files than from grid output
+- We will run NMSSMTools lot of times, for single points in parameter space. To do this, each paramter point requires a separate input file, to specify all the values of the parameters at that point.
+    - Don't use the grid scan options in NMSSMTools for now... more info in `spectr_*.dat` files than from grid output, unless you faff around with the fortan subroutine :s
 - We will run this on the HTCondor batch system at Bristol. To run batch jobs on HTCondor, we need to setup NMSSMTools on the worker node because it's not installed centrally.
 - Running batch jobs requires 2 files: a job file, and a script file.
     - **job file**: gives instructions to HTcondor about input/output files, how much RAM/cpus to use, etc. This is [Proto_files/runScan.condor](Proto_files/runScan.condor)
@@ -47,21 +46,17 @@ condor_queue `whoami`
 - As a benchmark, 10K points takes ~ 30 to 45 minutes.
 
 ###Analysis of spectrum files
-- First untar all the spectrum tarballs (**warning**, output will be large!):
-```shell
-cd <dir>
-for f in *.tgz; do tar -xvzf $f; done
-```
-- To analyse the output `spectr_*.dat` files, we first run over them and find all parameter points that pass experimental constraints, then pull the relevant masses/BRs/couplings, etc. and put them into a file. This is done by [Analyse_scans.pl](Analyse_scans.pl), which you can run with:
+- All the output spectrum files from NMSSMTools are packaged up into tarballs, 1 per job. You don't need to un-tar them, unless you want to check the contents. (**warning**, if you untar everything the output will be large!):
+- To analyse the output `spectr_*.dat` files, we run over them and pull the relevant masses/BRs/couplings, etc. and put them into a file. This is done by [Analyse_scans.pl](Analyse_scans.pl):
 ```shell
 perl Analyse_scans.pl <dir with spectr_* files>
 ```
-- If you want to do this to several folders simultaneously, there's a script [analyse.sh](analyse.sh) to do so:
+- However, for lots of files, it is much easier & faster to run them on batch system. Use the script [analyse.sh](analyse.sh) to do so:
 ```shell
 ./analyse.sh <dir 1> <dir 2> ...
 ```
-- The `Analyse_scans.pl` will create a CSV file with space-delimited values of interesting masses, BRs, parameters, etc, for all parameter points passing experimental constraints. To see what constraints we check against, see the function `passExpCheck` in [Analyse_scans.pl](Analyse_scans.pl). These are pulled from `nmhdecay.f`.
-- This output file is created in the job directory with all the `spectr_*` files, and copied to the directory `NMSSM-Scan/output`. This directory will be created if it doesn't already exist. Note that the output files will have unique names, based on the folder they were run on.
+- The `Analyse_scans.pl` script will create a CSV file with space-delimited values of interesting masses, BRs, parameters, etc, for all parameter points. It also stores which (if any) experimental constraints it failed. To see what constraints we check against, see the function `passExpCheck` in [Analyse_scans.pl](Analyse_scans.pl). These are pulled from `nmhdecay.f`.
+- The CSV files will be created in the job directory with all the `spectr_*` tarbals.
 
 ###Plotting
 - At the moment, plotting and tinkering is done via iPython + pandas + matplotlib + numpy. Make sure these are installed first using `pip`. You may also need to install `texlive-latex-extra` via MacPorts (or similar in TexLive utility?) for latex fonts.
