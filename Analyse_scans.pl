@@ -43,12 +43,14 @@ my @columns = ("mtau", "mh1", "mh2", "mh3", "ma1", "ma2", "mhc",
               "tgbeta", "mueff", "lambda", "kappa", "alambda", "akappa",
               "h1u", "h1d", "h1b", "h1V", "h1G", "h1A",
               "h2u", "h2d", "h2b", "h2V", "h2G", "h2A",
-              "Brh1a1a1", "Brh1mumu", "Brh1tautau", "Brh1bb",
-              "Brh2h1h1", "Brh2a1a1",
+              "Brh1gg", "Brh1tautau", "Brh1cc", "Brh1bb", "Brh1ww", "Brh1zz", "Brh1gammagamma", "Brh1zgamma", "Brh1a1a1", "Brh1a1z",
+              "Brh2gg", "Brh2tautau", "Brh2bb", "Brh2ww", "Brh2zz", "Brh2gammagamma", "Brh2zgamma", "Brh2a1a1", "Brh2a1z", "Brh2h1h1",
+              "Brh3gg", "Brh3tautau", "Brh3bb", "Brh3ww", "Brh3zz", "Brh3gammagamma", "Brh3zgamma", "Brh3h1h1", "Brh3h2h2", "Brh3h1h2", "Brh3a1a1", "Brh3a1z",
               "Bra1mumu", "Bra1tautau", "Bra1bb",
               "h1ggrc2", "h2ggrc2", "h1bbrc2", "h2bbrc2",
               "S11", "S12", "S13", "S21", "S22", "S23", "S31", "S32", "S33",
               "P11", "P12", "P13", "P21", "P22", "P23",
+              "omega",
               "file", "constraints");
 
 # Make hash to hold results - need to do here and not in loop to ensure that
@@ -151,12 +153,45 @@ foreach $file (@spectrFiles) {
     $results{"h2A"} = $1 if / +2  6 +([E\d\.\-\+]+) +\# Photons/;
 
     # Higgs branching ratios
-    $results{"Brh1a1a1"} = $1 if / +([E\d\.\-\+]+) +2 +36 +36 +\# BR\(H_1 \-> A_1 A_1\)/;
-    $results{"Brh1mumu"} = $1 if / +([E\d\.\-\+]+) +2 +13 +\-13 +\# BR\(H_1 \-> muon muon\)/;
+    # h1
+    $results{"Brh1gg"} = $1 if / +([E\d\.\-\+]+) +2 +21 +21 +\# BR\(H_1 \-> gluon gluon\)/;
     $results{"Brh1tautau"} = $1 if / +([E\d\.\-\+]+) +2 +15 +\-15 +\# BR\(H_1 \-> tau tau\)/;
+    $results{"Brh1cc"} = $1 if / +([E\d\.\-\+]+) +2 +4 +\-4 +\# BR\(H_1 \-> c cbar\)/;
     $results{"Brh1bb"} = $1 if / +([E\d\.\-\+]+) +2 +5 +\-5 +\# BR\(H_1 \-> b bbar\)/;
+    $results{"Brh1ww"} = $1 if / +([E\d\.\-\+]+) +2 +24 +\-24 +\# BR\(H_1 \-> W\+ W\-\)/;
+    $results{"Brh1zz"} = $1 if / +([E\d\.\-\+]+) +2 +23 +\-23 +\# BR\(H_1 \-> Z Z\)/;
+    $results{"Brh1gammagamma"} = $1 if / +([E\d\.\-\+]+) +2 +22 +\-22 +\# BR\(H_1 \-> gamma gamma\)/;
+    $results{"Brh1zgamma"} = $1 if / +([E\d\.\-\+]+) +2 +23 +22 +\# BR\(H_1 \-> Z gamma\)/;
+    $results{"Brh1a1a1"} = $1 if / +([E\d\.\-\+]+) +2 +36 +36 +\# BR\(H_1 \-> A_1 A_1\)/;
+    $results{"Brh1a1z"} = $1 if / +([E\d\.\-\+]+) +2 +23 +36 +\# BR\(H_1 \-> A_1 Z\)/;
+
+    # h2
+    $results{"Brh2gg"} = $1 if / +([E\d\.\-\+]+) +2 +21 +21 +\# BR\(H_2 \-> gluon gluon\)/;
+    $results{"Brh2tautau"} = $1 if / +([E\d\.\-\+]+) +2 +15 +\-15 +\# BR\(H_2 \-> tau tau\)/;
+    $results{"Brh2bb"} = $1 if / +([E\d\.\-\+]+) +2 +5 +\-5 +\# BR\(H_2 \-> b bbar\)/;
+    $results{"Brh2ww"} = $1 if / +([E\d\.\-\+]+) +2 +24 +\-24 +\# BR\(H_2 \-> W\+ W\-\)/;
+    $results{"Brh2zz"} = $1 if / +([E\d\.\-\+]+) +2 +23 +\-23 +\# BR\(H_2 \-> Z Z\)/;
+    $results{"Brh2gammagamma"} = $1 if / +([E\d\.\-\+]+) +2 +22 +\-22 +\# BR\(H_2 \-> gamma gamma\)/;
+    $results{"Brh2zgamma"} = $1 if / +([E\d\.\-\+]+) +2 +23 +22 +\# BR\(H_2 \-> Z gamma\)/;
     $results{"Brh2a1a1"} = $1 if / +([E\d\.\-\+]+) +2 +36 +36 +\# BR\(H_2 \-> A_1 A_1\)/;
+    $results{"Brh2a1z"} = $1 if / +([E\d\.\-\+]+) +2 +23 +36 +\# BR\(H_2 \-> A_1 Z\)/;
     $results{"Brh2h1h1"} = $1 if / +([E\d\.\-\+]+) +2 +25 +25 +\# BR\(H_2 \-> H_1 H_1\)/;
+
+    # h3
+    $results{"Brh3gg"} = $1 if / +([E\d\.\-\+]+) +2 +21 +21 +\# BR\(H_3 \-> gluon gluon\)/;
+    $results{"Brh3tautau"} = $1 if / +([E\d\.\-\+]+) +2 +15 +\-15 +\# BR\(H_3 \-> tau tau\)/;
+    $results{"Brh3bb"} = $1 if / +([E\d\.\-\+]+) +2 +5 +\-5 +\# BR\(H_3 \-> b bbar\)/;
+    $results{"Brh3ww"} = $1 if / +([E\d\.\-\+]+) +2 +24 +\-24 +\# BR\(H_3 \-> W\+ W\-\)/;
+    $results{"Brh3zz"} = $1 if / +([E\d\.\-\+]+) +2 +23 +\-23 +\# BR\(H_3 \-> Z Z\)/;
+    $results{"Brh3gammagamma"} = $1 if / +([E\d\.\-\+]+) +2 +22 +\-22 +\# BR\(H_3 \-> gamma gamma\)/;
+    $results{"Brh3zgamma"} = $1 if / +([E\d\.\-\+]+) +2 +23 +22 +\# BR\(H_3 \-> Z gamma\)/;
+    $results{"Brh3a1a1"} = $1 if / +([E\d\.\-\+]+) +2 +36 +36 +\# BR\(H_3 \-> A_1 A_1\)/;
+    $results{"Brh3a1z"} = $1 if / +([E\d\.\-\+]+) +2 +23 +36 +\# BR\(H_3 \-> A_1 Z\)/;
+    $results{"Brh3h1h1"} = $1 if / +([E\d\.\-\+]+) +2 +25 +25 +\# BR\(H_3 \-> H_1 H_1\)/;
+    $results{"Brh3h2h2"} = $1 if / +([E\d\.\-\+]+) +2 +35 +35 +\# BR\(H_3 \-> H_2 H_2\)/;
+    $results{"Brh3h1h2"} = $1 if / +([E\d\.\-\+]+) +2 +25 +35 +\# BR\(H_3 \-> H_1 H_2\)/;
+
+    # a1
     $results{"Bra1mumu"} = $1 if / +([E\d\.\-\+]+) +2 +13 +\-13 +\# BR\(A_1 \-> muon muon\)/;
     $results{"Bra1tautau"} = $1 if / +([E\d\.\-\+]+) +2 +15 +\-15 +\# BR\(A_1 \-> tau tau\)/;
     $results{"Bra1bb"} = $1 if / +([E\d\.\-\+]+) +2 +5 +\-5 +\# BR\(A_1 \-> b bbar\)/;
@@ -185,6 +220,9 @@ foreach $file (@spectrFiles) {
     $results{"P21"} = $1 if /  2  1 +([E\d\.\-\+]+) +\# P_\(2,1\)/;
     $results{"P22"} = $1 if /  2  2 +([E\d\.\-\+]+) +\# P_\(2,2\)/;
     $results{"P23"} = $1 if /  2  3 +([E\d\.\-\+]+) +\# P_\(2,3\)/;
+
+    # DM relic density
+    $results{"omega"} = $1 if /    10 +([E\d\.\-\+]+) +\# Omega h\^2/;
 
   } #end while
   close(DATASPECTR);
@@ -293,7 +331,7 @@ sub passExpCheck {
     "chi2\\(H->ZZ\\) >",
     # "Excluded by sparticle searches at the LHC",
     # "Excluded by ggF/bb->H/A->tautau at the LHC",
-    # "Excluded H_125->AA->4mu \\(CMS\\)",
+    # "Excluded H_225->AA->4mu \\(CMS\\)",
     "Branching ratios of Higgs states < 1 GeV not reliable",
     "M_H1\\^2<1",
     "M_A1\\^2<1",
