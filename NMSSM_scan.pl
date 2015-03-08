@@ -31,7 +31,7 @@ my ${unique} = $ARGV[0];
 ###########################################
 # select max and min range for parameters
 ###########################################
-## EDITME
+## EDIT ME
 my $tgbetamax=50;
 my $tgbetamin=1.5;
 
@@ -52,7 +52,7 @@ my $akappamin=-30;
 
 # imposing dependant bounds on min or max parameters
 # (edit corresponding part in loop overicount)
-my $userbounds=1;
+my $userbounds=0;
 
 ###########################################
 # select number of random points to generate:
@@ -145,7 +145,7 @@ for(my $icount = 0; $icount < $nfinal; $icount++){
   close(INPUT);
 
   # run NMSSM Tools with new input file
-  system("./run $newInput");
+  system("cd NMSSMTools_?.?.?/ && ./run ../$newInput");
 
   # remove input file to save space
   unlink "$ScriptPath/$newInput";

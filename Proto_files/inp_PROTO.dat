@@ -6,7 +6,7 @@ BLOCK MODSEL
 	3	1		# NMSSM particle content
 	1	0		# IMOD (0=general NMSSM, 1=mSUGRA, 2=GMSB)
 	10	0		# ISCAN (0=no scan, 1=grid scan, 2=random scan, 3=MCMC)
-	9	0		# Call micrOmegas (default 0=no, 1=relic density only,
+	9	1		# Call micrOmegas (default 0=no, 1=relic density only,
 #				  2=dir. det. rate, 3=indir. det. rate, 4=both det. rates)
 	8       1               # Precision for Higgs masses (default 0: as before,
 #                                 1: full 1 loop + full 2 loop from top/bot Yukawas
