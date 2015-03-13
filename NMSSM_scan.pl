@@ -52,7 +52,7 @@ my $akappamin=-30;
 
 # imposing dependant bounds on min or max parameters
 # (edit corresponding part in loop overicount)
-my $userbounds=0;
+my $userbounds=1;
 
 ###########################################
 # select number of random points to generate:

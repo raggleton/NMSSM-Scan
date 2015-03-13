@@ -22,7 +22,7 @@ NJOBS=50
 
 # Make new job directory
 # EDIT ME
-DESCRIPTION=$NJOBS"_MICRO"
+DESCRIPTION=$NJOBS"_MICRO_depKappa"
 # DESCRIPTION=$NJOBS_"depKappa"
 
 ###########################################
@@ -34,7 +34,7 @@ if [ ! -d "$JOBDIR" ]; then
     echo "Putting job files in $JOBDIR"
     mkdir $JOBDIR
 else
-    echo "Cannot create job folder, it already exists"
+    echo "Cannot create job folder, it already exists - give it a minute"
     exit 1
 fi
 
