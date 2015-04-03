@@ -51,7 +51,7 @@ my @columns = ("mtau", "mh1", "mh2", "mh3", "ma1", "ma2", "mhc",
               "S11", "S12", "S13", "S21", "S22", "S23", "S31", "S32", "S33",
               "P11", "P12", "P13", "P21", "P22", "P23",
               "omega",
-              "file", "constraints");
+              "file", "constraints", "Del_a_mu");
 
 # Make hash to hold results - need to do here and not in loop to ensure that
 # column headers are in right order as order in @columns != order in %results
@@ -223,6 +223,9 @@ foreach $file (@spectrFiles) {
 
     # DM relic density
     $results{"omega"} = $1 if /    10 +([E\d\.\-\+]+) +\# Omega h\^2/;
+
+    # g-2 contribution
+    $results{"Del_a_mu"} = $1 if /     6 +([E\d\.\-\+]+) +\# Del_a_mu/;
 
   } #end while
   close(DATASPECTR);
