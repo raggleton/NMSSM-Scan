@@ -11,6 +11,6 @@ do
     sed -i "s@SEDJOBDIR@$f@g" $f/analyse.condor
     sed -i "s/SEDNUM/$NJOBS/g" $f/analyse.condor
     condor_submit $f/analyse.condor
-    sleep 120  
+    sleep 60
     # give it a pause so you don't clog up the queue - analysis jobs should run v.quickly
 done
