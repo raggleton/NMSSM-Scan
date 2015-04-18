@@ -34,8 +34,10 @@ if ($num_args == 2) {
 # CSV file to write results to
 # my $outFile = "$ScriptPath/$spectrDir/output.dat";
 my $outFile = "$spectrDir/output$ID.dat";
-print "Writing results to $outFile$ID\n";
+my $outFileGood = "$spectrDir/output_good$ID.dat";
+print "Writing results to $outFile and $outFileGood\n";
 open(OUTPUT, ">$outFile") or die;
+open(OUTPUTGOOD, ">$outFileGood") or die;
 
 # list any results that you want to store here. will be used as column headers.
 # then make sure you assign it further down.
@@ -62,6 +64,7 @@ my $columnHeader = join(",", @columns);
 $columnHeader .= "\n";
 print $columnHeader;
 print OUTPUT $columnHeader;
+print OUTPUTGOOD $columnHeader;
 
 my $igood = 0; # count number of points passing experimental constraints
 my $iuseful = 0; # count number of points that also have acceptable ma1
@@ -107,7 +110,6 @@ foreach $file (@spectrFiles) {
   #   next;
   # }
 
-  $igood++;
 
   # Get masses, parameters, etc
   open(DATASPECTR, $file) or die;
@@ -232,6 +234,7 @@ foreach $file (@spectrFiles) {
 
   # Convert to number for testing
   $results{"ma1"} = $results{"ma1"}*1.0;
+  $results{"Del_a_mu"} = $results{"Del_a_mu"}*1.0;
 
   # Write values to file if we're happy with them
   # Must do it like this - looping through @columns, otherwise order will muck up
@@ -243,12 +246,20 @@ foreach $file (@spectrFiles) {
     chop($outStr); # don't want that last , as it will screw up the ordering
     $outStr.= "\n";
     print OUTPUT $outStr;
+
+    # Save to "good" file if passes all constraints, except for g-2,
+    # where we are happy with a +ve delta a_mu
+    if ($results{"constraints"} eq "" || ( ($results{"Del_a_mu"} > 0) && ($results{"constraints"} eq "Muon magn. mom. more than 2 sigma away") )){
+      print OUTPUTGOOD $outStr;
+      $igood++;
+    }
     $iuseful++;
   }
 
   $counter++;
 } # end loop on number of random points to scan
 close(OUTPUT);
+close(OUTPUTGOOD);
 # copy output file to main output folder
 $spectrDir =~ s/\.*\///;
 # system("cp $ScriptPath/$spectrDir/output.dat $ScriptPath/output/output_$spectrDir.dat");
