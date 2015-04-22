@@ -41,7 +41,7 @@ open(OUTPUTGOOD, ">$outFileGood") or die;
 
 # list any results that you want to store here. will be used as column headers.
 # then make sure you assign it further down.
-my @columns = ("mtau", "mh1", "mh2", "mh3", "ma1", "ma2", "mhc",
+my @columns = ("mtau", "mh1", "mh2", "mh3", "ma1", "ma2", "mhc", "mstop1", "mstop2",
               "tgbeta", "mueff", "lambda", "kappa", "alambda", "akappa",
               "h1u", "h1d", "h1b", "h1V", "h1G", "h1A",
               "h2u", "h2d", "h2b", "h2V", "h2G", "h2A",
@@ -52,7 +52,7 @@ my @columns = ("mtau", "mh1", "mh2", "mh3", "ma1", "ma2", "mhc",
               "h1ggrc2", "h2ggrc2", "h1bbrc2", "h2bbrc2",
               "S11", "S12", "S13", "S21", "S22", "S23", "S31", "S32", "S33",
               "P11", "P12", "P13", "P21", "P22", "P23",
-              "omega",
+              "omega", "dmdiag1", "dmdiag2", "dmdiag3",
               "file", "constraints", "Del_a_mu");
 
 # Make hash to hold results - need to do here and not in loop to ensure that
@@ -130,6 +130,8 @@ foreach $file (@spectrFiles) {
     $results{"ma1"} = $1 if / +36 +([E\d\.\-\+]+) +\# lightest pseudoscalar/;
     $results{"ma2"} = $1 if / +46 +([E\d\.\-\+]+) +\# second pseudoscalar/;
     $results{"mhc"} = $1 if / +37 +([E\d\.\-\+]+) +\# charged Higgs/;
+    $results{"mstop1"} = $1 if /   1000006 +([E\d\.\-\+]+) +#  ~t_1/;
+    $results{"mstop2"} = $1 if /   2000006 +([E\d\.\-\+]+) +#  ~t_2/;
 
     # parameters
     $results{"tgbeta"} = $1 if / +3 +([E\d\.\-\+]+) +\# TANBETA\(MZ\)/;
@@ -223,8 +225,17 @@ foreach $file (@spectrFiles) {
     $results{"P22"} = $1 if /  2  2 +([E\d\.\-\+]+) +\# P_\(2,2\)/;
     $results{"P23"} = $1 if /  2  3 +([E\d\.\-\+]+) +\# P_\(2,3\)/;
 
-    # DM relic density
-    $results{"omega"} = $1 if /    10 +([E\d\.\-\+]+) +\# Omega h\^2/;
+    # DM relic density & 3 most common diagrams
+    if (/    10 +([E\d\.\-\+]+) +\# Omega h\^2/){
+      $results{"omega"} = $1;
+      # skip2 comment lines in the spectrum file
+      $dud = <DATASPECTR>;
+      $dud = <DATASPECTR>;
+      # the regex here trims whitespace from both ends of the line
+      ($results{"dmdiag1"} = <DATASPECTR>) =~ s/^\s+|\s+$//g;
+      ($results{"dmdiag2"} = <DATASPECTR>) =~ s/^\s+|\s+$//g;
+      ($results{"dmdiag3"} = <DATASPECTR>) =~ s/^\s+|\s+$//g;
+    }
 
     # g-2 contribution
     $results{"Del_a_mu"} = $1 if /     6 +([E\d\.\-\+]+) +\# Del_a_mu/;
@@ -273,8 +284,8 @@ print("\n");
 print("\n");
 print("#########################################\n");
 print("### N. input points  =   $itotal          \n");
-print("### N. good points   =   $igood          \n");
-print("### N. useful points =   $iuseful        \n");
+print("### N. with 0 < ma1 < 100 =   $iuseful        \n");
+print("### N. with 0 < ma1 < 100 & passing exp. constraints = $igood\n");
 print("### Fraction good    =   $fracGood       \n");
 print("### Fraction useful  =   $fracUseful       \n");
 print("#########################################\n");
