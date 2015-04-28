@@ -2,7 +2,8 @@
 host=`hostname`
 echo "Running on $host"
 echo "With parameters: $@"
-# parameters are: [batch number]
+# parameters are: [job dir on hdfs] [batch number]
+jobdir=$1
 
 # Setup NMSSMTools on execute machine
 tar -xvzf NMSSMTools_4.5.1.tgz
@@ -11,12 +12,28 @@ cd NMSSMTools_4.5.1
 patch run < ../run.patch
 make init
 make
-ls
 cd ..
+ls
+
+# Setup SusHi
+# Need to tell it where LHAPDF is - check this is right!
+# make sure that the gcc lhapdf was compiled against matches the version that
+# gfortran was made with, otherwise you're gonna have a bad time
+# tar -xvzf SusHi-1.5.0.tar.gz
+# cd SusHi-1.5.0
+# ./configure
+# # sed -i '0,/LHAPATH =/s@@LHAPATH = /cvmfs/sft.cern.ch/lcg/external/MCGenerators/lhapdf/5.8.9/x86_64-slc6-gcc46-opt/lib@' Makefile
+# sed -i '0,/LHAPATH =/s@@LHAPATH = /cvmfs/cms.cern.ch/slc6_amd64_gcc491/external/lhapdf6/6.1.5/lib@' Makefile
+# make
+# cd ..
 
 # Run NMSSMTools over parameter points
-perl NMSSM_scan.pl $1
+# First arg is job dir (will be made on hdfs)
+perl NMSSM_scan.pl $jobdir $2
 
 ls
+ls $jobdir
 # Zip up spectrum files to transfer back
-tar -cvzf spectr$1.tgz spectr*.dat paramRange.txt
+cd $jobdir
+tar -cvzf spectr.tgz spectr*.dat paramRange.txt
+rm spectr*.dat

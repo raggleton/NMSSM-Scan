@@ -22,7 +22,7 @@ NJOBS=50
 
 # Make new job directory
 # EDIT ME
-DESCRIPTION=$NJOBS"_MICRO_depKappa"
+DESCRIPTION=$NJOBS"_MICRO"
 # DESCRIPTION=$NJOBS_"depKappa"
 
 ###########################################
@@ -32,7 +32,9 @@ JOBDIR="jobs_${DESCRIPTION}_${DATE}"
 
 if [ ! -d "$JOBDIR" ]; then
     echo "Putting job files in $JOBDIR"
+    echo "Putting output in /hdfs/user/ra12451/NMSSM-Scan/$JOBDIR"
     mkdir $JOBDIR
+    mkdir /hdfs/user/ra12451/NMSSM-Scan/$JOBDIR
 else
     echo "Cannot create job folder, it already exists - give it a minute"
     exit 1
@@ -45,10 +47,10 @@ echo $FULLPATH
 cp Proto_files/runScan.condor $JOBDIR/runScan.condor
 # Need the @ instead of usual / since we're dealing with paths
 sed -i "s@SEDINITIAL@$FULLPATH@g" "$JOBDIR/runScan.condor"
+sed -i "s@SEDOUTDIR@$JOBDIR@g" "$JOBDIR/runScan.condor"
 
 JOBS="queue $NJOBS"
 sed -i "s@SEDJOB@$JOBS@g" "$JOBDIR/runScan.condor"
-
 # To store .out .log .err files
 mkdir $JOBDIR/logFiles
 

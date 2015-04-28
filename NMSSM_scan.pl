@@ -10,8 +10,9 @@ use File::Path qw/make_path/;
 # The output "spectr_X_Y.dat" files are produced in $PWD
 #
 # Usage:
-# perl NMSSM_scan.pl X
+# perl NMSSM_scan.pl <input/output dir> X
 #
+# where <input/output dir> is the job directory name
 # where X is a unique identifier for these spectrum files
 # e.g. $(process) for HTcondor jobs
 #
@@ -21,12 +22,15 @@ use File::Path qw/make_path/;
 my $ScriptPath = $ENV{PWD};
 print("ScriptPath: ", $ScriptPath, "\n");
 
+my $outDir = $ARGV[0];
+print("Output dir: ", $outDir, "\n");
+
 # --- find NMSSM tools dir ---#
 # $ENV{PWD} =~ m@^(.*)(/[^/]+){1}$@; $NMSSMtoolsPath = $1;
 # print "NMSSMtoolsPath: ", $NMSSMtoolsPath, "\n";
 
 # Unique identifier for the set of spectrum files from this script
-my ${unique} = $ARGV[0];
+my ${unique} = $ARGV[1];
 
 ###########################################
 # select max and min range for parameters
@@ -113,6 +117,7 @@ for(my $icount = 0; $icount < $nfinal; $icount++){
   my $mueff = rand($deltamueff) + $x0mueff;
   
   # in case of different and dependent range, write it here
+
   if($userbounds==1){
     # Make sure you add any condition to the comments string!
     $kappa = rand((200*$lambda)/$mueff);
@@ -124,10 +129,11 @@ for(my $icount = 0; $icount < $nfinal; $icount++){
   
   # writing the input files
   my $newInput = "inp_${unique}_${icount}.dat";
-  open(INPUT,	  ">$ScriptPath/$newInput") or die;
+  my $inputCard = "${outDir}/${newInput}";
+  open(INPUT,	  ">$inputCard") or die;
 
   if ($icount % 500 == 0) {
-    print("Making input card $ScriptPath/$newInput\n");
+    print("Making input card $inputCard\n");
   }
 
   foreach my $line (@proto) {
@@ -138,23 +144,23 @@ for(my $icount = 0; $icount < $nfinal; $icount++){
     $newline =~ s/SED_ALAMBDA/$alambda/g;
     $newline =~ s/SED_AKAPPA/$akappa/g;
     $newline =~ s/SED_MUEFF/$mueff/g;
-    # $_ =~ s/SED_COMMENTS/$comments/g;
+    $newline =~ s/SED_COMMENTS/$comments/g;
     $newline .= "\n";
     print INPUT $newline;
   }
   close(INPUT);
 
   # run NMSSM Tools with new input file
-  system("cd NMSSMTools_?.?.?/ && ./run ../$newInput");
+  system("cd NMSSMTools_?.?.?/ && ./run $inputCard");
 
   # remove input file to save space
-  unlink "$ScriptPath/$newInput";
+  # unlink "$inputCard";
 
 } # end loop on number of random points to scan
 
 
 # make a note of what param range we ran over
-open(NOTES, ">$ScriptPath/paramRange.txt") or die;
+open(NOTES, ">$outDir/paramRange.txt") or die;
 print NOTES $comments;
 close(NOTES);
 
