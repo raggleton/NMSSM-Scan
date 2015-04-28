@@ -7,6 +7,8 @@ echo "With parameters: $@"
 # Setup NMSSMTools on execute machine
 tar -xvzf NMSSMTools_4.5.1.tgz
 cd NMSSMTools_4.5.1
+# patch bug in mving output files
+patch run < ../run.patch
 make init
 make
 ls
