@@ -42,21 +42,21 @@ my $tgbetamin=1.5;
 my $mueffmax=300;
 my $mueffmin=100;
   
-my $lambdamax=1;
+my $lambdamax=0.7;
 my $lambdamin=0;
   
-my $kappamax=1;
+my $kappamax=0.7;
 my $kappamin=0;
 
 my $alambdamax=+4000;
-my $alambdamin=-4000;
+my $alambdamin=-1000;
 
-my $akappamax=+10;
+my $akappamax=2.5;
 my $akappamin=-30;
 
 # imposing dependant bounds on min or max parameters
 # (edit corresponding part in loop overicount)
-my $userbounds=1;
+my $userbounds=0;
 
 ###########################################
 # select number of random points to generate:
