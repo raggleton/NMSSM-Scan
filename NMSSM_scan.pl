@@ -154,7 +154,7 @@ for(my $icount = 0; $icount < $nfinal; $icount++){
   system("cd NMSSMTools_?.?.?/ && ./run $inputCard");
 
   # remove input file to save space
-  # unlink "$inputCard";
+  unlink "$inputCard";
 
 } # end loop on number of random points to scan
 

@@ -4,11 +4,12 @@ echo "Running on $host"
 echo "With parameters: $@"
 # parameters are: [job dir on hdfs] [batch number]
 jobdir=$1
+batchNum=$2
 
 # Setup NMSSMTools on execute machine
 tar -xvzf NMSSMTools_4.5.1.tgz
 cd NMSSMTools_4.5.1
-# patch bug in mving output files
+# patch bug in moving output files
 patch run < ../run.patch
 make init
 make
@@ -28,12 +29,12 @@ ls
 # cd ..
 
 # Run NMSSMTools over parameter points
-# First arg is job dir (will be made on hdfs)
-perl NMSSM_scan.pl $jobdir $2
+# First arg is job dir - where the input.dat and spectr.dat files get made
+perl NMSSM_scan.pl $PWD $2
 
 ls
-ls $jobdir
 # Zip up spectrum files to transfer back
-cd $jobdir
-tar -cvzf spectr.tgz spectr*.dat paramRange.txt
+tar -cvzf $jobdir/spectr$batchNum.tgz spectr*.dat paramRange.txt
+tar -cvzf $jobdir/omega$batchNum.tgz omega*.dat
 rm spectr*.dat
+rm omega*.dat
