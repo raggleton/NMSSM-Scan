@@ -4,12 +4,12 @@ use warnings 'all';
 use Archive::Tar;
 use File::Basename;
 use File::Path qw/make_path/;
-
+# use Algorithm::Combinatorics qw(permutations);
 
 ########################################################
 # This script analyses the output spectrum files.
 #
-# usage: perl Analyse_scans.pl <dir with spectrum files> <optional unique identifier for this set of output files>
+# usage: perl Analyse_scans.pl <dir with spectrum files> <output dir for CSV files> <optional unique identifier for this set of output files>
 ########################################################
 
 
@@ -24,17 +24,20 @@ print "Getting spectrum files from ${spectrDir}\n";
 # get list of all spectr_* files in dir
 my @spectrFiles = glob("$spectrDir/spectr_*");
 
+# output dir
+my $outDir = $ARGV[1];
+
 # unique identifier for this output file
 my $ID = "";
 my $num_args = $#ARGV + 1;
-if ($num_args == 2) {
-  $ID = $ARGV[1];
+if ($num_args == 3) {
+  $ID = $ARGV[2];
 }
 
 # CSV file to write results to
 # my $outFile = "$ScriptPath/$spectrDir/output.dat";
-my $outFile = "$spectrDir/output$ID.dat";
-my $outFileGood = "$spectrDir/output_good$ID.dat";
+my $outFile = "$outDir/output$ID.dat";
+my $outFileGood = "$outDir/output_good$ID.dat";
 print "Writing results to $outFile and $outFileGood\n";
 open(OUTPUT, ">$outFile") or die;
 open(OUTPUTGOOD, ">$outFileGood") or die;
@@ -50,8 +53,8 @@ my @columns = ("mtau", "mh1", "mh2", "mh3", "ma1", "ma2", "mhc", "mstop1", "msto
               "Brh3gg", "Brh3tautau", "Brh3bb", "Brh3ww", "Brh3zz", "Brh3gammagamma", "Brh3zgamma", "Brh3h1h1", "Brh3h2h2", "Brh3h1h2", "Brh3a1a1", "Brh3a1z",
               "Bra1mumu", "Bra1tautau", "Bra1bb",
               "h1ggrc2", "h2ggrc2", "h1bbrc2", "h2bbrc2",
-              "S11", "S12", "S13", "S21", "S22", "S23", "S31", "S32", "S33",
-              "P11", "P12", "P13", "P21", "P22", "P23",
+              # "S11", "S12", "S13", "S21", "S22", "S23", "S31", "S32", "S33",
+              # "P11", "P12", "P13", "P21", "P22", "P23",
               "omega", "dmdiag1", "dmdiag2", "dmdiag3",
               "file", "constraints", "Del_a_mu");
 
@@ -207,23 +210,23 @@ foreach $file (@spectrFiles) {
     $results{"h2bbrc2"} = $1 if / +([E\d\.\-\+]+) +[E\d\.\-\+]+ +3 +35 +5 +5 \# Higgs\(2\)-b-b red\. coupling\^2/;
 
     # 3x3 Higgs mixing matrix
-    $results{"S11"} = $1 if /  1  1 +([E\d\.\-\+]+) +\# S_\(1,1\)/;
-    $results{"S12"} = $1 if /  1  2 +([E\d\.\-\+]+) +\# S_\(1,2\)/;
-    $results{"S13"} = $1 if /  1  3 +([E\d\.\-\+]+) +\# S_\(1,3\)/;
-    $results{"S21"} = $1 if /  2  1 +([E\d\.\-\+]+) +\# S_\(2,1\)/;
-    $results{"S22"} = $1 if /  2  2 +([E\d\.\-\+]+) +\# S_\(2,2\)/;
-    $results{"S23"} = $1 if /  2  3 +([E\d\.\-\+]+) +\# S_\(2,3\)/;
-    $results{"S31"} = $1 if /  3  1 +([E\d\.\-\+]+) +\# S_\(3,1\)/;
-    $results{"S32"} = $1 if /  3  2 +([E\d\.\-\+]+) +\# S_\(3,2\)/;
-    $results{"S33"} = $1 if /  3  3 +([E\d\.\-\+]+) +\# S_\(3,3\)/;
+    # $results{"S11"} = $1 if /  1  1 +([E\d\.\-\+]+) +\# S_\(1,1\)/;
+    # $results{"S12"} = $1 if /  1  2 +([E\d\.\-\+]+) +\# S_\(1,2\)/;
+    # $results{"S13"} = $1 if /  1  3 +([E\d\.\-\+]+) +\# S_\(1,3\)/;
+    # $results{"S21"} = $1 if /  2  1 +([E\d\.\-\+]+) +\# S_\(2,1\)/;
+    # $results{"S22"} = $1 if /  2  2 +([E\d\.\-\+]+) +\# S_\(2,2\)/;
+    # $results{"S23"} = $1 if /  2  3 +([E\d\.\-\+]+) +\# S_\(2,3\)/;
+    # $results{"S31"} = $1 if /  3  1 +([E\d\.\-\+]+) +\# S_\(3,1\)/;
+    # $results{"S32"} = $1 if /  3  2 +([E\d\.\-\+]+) +\# S_\(3,2\)/;
+    # $results{"S33"} = $1 if /  3  3 +([E\d\.\-\+]+) +\# S_\(3,3\)/;
 
     # 2x3 Pseudoscalar higgs mixing matrix
-    $results{"P11"} = $1 if /  1  1 +([E\d\.\-\+]+) +\# P_\(1,1\)/;
-    $results{"P12"} = $1 if /  1  2 +([E\d\.\-\+]+) +\# P_\(1,2\)/;
-    $results{"P13"} = $1 if /  1  3 +([E\d\.\-\+]+) +\# P_\(1,3\)/;
-    $results{"P21"} = $1 if /  2  1 +([E\d\.\-\+]+) +\# P_\(2,1\)/;
-    $results{"P22"} = $1 if /  2  2 +([E\d\.\-\+]+) +\# P_\(2,2\)/;
-    $results{"P23"} = $1 if /  2  3 +([E\d\.\-\+]+) +\# P_\(2,3\)/;
+    # $results{"P11"} = $1 if /  1  1 +([E\d\.\-\+]+) +\# P_\(1,1\)/;
+    # $results{"P12"} = $1 if /  1  2 +([E\d\.\-\+]+) +\# P_\(1,2\)/;
+    # $results{"P13"} = $1 if /  1  3 +([E\d\.\-\+]+) +\# P_\(1,3\)/;
+    # $results{"P21"} = $1 if /  2  1 +([E\d\.\-\+]+) +\# P_\(2,1\)/;
+    # $results{"P22"} = $1 if /  2  2 +([E\d\.\-\+]+) +\# P_\(2,2\)/;
+    # $results{"P23"} = $1 if /  2  3 +([E\d\.\-\+]+) +\# P_\(2,3\)/;
 
     # DM relic density & 3 most common diagrams
     if (/    10 +([E\d\.\-\+]+) +\# Omega h\^2/){
@@ -259,8 +262,8 @@ foreach $file (@spectrFiles) {
     print OUTPUT $outStr;
 
     # Save to "good" file if passes all constraints, except for g-2,
-    # where we are happy with a +ve delta a_mu
-    if ($results{"constraints"} eq "" || ( ($results{"Del_a_mu"} > 0) && ($results{"constraints"} eq "Muon magn. mom. more than 2 sigma away") )){
+    # where we are happy with a +ve delta a_mu, and omega, where we are happy if it's too small
+    if ($results{"constraints"} eq "" || (checkExpPermutations($results{"constraints"}) && ($results{"Del_a_mu"} > 0) )){
       print OUTPUTGOOD $outStr;
       $igood++;
     }
@@ -271,10 +274,6 @@ foreach $file (@spectrFiles) {
 } # end loop on number of random points to scan
 close(OUTPUT);
 close(OUTPUTGOOD);
-# copy output file to main output folder
-$spectrDir =~ s/\.*\///;
-# system("cp $ScriptPath/$spectrDir/output.dat $ScriptPath/output/output_$spectrDir.dat");
-# print "Copied output to $ScriptPath/output/output_$spectrDir.dat\n";
 
 # printing stats
 my $itotal = @spectrFiles;
@@ -283,12 +282,50 @@ my $fracUseful = sprintf "%.4f", $iuseful / $itotal;
 print("\n");
 print("\n");
 print("#########################################\n");
-print("### N. input points  =   $itotal          \n");
-print("### N. with 0 < ma1 < 100 =   $iuseful        \n");
-print("### N. with 0 < ma1 < 100 & passing exp. constraints = $igood\n");
-print("### Fraction good    =   $fracGood       \n");
-print("### Fraction useful  =   $fracUseful       \n");
+print("### N. input points         =   $itotal\n");
+print("### N. with 0 < ma1 < 100   =   $iuseful\n");
+print("### N. with 0 < ma1 < 100,\n");
+print(" & passing exp. constraints = $igood\n");
+print("### Fraction useful         =   $fracUseful\n");
+print("### Fraction good           =   $fracGood\n");
 print("#########################################\n");
+
+
+sub checkExpPermutations {
+  # Check if string matches one constraint, or several (in any permutation)
+  # e.g. if we tested against "Chargino too light" and "Stau too light"
+  # then we would return True if the input text was:
+  # "Chargino too light"
+  # or "Stau too light"
+  # or "Chargino too light/Stau too light"
+  # or "Stau too light/Chargino too light"
+  # and False if e.g. "Chargino too light/Landau Pole below MGUT"
+
+  my $conStr = $_[0];
+
+  # constraints to test against
+  my @testConstraints = (
+    "Relic density too small (Planck)",
+    "Muon magn. mom. more than 2 sigma away"
+  );
+
+  # eurgh would like to automate this but need Algorithms::Combinatorics, which
+  # needs installing but as non-root...
+  # must be in right order as in subroutine below, otherwise will go wrong
+  my @permutations = (
+    "Relic density too small (Planck)",
+    "Muon magn. mom. more than 2 sigma away",
+    "Relic density too small (Planck)/Muon magn. mom. more than 2 sigma away"
+  );
+
+  foreach $check(@permutations) {
+    if ($conStr eq $check) {
+      return 1;
+    }
+  }
+  return 0;
+
+}
 
 
 sub passExpCheck {
