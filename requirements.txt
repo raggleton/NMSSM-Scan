@@ -20,5 +20,6 @@ pyzmq==14.6.0
 scipy==0.15.1
 seaborn==0.5.1
 six==1.9.0
+tables==3.1.1
 terminado==0.5
 tornado==4.1
