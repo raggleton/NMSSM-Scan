@@ -8,3 +8,12 @@ inp_*.dat
 *BK
 output
 .ipynb_checkpoints/
+data
+*.png
+*.pdf
+*.pyc
+*.ipynb
+*.tex
+*.toc
+*.h5
+*.tmp
