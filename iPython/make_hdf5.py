@@ -11,27 +11,46 @@ import numpy as np
 import glob
 import math
 from itertools import product, chain, permutations
+from shutil import copyfile
 
 
 def load_df(directory, folders, filestem):
     """Load dataframes with CSV files from several folders in directory arg,
     from CSV files named filestem*.dat
 
-    Note that we do not use the pd.concat method here - it's really slow
-    and hogs a lot of memory. Instead we make a dataframe from the current
-    CSV, then append it to the main dataframe. That way the temp one gets
-    destroyed and the memory freed
-    """
+    Works by first making a large CSV file from all the consituent CSV files,
+    and then reading that into a dataframe.
 
-    df = pd.DataFrame()
+    I did try using the concat() and merge() methods, however their performance
+    is much worse - appending is numpy's slow point, and it consumed a lot
+    of memory to keep all those individual dataframes open and then concat them.
+    """
     for fo in folders:
         print fo
-        for fi in glob.glob(directory + "/" + fo + "/%s*.dat" % filestem):
-            df_temp = pd.read_csv(fi, delimiter=",")
-            if len(folders) == 1:
-                df = df_temp
-            else:
-                df = df.append(df_temp, ignore_index=True)
+        file_list = [fi for fi in glob.glob(directory + "/" + fo + "/%s*.dat" % filestem)]
+
+    # Make a copy of the first file (so we can keep the column headers)
+    copyfile(file_list[0], "merge.csv")
+
+    # Now add the data rows of the rest of the files to the massive csv file
+    with open("merge.csv", "a") as fout:
+        for csv in file_list[1:]:
+            with open(csv, "r") as fin:
+                next(fin)  # skip header
+                for line in fin:
+                    fout.write(line)
+
+    df = pd.read_csv("merge.csv", delimiter=",")
+
+    # rename from column "lambda" to "lambda_"
+    df.rename(columns={'lambda':'lambda_'}, inplace=True)
+
+    # Fix the constraints column, such that the ones that pass (i.e. == "",
+    # which pandas interprets as NaN) have NaN replaced by something sensible
+    df.fillna({"constraints":""}, axis=0, inplace=True)
+
+    print len(df.index)
+    print df.columns.values
     return df
 
 
@@ -127,9 +146,6 @@ def make_dataframes(folders):
     df_orig = load_df(csv_directory, folders, "output")
     # df_orig = load_df(csv_directory, folders, "output_good")
 
-    # Fix the constraints column, such that the ones that pass have NaN replaced by something more sensible
-    df_orig.fillna({"constraints":""}, axis=0, inplace=True)
-
     # Load up the glu-glu cross sections for 13 TeV
     cs = pd.read_csv("parton_lumi_ratio.csv")
     masses = cs["MH [GeV]"].tolist()
@@ -179,15 +195,15 @@ def make_dataframes(folders):
 if __name__ == "__main__":
 
 
-    standard_scan = [
-        # "jobs_50_MICRO_M3_2000_30_Apr_15_1053"
-        # "jobs_50_MICRO_MD3_2000_30_Apr_15_1057"
-        "jobs_50_MICRO_MQ3_2000_30_Apr_15_1057"
+    folders = [
+        # "jobs_50_MICRO_M3_2000_30_Apr_15_1053",
+        # "jobs_50_MICRO_MD3_2000_30_Apr_15_1057",
+        "jobs_50_MICRO_MQ3_2000_30_Apr_15_1057",
     ]
 
-    df_orig, df_pass_all, df_ma1Lt10, df_h1SM, df_h2SM = make_dataframes(standard_scan)
+    df_orig, df_pass_all, df_ma1Lt10, df_h1SM, df_h2SM = make_dataframes(folders)
 
-    store = pd.HDFStore('MQ3_2000.h5')
+    store = pd.HDFStore('MQ3_2000_comp.h5', complevel=9, comlib='bzip2')
 
     store.put('full12loop_all', df_orig, format='table', data_columns=True)
     store.put('full12loop_good_posMuMagMom_planckUpperOnly', df_pass_all, format='table', data_columns=True)
