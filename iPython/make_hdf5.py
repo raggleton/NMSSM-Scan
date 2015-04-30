@@ -6,6 +6,7 @@ Make a HDF5 binary from lots of CSV files so it can be easily used in pandas
 
 """
 
+import argparse
 import pandas as pd
 import numpy as np
 import glob
@@ -194,13 +195,21 @@ def make_dataframes(folders):
 #---------------------------------------------
 if __name__ == "__main__":
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument("output", help="output HDF5 filename")
+    parser.add_argument("input", nargs="*", help="folders with CSV files")
+    args = parser.parse_args()
 
-    folders = [
-        # "jobs_50_MICRO_M3_2000_30_Apr_15_1053",
-        # "jobs_50_MICRO_MD3_2000_30_Apr_15_1057",
-        "jobs_50_MICRO_MQ3_2000_30_Apr_15_1057",
+    job_folders = [
+        "/Users/robina/Dropbox/4Tau/NMSSM-Scan/data/jobs_50_MICRO_28_Apr_15_1404",
+        "/Users/robina/Dropbox/4Tau/NMSSM-Scan/data/jobs_50_MICRO_28_Apr_15_2016",
+        "/Users/robina/Dropbox/4Tau/NMSSM-Scan/data/jobs_50_MICRO_28_Apr_15_2017",
+        "/Users/robina/Dropbox/4Tau/NMSSM-Scan/data/jobs_50_MICRO_28_Apr_15_2018",
     ]
 
+    # can use either command-line input, or manually add in folders here if easier
+    # note that command lien arg takes precedent
+    folders = args.input if args.input else job_folders
     df_orig, df_pass_all, df_ma1Lt10, df_h1SM, df_h2SM = make_dataframes(folders)
 
     store = pd.HDFStore('MQ3_2000_comp.h5', complevel=9, comlib='bzip2')
