@@ -15,7 +15,7 @@ from itertools import product, chain, permutations
 from shutil import copyfile
 
 
-def load_df(directory, folders, filestem):
+def load_df(folders, filestem):
     """Load dataframes with CSV files from several folders in directory arg,
     from CSV files named filestem*.dat
 
@@ -28,7 +28,10 @@ def load_df(directory, folders, filestem):
     """
     for fo in folders:
         print fo
-        file_list = [fi for fi in glob.glob(directory + "/" + fo + "/%s*.dat" % filestem)]
+        file_list = [fi for fi in glob.glob(fo + "/%s*.dat" % filestem)]
+
+    if not file_list:
+        raise IndexError("file_list is empty - are you sure you've input the correct folders?")
 
     # Make a copy of the first file (so we can keep the column headers)
     copyfile(file_list[0], "merge.csv")
@@ -137,14 +140,13 @@ def make_dataframes(folders):
     """Load files into Panda dataframes
 
     CSV files read in are named output*.dat and output_good*.dat, and are
-    pulled from the folders listed in the arg. these folders are kept in csv_directory
-    (just to make life complicated :p)
+    pulled from the folders listed in the arg.
     """
 
-    csv_directory = "/Users/robina/Dropbox/4Tau/NMSSM-Scan/data"
+    # csv_directory = "/Users/robina/Dropbox/4Tau/NMSSM-Scan/data"
     # csv_directory = "/hdfs/user/ra12451/NMSSM-Scan/"
 
-    df_orig = load_df(csv_directory, folders, "output")
+    df_orig = load_df(folders, "output")
     # df_orig = load_df(csv_directory, folders, "output_good")
 
     # Load up the glu-glu cross sections for 13 TeV
@@ -212,7 +214,7 @@ if __name__ == "__main__":
     folders = args.input if args.input else job_folders
     df_orig, df_pass_all, df_ma1Lt10, df_h1SM, df_h2SM = make_dataframes(folders)
 
-    store = pd.HDFStore('MQ3_2000_comp.h5', complevel=9, comlib='bzip2')
+    store = pd.HDFStore(args.output, complevel=9, comlib='bzip2')
 
     store.put('full12loop_all', df_orig, format='table', data_columns=True)
     store.put('full12loop_good_posMuMagMom_planckUpperOnly', df_pass_all, format='table', data_columns=True)
