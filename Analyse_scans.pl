@@ -44,7 +44,7 @@ open(OUTPUTGOOD, ">$outFileGood") or die;
 
 # list any results that you want to store here. will be used as column headers.
 # then make sure you assign it further down.
-my @columns = ("mtau", "mh1", "mh2", "mh3", "ma1", "ma2", "mhc", "mstop1", "mstop2",
+my @columns = ("mtau", "mh1", "mh2", "mh3", "ma1", "ma2", "mhc", "mstop1", "mstop2", "msbottom1", "msbottom2",
               "tgbeta", "mueff", "lambda", "kappa", "alambda", "akappa",
               "h1u", "h1d", "h1b", "h1V", "h1G", "h1A",
               "h2u", "h2d", "h2b", "h2V", "h2G", "h2A",
@@ -135,6 +135,8 @@ foreach $file (@spectrFiles) {
     $results{"mhc"} = $1 if / +37 +([E\d\.\-\+]+) +\# charged Higgs/;
     $results{"mstop1"} = $1 if /   1000006 +([E\d\.\-\+]+) +#  ~t_1/;
     $results{"mstop2"} = $1 if /   2000006 +([E\d\.\-\+]+) +#  ~t_2/;
+    $results{"msbottom1"} = $1 if /   1000005 +([E\d\.\-\+]+) +#  ~b_1/;
+    $results{"msbottom2"} = $1 if /   2000005 +([E\d\.\-\+]+) +#  ~b_2/;
 
     # parameters
     $results{"tgbeta"} = $1 if / +3 +([E\d\.\-\+]+) +\# TANBETA\(MZ\)/;
@@ -315,7 +317,8 @@ sub checkExpPermutations {
   my @permutations = (
     "Relic density too small (Planck)",
     "Muon magn. mom. more than 2 sigma away",
-    "Relic density too small (Planck)/Muon magn. mom. more than 2 sigma away"
+    "Relic density too small (Planck)/Muon magn. mom. more than 2 sigma away",
+    "Muon magn. mom. more than 2 sigma away/Relic density too small (Planck)"
   );
 
   foreach $check(@permutations) {
