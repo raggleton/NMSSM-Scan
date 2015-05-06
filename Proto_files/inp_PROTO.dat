@@ -28,8 +28,8 @@ BLOCK MINPAR
 BLOCK EXTPAR
 	1	150.D0		# M1 (If =/= M2/2)
 	2	300.D0		# M2
-	3	1000.D0		# M3 (If =/= 3*M2)
-	11	2500.D0		# AU3
+	3	SED_M3		# M3 (If =/= 3*M2)
+	11	SED_AU3		# AU3
 	12	2500.D0		# AD3
 	13	2500.D0		# AE3
 #	16	-2500.D0	# AE2 = AE1 (If =/= AE3)
@@ -37,9 +37,9 @@ BLOCK EXTPAR
 #	32	200.D0		# ML2 = ML1 (If =/= ML3)
 	36	1000.D0		# ME3
 #	35	200.D0		# ME2 = ME1 (If =/= ME3)
-	43	1000.D0		# MQ3
+	43	SED_MQ3		# MQ3
 #	42	1000.D0		# MQ2 = MQ1 (If =/= MQ3)
-	46	1000.D0		# MU3
+	46	SED_MU3		# MU3
 #	45	1000.D0		# MU2 = MU1 (If =/= MU3)
 	49	1000.D0		# MD3
 #	48	1000.D0		# MD2 = MD1 (If =/= MD3)
