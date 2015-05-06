@@ -22,8 +22,7 @@ NJOBS=50
 
 # Make new job directory
 # EDIT ME
-DESCRIPTION=$NJOBS"_MICRO"
-# DESCRIPTION=$NJOBS_"depKappa"
+DESCRIPTION=$NJOBS"_MICRO_SCAN_M3MQ3MU3AU3"
 
 ###########################################
 # Don't touch anything below here

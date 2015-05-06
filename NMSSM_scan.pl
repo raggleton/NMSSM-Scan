@@ -54,6 +54,18 @@ my $alambdamin=-1000;
 my $akappamax=2.5;
 my $akappamin=-30;
 
+my $m3min=500;
+my $m3max=2000;
+
+my $mq3min=500;
+my $mq3max=2500;
+
+my $mu3min=500;
+my $mu3max=2500;
+
+my $au3min=500;
+my $au3max=3000;
+
 # imposing dependant bounds on min or max parameters
 # (edit corresponding part in loop overicount)
 my $userbounds=0;
@@ -80,6 +92,10 @@ $comments .= "# lambda: $lambdamin -> $lambdamax\n";
 $comments .= "# kappa: $kappamin -> $kappamax\n";
 $comments .= "# A_lambda: $alambdamin -> $alambdamax\n";
 $comments .= "# A_kappa: $akappamin -> $akappamax\n";
+$comments .= "# M3: $m3min -> $m3max\n";
+$comments .= "# MQ3: $mq3min -> $mq3max\n";
+$comments .= "# MU3: $mu3min -> $mu3max\n";
+$comments .= "# AU3: $au3min -> $au3max\n";
 
 # computing range for random generator
 my $deltatgbeta = ($tgbetamax - $tgbetamin);
@@ -100,6 +116,18 @@ my $x0akappa = $akappamin;
 my $deltamueff = ($mueffmax - $mueffmin);
 my $x0mueff = $mueffmin;
 
+my $deltam3 = ($m3max - $m3min);
+my $x0m3 = $m3min;
+
+my $deltamq3 = ($mq3max - $mq3min);
+my $x0mq3 = $mq3min;
+
+my $deltamu3 = ($mu3max - $mu3min);
+my $x0mu3 = $mu3min;
+
+my $deltaau3 = ($au3max - $au3min);
+my $x0au3 = $au3min;
+
 # Read prototype input file into array so quicker
 open(INPUT_PROTO, "$ScriptPath/inp_PROTO.dat") or die;
 chomp (my @proto = (<INPUT_PROTO>));
@@ -115,6 +143,10 @@ for(my $icount = 0; $icount < $nfinal; $icount++){
   my $alambda = rand($deltaalambda) + $x0alambda;
   my $akappa = rand($deltaakappa) + $x0akappa;
   my $mueff = rand($deltamueff) + $x0mueff;
+  my $m3 = rand($deltam3) + $x0m3;
+  my $mq3 = rand($deltamq3) + $x0mq3;
+  my $mu3 = rand($deltamu3) + $x0mu3;
+  my $au3 = rand($deltaau3) + $x0au3;
   
   # in case of different and dependent range, write it here
 
@@ -145,6 +177,11 @@ for(my $icount = 0; $icount < $nfinal; $icount++){
     $newline =~ s/SED_AKAPPA/$akappa/g;
     $newline =~ s/SED_MUEFF/$mueff/g;
     $newline =~ s/SED_COMMENTS/$comments/g;
+    $newline =~ s/SED_M3/$m3/g;
+    $newline =~ s/SED_MQ3/$mq3/g;
+    $newline =~ s/SED_MU3/$mu3/g;
+    $newline =~ s/SED_AU3/$au3/g;
+
     $newline .= "\n";
     print INPUT $newline;
   }
