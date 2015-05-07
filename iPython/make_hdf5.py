@@ -197,7 +197,7 @@ def make_dataframes(folders):
 #---------------------------------------------
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("output", help="output HDF5 filename")
     parser.add_argument("input", nargs="*", help="folders with CSV files")
     args = parser.parse_args()
