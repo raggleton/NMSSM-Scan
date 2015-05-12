@@ -24,26 +24,28 @@ nmssm_params = {"lambda_": Param(label=r"$\lambda$", color="orange", bins=25, ra
 
 def plot_many_hists_compare(var, dfs, title, labels, xlabel, ylabel, colors, **kwargs):
     """
-    Plot hists on same set of axes, to compare the distributionss
+    Plot hists of same var on same set of axes, to compare the distributions
     """
-    ax = dfs[0][var].plot(kind="hist", title=title, color=colors[0], label=labels[0], edgecolor=colors[0], **kwargs)
-    for i, df in enumerate(dfs[1:]):
-        df[var].plot(kind="hist", title=title, color=colors[i+1], ax=ax, label=labels[i+1], edgecolor=colors[i+1], **kwargs)
-    ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel)
-    return ax
+    # ax = dfs[0][var].plot(kind="hist", title=title, color=colors[0], label=labels[0], edgecolor=colors[0], **kwargs)
+    plt.title(title)
+    for i, df in enumerate(dfs):
+        plt.hist(df[var].values, color=colors[i], label=labels[i], edgecolor=colors[i], **kwargs)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    # return ax
 
 
 def plot_many_scatters_compare(varx, vary, dfs, title, labels, xlabel, ylabel, colors, **kwargs):
     """
-    Plot scatters on same set of axes, to compare the distributions
+    Plot scatters of same var x & y on same set of axes, to compare the distributions
     """
-    ax = dfs[0].plot(kind="scatter", x=varx, y=vary, title=title, color=colors[0], label=labels[0], **kwargs)
-    for i, df in enumerate(dfs[1:]):
-        df.plot(kind="scatter", x=varx, y=vary, title=title, color=colors[i+1], ax=ax, label=labels[i+1], **kwargs)
-    ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel)
-    return ax
+    # ax = dfs[0].plot(kind="scatter", x=varx, y=vary, title=title, color=colors[0], label=labels[0], **kwargs)
+    plt.title(title)
+    for i, df in enumerate(dfs):
+        plt.scatter(x=df[varx].values, y=df[vary].values, color=colors[i], **kwargs)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    # return ax
 
 
 def plot_many_scatters(varx, vary, dfs, titles, xlabel, ylabel, **kwargs):
@@ -127,7 +129,7 @@ def paper_compare_plot1(df, title):
 
     fig.suptitle(r"$h_{SM}\ =\ h_1$", fontsize=34, y=1.05)
 
-    s = df.plot(kind="scatter", x="ma1", y="mh1", marker="+", ax=ax[0],
+    df.plot(kind="scatter", x="ma1", y="mh1", marker="+", ax=ax[0],
             c=df.tgbeta, cmap=col_map, vmin=0, vmax=50)
     ax[0].set_xlim([0, 150])
     ax[0].set_ylim([122,129])
@@ -220,7 +222,7 @@ def plot_input_params_hists(df, ylabel, title, errorbars=True, **kwargs):
     # get out a raw array.
     for i, (param, attr) in enumerate(nmssm_params.items()):
         ax = fig.add_subplot(rows, cols, i+1)
-        y, bins, patches = plt.hist(df[param].values, 20, color=attr.color)
+        y, bins, patches = plt.hist(df[param].values, color=attr.color, **kwargs)
         # put error bars on
         bincenters = 0.5*(bins[1:]+bins[:-1])
         menStd = np.sqrt(y)
@@ -263,3 +265,8 @@ def plot_input_params_scatters(df, yvar, ylabel, yrange=None, title="", **kwargs
         if yrange:
             ax.set_ylim(yrange)
         plt.minorticks_on()
+
+
+def plot_xsec_scatter():
+    """Plot"""
+    pass
