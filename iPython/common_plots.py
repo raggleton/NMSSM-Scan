@@ -22,16 +22,23 @@ nmssm_params = {"lambda_": Param(label=r"$\lambda$", color="orange", bins=25, ra
                 }
 
 
-def plot_many_hists_compare(var, dfs, title, labels, xlabel, ylabel, colors, **kwargs):
+def plot_many_hists_compare(var, dfs, title, labels, xlabel, ylabel, colors, normed=False, **kwargs):
     """
     Plot hists of same var on same set of axes, to compare the distributions
+    Note that normed here normalises the bins such that toal bin entries sum to 1, irrespective of the bin width.
     """
     # ax = dfs[0][var].plot(kind="hist", title=title, color=colors[0], label=labels[0], edgecolor=colors[0], **kwargs)
-    plt.title(title)
+    fig = plt.figure()
+    ax = fig.add_subplot(1,1,1)
+    ax.set_title(title)
     for i, df in enumerate(dfs):
-        plt.hist(df[var].values, color=colors[i], label=labels[i], edgecolor=colors[i], **kwargs)
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
+        vals = df[var].values
+        weights = None
+        if normed:
+            weights = np.ones_like(vals)/len(vals)
+        ax.hist(df[var].values, color=colors[i], label=labels[i], edgecolor=colors[i], weights=weights, **kwargs)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
     # return ax
 
 
