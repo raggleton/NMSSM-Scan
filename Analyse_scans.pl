@@ -46,13 +46,14 @@ open(OUTPUTGOOD, ">$outFileGood") or die;
 # then make sure you assign it further down.
 my @columns = ("mtau", "mh1", "mh2", "mh3", "ma1", "ma2", "mhc", "mstop1", "mstop2", "msbottom1", "msbottom2",
               "tgbeta", "mueff", "lambda", "kappa", "alambda", "akappa",
+              "m3", "mu3", "mq3", "au3",
               "h1u", "h1d", "h1b", "h1V", "h1G", "h1A",
               "h2u", "h2d", "h2b", "h2V", "h2G", "h2A",
               "Brh1gg", "Brh1tautau", "Brh1cc", "Brh1bb", "Brh1ww", "Brh1zz", "Brh1gammagamma", "Brh1zgamma", "Brh1a1a1", "Brh1a1z",
               "Brh2gg", "Brh2tautau", "Brh2bb", "Brh2ww", "Brh2zz", "Brh2gammagamma", "Brh2zgamma", "Brh2a1a1", "Brh2a1z", "Brh2h1h1",
               "Brh3gg", "Brh3tautau", "Brh3bb", "Brh3ww", "Brh3zz", "Brh3gammagamma", "Brh3zgamma", "Brh3h1h1", "Brh3h2h2", "Brh3h1h2", "Brh3a1a1", "Brh3a1z",
-              "Bra1mumu", "Bra1tautau", "Bra1bb",
-              "h1ggrc2", "h2ggrc2", "h1bbrc2", "h2bbrc2",
+              "Bra1mumu", "Bra1tautau", "Bra1bb", "Bra1gg",
+              "h1ggrc2", "h2ggrc2", "h1bbrc2", "h2bbrc2", "a1tautaurc2", "a1bbrc2",
               # "S11", "S12", "S13", "S21", "S22", "S23", "S31", "S32", "S33",
               # "P11", "P12", "P13", "P21", "P22", "P23",
               "omega", "dmdiag1", "dmdiag2", "dmdiag3",
@@ -146,6 +147,13 @@ foreach $file (@spectrFiles) {
     $results{"alambda"} = $1 if / +63 +([E\d\.\-\+]+) +\# ALAMBDA/;
     $results{"akappa"} = $1 if / +64 +([E\d\.\-\+]+) +\# AKAPPA/;
 
+    if ($results{"m3"} < 0.1) {
+      $results{"m3"} = $1 if / +3 +([E\d\.\-\+]+) +\# M3/;
+    }
+    $results{"mu3"} = $1 if / +46 +([E\d\.\-\+]+) +\# RIGHT T-SQUARKS/;
+    $results{"mq3"} = $1 if / +43 +([E\d\.\-\+]+) +\# LEFT 3RD GEN. SQUARKS/;
+    $results{"au3"} = $1 if / +11 +([E\d\.\-\+]+) +\# ATOP/;
+
     # higgs reduced couplings
     $results{"h1u"} = $1 if / +1  1 +([E\d\.\-\+]+) +\# U\-type fermions/;
     $results{"h1d"} = $1 if / +1  2 +([E\d\.\-\+]+) +\# D\-type fermions/;
@@ -168,8 +176,8 @@ foreach $file (@spectrFiles) {
     $results{"Brh1cc"} = $1 if / +([E\d\.\-\+]+) +2 +4 +\-4 +\# BR\(H_1 \-> c cbar\)/;
     $results{"Brh1bb"} = $1 if / +([E\d\.\-\+]+) +2 +5 +\-5 +\# BR\(H_1 \-> b bbar\)/;
     $results{"Brh1ww"} = $1 if / +([E\d\.\-\+]+) +2 +24 +\-24 +\# BR\(H_1 \-> W\+ W\-\)/;
-    $results{"Brh1zz"} = $1 if / +([E\d\.\-\+]+) +2 +23 +\-23 +\# BR\(H_1 \-> Z Z\)/;
-    $results{"Brh1gammagamma"} = $1 if / +([E\d\.\-\+]+) +2 +22 +\-22 +\# BR\(H_1 \-> gamma gamma\)/;
+    $results{"Brh1zz"} = $1 if / +([E\d\.\-\+]+) +2 +23 +23 +\# BR\(H_1 \-> Z Z\)/;
+    $results{"Brh1gammagamma"} = $1 if / +([E\d\.\-\+]+) +2 +22 +22 +\# BR\(H_1 \-> gamma gamma\)/;
     $results{"Brh1zgamma"} = $1 if / +([E\d\.\-\+]+) +2 +23 +22 +\# BR\(H_1 \-> Z gamma\)/;
     $results{"Brh1a1a1"} = $1 if / +([E\d\.\-\+]+) +2 +36 +36 +\# BR\(H_1 \-> A_1 A_1\)/;
     $results{"Brh1a1z"} = $1 if / +([E\d\.\-\+]+) +2 +23 +36 +\# BR\(H_1 \-> A_1 Z\)/;
@@ -179,8 +187,8 @@ foreach $file (@spectrFiles) {
     $results{"Brh2tautau"} = $1 if / +([E\d\.\-\+]+) +2 +15 +\-15 +\# BR\(H_2 \-> tau tau\)/;
     $results{"Brh2bb"} = $1 if / +([E\d\.\-\+]+) +2 +5 +\-5 +\# BR\(H_2 \-> b bbar\)/;
     $results{"Brh2ww"} = $1 if / +([E\d\.\-\+]+) +2 +24 +\-24 +\# BR\(H_2 \-> W\+ W\-\)/;
-    $results{"Brh2zz"} = $1 if / +([E\d\.\-\+]+) +2 +23 +\-23 +\# BR\(H_2 \-> Z Z\)/;
-    $results{"Brh2gammagamma"} = $1 if / +([E\d\.\-\+]+) +2 +22 +\-22 +\# BR\(H_2 \-> gamma gamma\)/;
+    $results{"Brh2zz"} = $1 if / +([E\d\.\-\+]+) +2 +23 +23 +\# BR\(H_2 \-> Z Z\)/;
+    $results{"Brh2gammagamma"} = $1 if / +([E\d\.\-\+]+) +2 +22 +22 +\# BR\(H_2 \-> gamma gamma\)/;
     $results{"Brh2zgamma"} = $1 if / +([E\d\.\-\+]+) +2 +23 +22 +\# BR\(H_2 \-> Z gamma\)/;
     $results{"Brh2a1a1"} = $1 if / +([E\d\.\-\+]+) +2 +36 +36 +\# BR\(H_2 \-> A_1 A_1\)/;
     $results{"Brh2a1z"} = $1 if / +([E\d\.\-\+]+) +2 +23 +36 +\# BR\(H_2 \-> A_1 Z\)/;
@@ -191,8 +199,8 @@ foreach $file (@spectrFiles) {
     $results{"Brh3tautau"} = $1 if / +([E\d\.\-\+]+) +2 +15 +\-15 +\# BR\(H_3 \-> tau tau\)/;
     $results{"Brh3bb"} = $1 if / +([E\d\.\-\+]+) +2 +5 +\-5 +\# BR\(H_3 \-> b bbar\)/;
     $results{"Brh3ww"} = $1 if / +([E\d\.\-\+]+) +2 +24 +\-24 +\# BR\(H_3 \-> W\+ W\-\)/;
-    $results{"Brh3zz"} = $1 if / +([E\d\.\-\+]+) +2 +23 +\-23 +\# BR\(H_3 \-> Z Z\)/;
-    $results{"Brh3gammagamma"} = $1 if / +([E\d\.\-\+]+) +2 +22 +\-22 +\# BR\(H_3 \-> gamma gamma\)/;
+    $results{"Brh3zz"} = $1 if / +([E\d\.\-\+]+) +2 +23 +23 +\# BR\(H_3 \-> Z Z\)/;
+    $results{"Brh3gammagamma"} = $1 if / +([E\d\.\-\+]+) +2 +22 +22 +\# BR\(H_3 \-> gamma gamma\)/;
     $results{"Brh3zgamma"} = $1 if / +([E\d\.\-\+]+) +2 +23 +22 +\# BR\(H_3 \-> Z gamma\)/;
     $results{"Brh3a1a1"} = $1 if / +([E\d\.\-\+]+) +2 +36 +36 +\# BR\(H_3 \-> A_1 A_1\)/;
     $results{"Brh3a1z"} = $1 if / +([E\d\.\-\+]+) +2 +23 +36 +\# BR\(H_3 \-> A_1 Z\)/;
@@ -204,12 +212,16 @@ foreach $file (@spectrFiles) {
     $results{"Bra1mumu"} = $1 if / +([E\d\.\-\+]+) +2 +13 +\-13 +\# BR\(A_1 \-> muon muon\)/;
     $results{"Bra1tautau"} = $1 if / +([E\d\.\-\+]+) +2 +15 +\-15 +\# BR\(A_1 \-> tau tau\)/;
     $results{"Bra1bb"} = $1 if / +([E\d\.\-\+]+) +2 +5 +\-5 +\# BR\(A_1 \-> b bbar\)/;
+    $results{"Bra1gg"} = $1 if / +([E\d\.\-\+]+) +2 +21 +21 +\# BR\(A_1 \-> gluon gluon\)/;
+    $results{"Bra1cc"} = $1 if / +([E\d\.\-\+]+) +2 +4 +\-4 +\# BR\(A_1 \-> c cbar\)/;
 
     # Input Higgs Couplings Bosons
     $results{"h1ggrc2"} = $1 if / +([E\d\.\-\+]+) +3 +25 +21 +21 \# Higgs\(1\)-gluon-gluon reduced coupling\^2/;
     $results{"h2ggrc2"} = $1 if / +([E\d\.\-\+]+) +3 +35 +21 +21 \# Higgs\(2\)-gluon-gluon reduced coupling\^2/;
     $results{"h1bbrc2"} = $1 if / +([E\d\.\-\+]+) +[E\d\.\-\+]+ +3 +25 +5 +5 \# Higgs\(1\)-b-b red\. coupling\^2/;
     $results{"h2bbrc2"} = $1 if / +([E\d\.\-\+]+) +[E\d\.\-\+]+ +3 +35 +5 +5 \# Higgs\(2\)-b-b red\. coupling\^2/;
+    $results{"a1tautaurc2"} = $1 if / +[E\d\.\-\+]+ +([E\d\.\-\+]+) +3 +36 +15 +15 \# CP-odd Higgs\(1\)-tau-tau red\. coupling\^2/;
+    $results{"a1bbrc2"} = $1 if / +[E\d\.\-\+]+ +([E\d\.\-\+]+) +3 +36 +5 +5 \# CP-odd Higgs\(1\)-b-b red\. coupling\^2/;
 
     # 3x3 Higgs mixing matrix
     # $results{"S11"} = $1 if /  1  1 +([E\d\.\-\+]+) +\# S_\(1,1\)/;
