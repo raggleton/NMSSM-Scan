@@ -34,7 +34,7 @@ perl NMSSM_scan.pl $PWD $2
 
 ls
 # Zip up spectrum files to transfer back
-tar -cvzf $jobdir/spectr$batchNum.tgz spectr*.dat paramRange.txt
+tar -cvzf $jobdir/spectr$batchNum.tgz spectr*.dat paramRange.txt NMSSM_scan.pl
 tar -cvzf $jobdir/omega$batchNum.tgz omega*.dat
 rm spectr*.dat
 rm omega*.dat
