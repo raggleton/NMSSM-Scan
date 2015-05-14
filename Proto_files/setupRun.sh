@@ -6,9 +6,11 @@ echo "With parameters: $@"
 jobdir=$1
 batchNum=$2
 
-# Setup NMSSMTools on execute machine
-tar -xvzf NMSSMTools_4.5.1.tgz
-cd NMSSMTools_4.5.1
+###################
+# Setup NMSSMTools
+###################
+tar -xvzf NMSSMTools_*.tgz
+cd NMSSMTools_*
 # patch bug in moving output files
 patch run < ../run.patch
 make init
@@ -32,9 +34,33 @@ ls
 # First arg is job dir - where the input.dat and spectr.dat files get made
 perl NMSSM_scan.pl $PWD $2
 
+###################
+# Setup SuperIso
+###################
+tar -xvzf superiso_v*.tgz
+cd superiso*
+make slha
+# Run SuperIso over files and output screen info to file
+for s in ../spectr*.dat;
+do
+    id=`basename $s`
+    id=${id%.dat}
+    id=${id#spectr}
+    ./slha.x $s > ../superiso$id.dat
+done
+cd ..
 ls
-# Zip up spectrum files to transfer back
+
+###################
+# Zip up files to transfer back
+###################
 tar -cvzf $jobdir/spectr$batchNum.tgz spectr*.dat paramRange.txt NMSSM_scan.pl
 tar -cvzf $jobdir/omega$batchNum.tgz omega*.dat
+tar -cvzf $jobdir/superiso$batchNum.tgz superiso*.dat
+
+###################
+# Tidy up
+###################
 rm spectr*.dat
 rm omega*.dat
+rm superiso*.dat
