@@ -52,7 +52,7 @@ my @columns = ("mtau", "mh1", "mh2", "mh3", "ma1", "ma2", "mhc", "mstop1", "msto
               "Brh1gg", "Brh1tautau", "Brh1cc", "Brh1bb", "Brh1ww", "Brh1zz", "Brh1gammagamma", "Brh1zgamma", "Brh1a1a1", "Brh1a1z",
               "Brh2gg", "Brh2tautau", "Brh2bb", "Brh2ww", "Brh2zz", "Brh2gammagamma", "Brh2zgamma", "Brh2a1a1", "Brh2a1z", "Brh2h1h1",
               "Brh3gg", "Brh3tautau", "Brh3bb", "Brh3ww", "Brh3zz", "Brh3gammagamma", "Brh3zgamma", "Brh3h1h1", "Brh3h2h2", "Brh3h1h2", "Brh3a1a1", "Brh3a1z",
-              "Bra1mumu", "Bra1tautau", "Bra1bb", "Bra1gg",
+              "Bra1mumu", "Bra1tautau", "Bra1bb", "Bra1gg", "Bra1cc", "Bra1ss",
               "h1ggrc2", "h2ggrc2", "h1bbrc2", "h2bbrc2", "a1tautaurc2", "a1bbrc2",
               # "S11", "S12", "S13", "S21", "S22", "S23", "S31", "S32", "S33",
               # "P11", "P12", "P13", "P21", "P22", "P23",
@@ -214,6 +214,7 @@ foreach $file (@spectrFiles) {
     $results{"Bra1bb"} = $1 if / +([E\d\.\-\+]+) +2 +5 +\-5 +\# BR\(A_1 \-> b bbar\)/;
     $results{"Bra1gg"} = $1 if / +([E\d\.\-\+]+) +2 +21 +21 +\# BR\(A_1 \-> gluon gluon\)/;
     $results{"Bra1cc"} = $1 if / +([E\d\.\-\+]+) +2 +4 +\-4 +\# BR\(A_1 \-> c cbar\)/;
+    $results{"Bra1ss"} = $1 if / +([E\d\.\-\+]+) +2 +3 +\-3 +\# BR\(A_1 \-> s sbar\)/;
 
     # Input Higgs Couplings Bosons
     $results{"h1ggrc2"} = $1 if / +([E\d\.\-\+]+) +3 +25 +21 +21 \# Higgs\(1\)-gluon-gluon reduced coupling\^2/;
