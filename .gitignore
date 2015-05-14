@@ -17,3 +17,4 @@ data
 *.toc
 *.h5
 *.tmp
+*.csv
