@@ -56,6 +56,7 @@ my @columns = ("mtau", "mh1", "mh2", "mh3", "ma1", "ma2", "mhc", "mstop1", "msto
               "h1ggrc2", "h2ggrc2", "h1bbrc2", "h2bbrc2", "a1tautaurc2", "a1bbrc2",
               # "S11", "S12", "S13", "S21", "S22", "S23", "S31", "S32", "S33",
               # "P11", "P12", "P13", "P21", "P22", "P23",
+              "bsgamma", "bsmumu", "btaunu", "delms", "delmd",
               "omega", "dmdiag1", "dmdiag2", "dmdiag3",
               "file", "constraints", "Del_a_mu");
 
@@ -243,6 +244,13 @@ foreach $file (@spectrFiles) {
     # $results{"P22"} = $1 if /  2  2 +([E\d\.\-\+]+) +\# P_\(2,2\)/;
     # $results{"P23"} = $1 if /  2  3 +([E\d\.\-\+]+) +\# P_\(2,3\)/;
 
+    # Flavour constraints (to compare with SuperIso)
+    $results{"bsgamma"} = $1 if / +1 +([E\d\.\-\+]+) +\# BR\(b \-> s gamma\)/;
+    $results{"delmd"} = $1 if / +2 +([E\d\.\-\+]+) +\# Delta M_d in ps\^\-1/;
+    $results{"delms"} = $1 if / +3 +([E\d\.\-\+]+) +\# Delta M_s in ps\^\-1/;
+    $results{"bsmumu"} = $1 if / +4 +([E\d\.\-\+]+) +\# BR\(Bs \-> mu\+mu\-\)/;
+    $results{"btaunu"} = $1 if / +5 +([E\d\.\-\+]+) +\# BR\(B\+ \-> tau\+ \+ nu_tau\)/;
+
     # DM relic density & 3 most common diagrams
     if (/    10 +([E\d\.\-\+]+) +\# Omega h\^2/){
       $results{"omega"} = $1;
@@ -266,7 +274,8 @@ foreach $file (@spectrFiles) {
   $results{"Del_a_mu"} = $results{"Del_a_mu"}*1.0;
 
   # Write values to file if we're happy with them
-  # Must do it like this - looping through @columns, otherwise order will muck up
+  # Must do it like this - looping through @columns
+  # otherwise order will muck up
   if($results{"ma1"} < 100 && $results{"ma1"} > 0){
     my $outStr = "";
     foreach my $col (@columns){
