@@ -5,8 +5,11 @@ Files to do parameter scans using [NMSSMTools](http://www.th.u-psud.fr/NMHDECAY/
 There are 4 parts to running this code:
 
 1) parameter point generation
+
 2) converting spectrum files (SLHA) into CSV
+
 3) converting CSV into HDF5 binary files
+
 4) use the HDF5 binaries to make lots of interesting plots
 
 Steps 1 & 2 are done on a remote batch system. At the moment, things are setup to work on the Bristol machines, using the HTCondor system there and storing the large output on the /hdfs system. An alternate setup on qsub/qsub system is probably possible, but has not been attempted. We store interesting quantities in CSV files as they are a very flexible format which can be read in a variety of frameworks.
@@ -71,12 +74,13 @@ pip install -r requirements.txt
 
 ##Parameter Point Generation
 
+**TODO**
 
 ##Converting Spectrum Files (SLHA) Into CSV
 
 We store information about all points from one set of jobs into CSV files. This converts SLHA format spectrum files that NMSSMTools outputs into a table of data, with columns representing quantities we're interested in (e.g. higgs masses), and rows representing a point in parameter space.
 
-[Analyse_scans.pl](analyse_scans.pl) actually goes through and makes the CSV files from a folder of spectr*.dat files. We don't store all quantites for space & time reasons. To add another field:
+[Analyse_scans.pl](Analyse_scans.pl) actually goes through and makes the CSV files from a folder of spectr*.dat files. We don't store all quantites for space & time reasons. To add another field:
 
 - Add the field name to `@columns`. This generates the colummn headers, so if it isn't here it wont be included
 
@@ -118,9 +122,9 @@ python make_hdf5.py <HDF5 filename> <list of job directories you want to include
 
 4) Note that within the HDF5 file there are several DataFrames. There will be:
 
-    - one for all points, irrespective of experimental constraints (ends in `_orig`)
-    - one for all points passing all contraints we care about (will have `pass` in it probably)
-    - may have DataFrames for when h1 = h(125), h2 = h(125), and ma1 < 10. However, check `make_hdf5.py`.
+- one for all points, irrespective of experimental constraints (ends in `_orig`)
+- one for all points passing all contraints we care about (will have `pass` in it probably)
+- may have DataFrames for when h1 = h(125), h2 = h(125), and ma1 < 10. However, check `make_hdf5.py`.
 
 ##Use The HDF5 Binaries To Make Lots Of Interesting Plots
 
