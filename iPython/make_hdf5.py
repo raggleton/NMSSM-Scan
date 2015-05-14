@@ -6,6 +6,7 @@ Make a HDF5 binary from lots of CSV files so it can be easily used in pandas
 
 """
 
+import sys
 import argparse
 import pandas as pd
 import numpy as np
@@ -117,16 +118,24 @@ def subset_pass_constraints(df):
     # i.e. if we have 3, then this will include:
     #  1, 2, 3, 1+2, 2+1, 1+3, 3+1, 2+3, 3+2, 1+2+3
     # We join with a "/" since this is how multiple constraint strings are stored in the CSV
+    # This is why I love python
     all_permutations = chain.from_iterable(permutations(constraints, r) for r in range(1, len(constraints)+1))
     all_permutations_str = ["/".join(list(p)) for p in all_permutations]
-    print "Checking constraint combos:", all_permutations_str
+    print "Ignoring constraint combos:", all_permutations_str
 
     # Check the constrainst column against all permutations
     # Want it to match at least one of the constraint strings
+    # Note that the result variable is a Series of True/False, one for
+    # each param point. So by OR-ing, we check points pass *any* of
+    # the constraints we want to ignore. However we AND the del_a_mu constraint
+    # because ALL points must satisfy it (otherwise get points that pass
+    # all other constriants but have -ve del_a_mu)
     result = (df["constraints"] == "")  # passing all constraints
+    result = result & (df['Del_a_mu'] > 0) # Check that delta a_mu is +ve
     for p in all_permutations_str:
         result = result | (df['constraints'] == p)
-    return df[(result & (df["Del_a_mu"] > 0))]
+
+    return df[result]
 
 
 def subset_mass(df, min_mass, max_mass, mass_var):
@@ -201,6 +210,10 @@ if __name__ == "__main__":
     parser.add_argument("output", help="output HDF5 filename")
     parser.add_argument("input", nargs="*", help="folders with CSV files")
     args = parser.parse_args()
+
+    if not args.input:
+        print "You need to specify an input directory"
+        sys.exit(1)
 
     job_folders = [
         "/Users/robina/Dropbox/4Tau/NMSSM-Scan/data/jobs_50_MICRO_28_Apr_15_1404",
