@@ -13,7 +13,7 @@ request_memory = 500
 # use the ENV that is provided
 getenv = true
 initialdir = /storage/ra12451/NMSSM-Scan/SEDJOBDIR
-transfer_input_files = /storage/ra12451/NMSSM-Scan/Analyse_scans.pl
+transfer_input_files = /storage/ra12451/NMSSM-Scan/Analyse_scans.pl,/storage/ra12451/superiso_v3.4.tgz
 arguments = SEDJOBDIR $(process)
 
 queue SEDNUM

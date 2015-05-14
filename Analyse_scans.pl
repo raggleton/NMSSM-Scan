@@ -9,6 +9,9 @@ use File::Path qw/make_path/;
 ########################################################
 # This script analyses the output spectrum files.
 #
+# Also can compare with superiso files - assumes they're
+# in the same place as the spectrum files
+#
 # usage: perl Analyse_scans.pl <dir with spectrum files> <output dir for CSV files> <optional unique identifier for this set of output files>
 ########################################################
 
@@ -17,12 +20,26 @@ use File::Path qw/make_path/;
 my $ScriptPath = $ENV{PWD};
 print "ScriptPath: ", $ScriptPath, "\n";
 
-# dir to get spectrum files from
+# dir to get spectrum/superiso files from
 my $spectrDir = $ARGV[0];
 print "Getting spectrum files from ${spectrDir}\n";
 
 # get list of all spectr_* files in dir
 my @spectrFiles = glob("$spectrDir/spectr_*");
+
+# get list of all superiso_* files in dir
+# if none, we won't include their results
+my @superIsoFiles = glob("$spectrDir/superiso_*");
+my $doSuperIso = 1;
+print @superIsoFiles, "\n";
+if (scalar(@superIsoFiles) == 0) {
+  print "No super iso files - won't include their results\n";
+  $doSuperIso = 0;
+} elsif (scalar(@superIsoFiles) != scalar(@spectrFiles)) {
+  print "# spectrum files != # SuperIso files - not including their results\n";
+  $doSuperIso = 0;
+}
+print $doSuperIso, "\n";
 
 # output dir
 my $outDir = $ARGV[1];
@@ -35,7 +52,8 @@ if ($num_args == 3) {
 }
 
 # CSV file to write results to
-# my $outFile = "$ScriptPath/$spectrDir/output.dat";
+# output*.dat contains all points
+# output_good*.dat conatins points that pass constraints
 my $outFile = "$outDir/output$ID.dat";
 my $outFileGood = "$outDir/output_good$ID.dat";
 print "Writing results to $outFile and $outFileGood\n";
@@ -59,6 +77,13 @@ my @columns = ("mtau", "mh1", "mh2", "mh3", "ma1", "ma2", "mhc", "mstop1", "msto
               "bsgamma", "bsmumu", "btaunu", "delms", "delmd",
               "omega", "dmdiag1", "dmdiag2", "dmdiag3",
               "file", "constraints", "Del_a_mu");
+
+# add in optional columns for SuperIso results
+# make sure the names don't clash!
+if ($doSuperIso){
+  my @superIsoColumns = ("bsgamma_si", "bsmumu_si", "btaunu_si");
+  push(@columns, @superIsoColumns);
+}
 
 # Make hash to hold results - need to do here and not in loop to ensure that
 # column headers are in right order as order in @columns != order in %results
@@ -115,8 +140,7 @@ foreach $file (@spectrFiles) {
   #   next;
   # }
 
-
-  # Get masses, parameters, etc
+  # Get masses, parameters, etc from spectrum file
   open(DATASPECTR, $file) or die;
   while(<DATASPECTR>){
     # some regex goodness here to grab relevant lines
@@ -268,6 +292,28 @@ foreach $file (@spectrFiles) {
 
   } #end while
   close(DATASPECTR);
+
+  # Open corresponding superiso file
+  if ($doSuperIso) {
+    # Check superiso file exists - spectrum file has name spectr_1_2.dat,
+    # so superiso file should be named superiso_1_2.dat
+    my $superIsoFile = $file;
+    $superIsoFile =~ s/spectr/superiso/g;
+    if (not(grep {$_ eq $superIsoFile} @superIsoFiles)) {
+      print "Cannot find superisofile $superIsoFile";
+      $doSuperIso = 0;
+    }
+
+    # If it exists, loop over and pull relevant quantities & store
+    # print "Openign $superIsoFile\n";
+    open(DATAISO, $superIsoFile) or die;
+    while(<DATAISO>){
+      $results{"bsgamma_si"} = $1 if /BR\(b\->s gamma\)\s+([eE\d\.\-\+]+)/;
+      $results{"bsmumu_si"} = $1 if /BR\(Bs\->mu mu\)\s+([eE\d\.\-\+]+)/;
+      $results{"btaunu_si"} = $1 if /BR\(B\->tau nu\)\s+([eE\d\.\-\+]+)/;
+    }
+    close(DATAISO);
+  }
 
   # Convert to number for testing
   $results{"ma1"} = $results{"ma1"}*1.0;
