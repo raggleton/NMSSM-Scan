@@ -1,16 +1,15 @@
 #!/bin/bash
 
 declare -a jobdirs=(
-jobs_50_MICRO_28_Apr_15_1404
-jobs_50_MICRO_28_Apr_15_2016
-jobs_50_MICRO_28_Apr_15_2017
-jobs_50_MICRO_28_Apr_15_2018
-jobs_50_MICRO_28_Apr_15_2019
-jobs_50_MICRO_28_Apr_15_2020
-jobs_50_MICRO_28_Apr_15_2022
-jobs_50_MICRO_28_Apr_15_2023
-jobs_50_MICRO_28_Apr_15_2024
-jobs_50_MICRO_28_Apr_15_2025
+jobs_50_MICRO_SCAN_M3MQ3MU3MD3AU3_14_May_15_1151
+jobs_50_MICRO_SCAN_M3MQ3MU3MD3AU3AD3_14_May_15_1153
+jobs_50_MICRO_SCAN_M3MQ3MU3AU3_13_May_15_1351
+jobs_50_MICRO_SCAN_M3MQ3MU3AU3_06_May_15_1600
+jobs_50_MICRO_SCAN_M3MQ3MU3AU3_12_May_15_1500
+jobs_50_MICRO_DEFAULTMASS_SCAN_M3MQ3MU3AU3_06_May_15_1940
+jobs_50_MICRO_DEFAULTMASS_SCAN_M3MQ3MU3AU3_06_May_15_2203
+jobs_50_MICRO_DEFAULTMASS_SCAN_M3MQ3MU3AU3_06_May_15_2132
+jobs_50_MICRO_DEFAULTMASS_SCAN_M3MQ3MU3AU3_12_May_15_1413
 )
 
 for f in "${jobdirs[@]}"
@@ -20,5 +19,6 @@ do
         echo "Making dir"
         mkdir "data/$f"
     fi
-    scp soolin:/hdfs/user/ra12451/NMSSM-Scan/$f/output*.dat data/$f/
+    # Make this friendly - ensure it is nice'd and limit bandwidth
+    rsync -avzP --rsync-path="nice rsync" --bwlimit=1000 --exclude=output_good* soolin:/hdfs/user/ra12451/NMSSM-Scan/$f/output*.dat data/$f/
 done

@@ -18,7 +18,7 @@ from shutil import copyfile
 
 def load_df(folders, filestem):
     """Load dataframes with CSV files from several folders in directory arg,
-    from CSV files named filestem*.dat
+    from CSV files named <filestem>[0-9]*.dat
 
     Works by first making a large CSV file from all the consituent CSV files,
     and then reading that into a dataframe.
@@ -27,9 +27,10 @@ def load_df(folders, filestem):
     is much worse - appending is numpy's slow point, and it consumed a lot
     of memory to keep all those individual dataframes open and then concat them.
     """
+    file_list = []
     for fo in folders:
-        print fo
-        file_list = [fi for fi in glob.glob(fo + "/%s*.dat" % filestem)]
+        print "Getting CSVs from:", fo
+        file_list += [fi for fi in glob.glob(fo + "/%s[0-9]*.dat" % filestem)]
 
     if not file_list:
         raise IndexError("file_list is empty - are you sure you've input the correct folders?")
@@ -41,10 +42,12 @@ def load_df(folders, filestem):
     with open("merge.csv", "a") as fout:
         for csv in file_list[1:]:
             with open(csv, "r") as fin:
+                print "Adding", csv
                 next(fin)  # skip header
                 for line in fin:
                     fout.write(line)
 
+    print "Making dataframe..."
     df = pd.read_csv("merge.csv", delimiter=",")
 
     # rename from column "lambda" to "lambda_"
@@ -54,8 +57,8 @@ def load_df(folders, filestem):
     # which pandas interprets as NaN) have NaN replaced by something sensible
     df.fillna({"constraints":""}, axis=0, inplace=True)
 
-    print len(df.index)
-    print df.columns.values
+    print "Entries:", len(df.index)
+    print "Columns:", df.columns.values
     return df
 
 
@@ -99,43 +102,32 @@ def store_xsec(df):
 
 
 def subset_pass_constraints(df):
-    """Return dataframe where points pass all constraints, except a few
+    """Return dataframe where points pass all constraints, except ones we select
 
-    Some sneaky itertools use here to get all the possible permutations of
-    constraint strings, for varying numbers of constraints.
-
-    I suppose an easier way would be to take the constrainsts string,
-    then do a replace() with each constraint and see what's left over.
+    We take the constraints string, then do a replace() with each constraint
+    and see what's left over.
     """
-
-    # Here we include all the constraints strings to test against.
+    # All the constraints strings to test against. Must follow regex.
     constraints = [
-        r"Muon magn. mom. more than 2 sigma away",
-        r"Relic density too small (Planck)"
+        r"Muon magn\. mom\. more than 2 sigma away",
+        r"Relic density too small \(Planck\)",
+        r"Excluded by sparticle searches at the LHC",
+        r"Excluded by ggF/bb\->H/A\->tautau at the LHC",
+        r"Excluded H_125\->AA\->4mu \(CMS\)",
+        r"Excluded by ggF\->H/A\->gamgam \(ATLAS\)"
     ]
 
-    # Make a list of all possible permutations, with varying numbers of constraints
-    # i.e. if we have 3, then this will include:
-    #  1, 2, 3, 1+2, 2+1, 1+3, 3+1, 2+3, 3+2, 1+2+3
-    # We join with a "/" since this is how multiple constraint strings are stored in the CSV
-    # This is why I love python
-    all_permutations = chain.from_iterable(permutations(constraints, r) for r in range(1, len(constraints)+1))
-    all_permutations_str = ["/".join(list(p)) for p in all_permutations]
-    print "Ignoring constraint combos:", all_permutations_str
-
-    # Check the constrainst column against all permutations
-    # Want it to match at least one of the constraint strings
-    # Note that the result variable is a Series of True/False, one for
-    # each param point. So by OR-ing, we check points pass *any* of
-    # the constraints we want to ignore. However we AND the del_a_mu constraint
-    # because ALL points must satisfy it (otherwise get points that pass
-    # all other constriants but have -ve del_a_mu)
-    result = (df["constraints"] == "")  # passing all constraints
-    result = result & (df['Del_a_mu'] > 0) # Check that delta a_mu is +ve
-    for p in all_permutations_str:
-        result = result | (df['constraints'] == p)
-
-    return df[result]
+    # We want a bitmask, so for each entry we simply want a True or False
+    # First make a copy of the constraints Series
+    con_series = df.constraints.copy(deep=True)
+    # Now for each entry we remove the constraints we don't mind failing
+    for c in constraints:
+        con_series = con_series.str.replace(c, "")
+    con_series = con_series.str.replace(r"^/+$", "") # Any leftover separators
+    # Now figure out which ones are empty
+    mask = con_series.str.match("^$")
+    # Return those entries, allowing for a +ve muon mag moment contribution
+    return df[mask & (df.Del_a_mu > 0)]
 
 
 def subset_mass(df, min_mass, max_mass, mass_var):
@@ -152,13 +144,25 @@ def make_dataframes(folders):
     pulled from the folders listed in the arg.
     """
 
-    # csv_directory = "/Users/robina/Dropbox/4Tau/NMSSM-Scan/data"
-    # csv_directory = "/hdfs/user/ra12451/NMSSM-Scan/"
-
+    print "Making one big dataframe..."
     df_orig = load_df(folders, "output")
-    # df_orig = load_df(csv_directory, folders, "output_good")
+    # df_orig = load_df(folders, "output_good")
+
+    # Drop columns tp save space
+    drop_cols = ['h1u', 'h1d', 'h1b', 'h1V', 'h1G', 'h1A',
+                 'h2u', 'h2d', 'h2b', 'h2V', 'h2G', 'h2A',
+                 'Brh3gg', 'Brh3tautau', 'Brh3bb', 'Brh3ww',
+                 'Brh3zz', 'Brh3gammagamma', 'Brh3zgamma', 'Brh3h1h1', 'Brh3h2h2', 'Brh3h1h2',
+                 'Brh3a1a1', 'Brh3a1z', 'file']
+    for col in drop_cols:
+        df_orig.drop(col, inplace=True, axis=1)
+    print "After dropping columns:", df_orig.columns.values
+
+    # Remove any duplicate entries
+    df_orig.drop_duplicates(inplace=True)
 
     # Load up the glu-glu cross sections for 13 TeV
+    print "Adding in cross-sections..."
     cs = pd.read_csv("parton_lumi_ratio.csv")
     masses = cs["MH [GeV]"].tolist()
     xsec_ggf13 = cs["ggF 13TeV cross section [pb]"].tolist()
@@ -174,18 +178,21 @@ def make_dataframes(folders):
     store_xsec(df_orig)
 
     # Make some subsets here:
+    print "Making subsets..."
     # Points passing all experimental constraints
     df_pass_all = subset_pass_constraints(df_orig)
 
     # subset with 2m_tau < ma1 < 10
-    df_ma1Lt10 = subset_mass(df_pass_all, 3.554, 10, "ma1")
+    df_ma1Lt10 = None
+    # df_ma1Lt10 = subset_mass(df_pass_all, 3.554, 10.5, "ma1")
 
     mhmin, mhmax = 122.1, 128.1
     # subset with h1 as h_125
     df_h1SM = subset_mass(df_pass_all, mhmin, mhmax, "mh1")
 
     # subset with h2 as h_125
-    df_h2SM = subset_mass(df_pass_all, mhmin, mhmax, "mh2")
+    df_h2SM = None
+    # df_h2SM = subset_mass(df_pass_all, mhmin, mhmax, "mh2")
 
     n_orig = len(df_orig.index)
     n_pass_all = len(df_pass_all.index)
@@ -195,9 +202,9 @@ def make_dataframes(folders):
 
     print "Running over", n_orig, "points"
     print n_pass_all, "points passing all constraints (= %s)" % percent_str(n_pass_all, n_orig)
-    print len(df_ma1Lt10.index), "of these have 2m_tau < ma1 < 10 GeV (= %s)" % percent_str(len(df_ma1Lt10.index), n_pass_all)
+    # print len(df_ma1Lt10.index), "of these have 2m_tau < ma1 < 10 GeV (= %s)" % percent_str(len(df_ma1Lt10.index), n_pass_all)
     print len(df_h1SM.index), "points in the h1 = h(125) subset (= %s)" % percent_str(len(df_h1SM.index), n_pass_all)
-    print len(df_h2SM.index), "points in the h2 = h(125) subset (= %s)" % percent_str(len(df_h2SM.index), n_pass_all)
+    # print len(df_h2SM.index), "points in the h2 = h(125) subset (= %s)" % percent_str(len(df_h2SM.index), n_pass_all)
     print ""
 
     return df_orig, df_pass_all, df_ma1Lt10, df_h1SM, df_h2SM
@@ -223,15 +230,16 @@ if __name__ == "__main__":
     ]
 
     # can use either command-line input, or manually add in folders here if easier
-    # note that command lien arg takes precedent
+    # note that command line arg takes precedent
     folders = args.input if args.input else job_folders
     df_orig, df_pass_all, df_ma1Lt10, df_h1SM, df_h2SM = make_dataframes(folders)
 
+    print "Saving as HDF5..."
     store = pd.HDFStore(args.output, complevel=9, comlib='bzip2')
 
     store.put('full12loop_all', df_orig, format='table', data_columns=True)
     store.put('full12loop_good_posMuMagMom_planckUpperOnly', df_pass_all, format='table', data_columns=True)
-    store.put('full12loop_good_posMuMagMom_planckUpperOnly_maLt10', df_ma1Lt10, format='table', data_columns=True)
+    # store.put('full12loop_good_posMuMagMom_planckUpperOnly_maLt10', df_ma1Lt10, format='table', data_columns=True)
     store.put('full12loop_good_posMuMagMom_planckUpperOnly_h1SM', df_h1SM, format='table', data_columns=True)
-    store.put('full12loop_good_posMuMagMom_planckUpperOnly_h2SM', df_h2SM, format='table', data_columns=True)
+    # store.put('full12loop_good_posMuMagMom_planckUpperOnly_h2SM', df_h2SM, format='table', data_columns=True)
 

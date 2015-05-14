@@ -31,7 +31,7 @@ my @spectrFiles = glob("$spectrDir/spectr_*");
 # if none, we won't include their results
 my @superIsoFiles = glob("$spectrDir/superiso_*");
 my $doSuperIso = 1;
-print @superIsoFiles, "\n";
+# print @superIsoFiles, "\n";
 if (scalar(@superIsoFiles) == 0) {
   print "No super iso files - won't include their results\n";
   $doSuperIso = 0;
