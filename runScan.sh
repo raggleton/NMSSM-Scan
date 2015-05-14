@@ -22,7 +22,7 @@ NJOBS=50
 
 # Make new job directory
 # EDIT ME
-DESCRIPTION=$NJOBS"_MICRO_SCAN_M3MQ3MU3AU3"
+DESCRIPTION=$NJOBS"_MICRO_SCAN_M3MQ3MU3MD3AU3AD3"
 
 ###########################################
 # Don't touch anything below here

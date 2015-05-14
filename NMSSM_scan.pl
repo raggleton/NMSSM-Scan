@@ -63,8 +63,14 @@ my $mq3max=2500;
 my $mu3min=500;
 my $mu3max=2500;
 
+my $md3min=500;
+my $md3max=2500;
+
 my $au3min=500;
 my $au3max=3000;
+
+my $ad3min=500;
+my $ad3max=3000;
 
 # imposing dependant bounds on min or max parameters
 # (edit corresponding part in loop overicount)
@@ -95,7 +101,9 @@ $comments .= "# A_kappa: $akappamin -> $akappamax\n";
 $comments .= "# M3: $m3min -> $m3max\n";
 $comments .= "# MQ3: $mq3min -> $mq3max\n";
 $comments .= "# MU3: $mu3min -> $mu3max\n";
+$comments .= "# MD3: $md3min -> $md3max\n";
 $comments .= "# AU3: $au3min -> $au3max\n";
+$comments .= "# AD3: $ad3min -> $ad3max\n";
 
 # computing range for random generator
 my $deltatgbeta = ($tgbetamax - $tgbetamin);
@@ -125,8 +133,14 @@ my $x0mq3 = $mq3min;
 my $deltamu3 = ($mu3max - $mu3min);
 my $x0mu3 = $mu3min;
 
+my $deltamd3 = ($md3max - $md3min);
+my $x0md3 = $md3min;
+
 my $deltaau3 = ($au3max - $au3min);
 my $x0au3 = $au3min;
+
+my $deltaad3 = ($ad3max - $ad3min);
+my $x0ad3 = $ad3min;
 
 # Read prototype input file into array so quicker
 open(INPUT_PROTO, "$ScriptPath/inp_PROTO.dat") or die;
@@ -146,7 +160,9 @@ for(my $icount = 0; $icount < $nfinal; $icount++){
   my $m3 = rand($deltam3) + $x0m3;
   my $mq3 = rand($deltamq3) + $x0mq3;
   my $mu3 = rand($deltamu3) + $x0mu3;
+  my $md3 = rand($deltamd3) + $x0md3;
   my $au3 = rand($deltaau3) + $x0au3;
+  my $ad3 = rand($deltaad3) + $x0ad3;
   
   # in case of different and dependent range, write it here
 
@@ -180,7 +196,9 @@ for(my $icount = 0; $icount < $nfinal; $icount++){
     $newline =~ s/SED_M3/$m3/g;
     $newline =~ s/SED_MQ3/$mq3/g;
     $newline =~ s/SED_MU3/$mu3/g;
+    $newline =~ s/SED_MD3/$md3/g;
     $newline =~ s/SED_AU3/$au3/g;
+    $newline =~ s/SED_AD3/$ad3/g;
 
     $newline .= "\n";
     print INPUT $newline;
