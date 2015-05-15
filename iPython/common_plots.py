@@ -5,6 +5,7 @@ Fns to make common types of plots
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 from itertools import izip
 from collections import namedtuple
 
@@ -22,24 +23,71 @@ nmssm_params = {"lambda_": Param(label=r"$\lambda$", color="orange", bins=25, ra
                 }
 
 
+def plot_histogram(ax, var, df, label, xlabel, ylabel, title, errorbars=True, normed=False, **kwargs):
+    """
+    Generic histogram plotter for a varaible in a dataframe on a set of axes
+
+    errorbars: can optionally show error bars
+    normed: can optionally normalise so sum of bin contents = 1
+    (irrespective of bin wdith)
+    kwargs: can pass in other args
+    """
+    vals = df[var].values
+    weights = None
+    if normed:
+        weights = np.ones_like(vals)/len(vals)
+    y, bins, patches = plt.hist(vals, weights=weights, label=label, **kwargs)
+    if errorbars:
+        # put error bars on
+        bincenters = 0.5*(bins[1:]+bins[:-1])
+        menStd = np.sqrt(y)
+        if normed:
+            # need to do this otherwise it does errors incorrectly as
+            # sqrt(normalised bin), not sqrt(bin)/sum of all bins
+            menStd = menStd/np.sqrt(len(vals))
+        width = 0.0
+        plt.bar(bincenters, y, width=width, yerr=menStd, alpha=0,
+                ecolor="black", error_kw=dict(elinewidth=2, capthick=2))
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.set_title(title, y=1.04)
+    # plt.xlabel(xlabel)
+    # plt.ylabel(ylabel)
+    # plt.title(title)
+    plt.minorticks_on()
+    plt.tight_layout()
+    return y, bins, patches
+
+
 def plot_many_hists_compare(var, dfs, title, labels, xlabel, ylabel, colors, normed=False, **kwargs):
     """
     Plot hists of same var on same set of axes, to compare the distributions
-    Note that normed here normalises the bins such that toal bin entries sum to 1, irrespective of the bin width.
+    Note that normed here normalises the bins such that total bin contents
+    sum to 1, irrespective of the bin width.
     """
     # ax = dfs[0][var].plot(kind="hist", title=title, color=colors[0], label=labels[0], edgecolor=colors[0], **kwargs)
+    # ax.set_title(title)
+    # for i, df in enumerate(dfs):
+    #     vals = df[var].values
+    #     weights = None
+    #     if normed:
+    #         weights = np.ones_like(vals)/len(vals)
+    #     ax.hist(df[var].values, color=colors[i], label=labels[i], edgecolor=colors[i], weights=weights, **kwargs)
+    # ax.set_xlabel(xlabel)
+    # ax.set_ylabel(ylabel)
+
     fig = plt.figure()
     ax = fig.add_subplot(1,1,1)
-    ax.set_title(title)
+    max_y = 0
     for i, df in enumerate(dfs):
-        vals = df[var].values
-        weights = None
-        if normed:
-            weights = np.ones_like(vals)/len(vals)
-        ax.hist(df[var].values, color=colors[i], label=labels[i], edgecolor=colors[i], weights=weights, **kwargs)
-    ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel)
-    # return ax
+        y, bins, patches = plot_histogram(ax=ax, df=df, var=var, xlabel=xlabel,
+                                          ylabel=ylable, title=title,
+                                          errorbars=False, normed=normed,
+                                          edgecolor=colours[i], **kwargs)
+        max_y = max(max_y, max(y))
+    ax.set_y(top=max_y)
+
+    return fig, ax
 
 
 def plot_many_scatters_compare(varx, vary, dfs, title, labels, xlabel, ylabel, colors, **kwargs):
@@ -187,7 +235,6 @@ def plot_constraints(df, title):
                 p = p.replace(r"tautau", r"\tau\tau")
                 cons.append(p)
 
-
     # use Series
     s = pd.Series(cons)
     vc = s.value_counts(normalize=True)
@@ -274,6 +321,24 @@ def plot_input_params_scatters(df, yvar, ylabel, yrange=None, title="", **kwargs
         plt.minorticks_on()
 
 
-def plot_xsec_scatter():
-    """Plot"""
-    pass
+def make_highlight_region(ax, limits, axis, **kwargs):
+    """
+    Make a semi-transparent patch to show an in/exclusion region on a
+    given axis.
+
+    ax is the Axes object you want to plot it on.
+    limits is a list of [min, max] for the variable
+    axis is the axis that represents the variable in question
+    can also change the colour, etc.
+    """
+    xmin, xmax = 0, 0
+    ymin, ymax = 0, 0
+    if axis == 'x':
+        xmin, xmax = limits
+        ymin, ymax = ax.get_ylim()
+    else:
+        ymin, ymax = limits
+        xmin, xmax = ax.get_xlim()
+
+    patch = patches.Rectangle((xmin, ymin), xmax-xmin, ymax-ymin, **kwargs)
+    return patch
