@@ -17,7 +17,7 @@ from shutil import copyfile
 
 
 def load_df(folders, filestem):
-    """Load dataframes with CSV files from several folders in directory arg,
+    """Load dataframe with CSV files from several folders in directory arg,
     from CSV files named <filestem>[0-9]*.dat
 
     Works by first making a large CSV file from all the consituent CSV files,
@@ -140,8 +140,13 @@ def subset_mass(df, min_mass, max_mass, mass_var):
 def make_dataframes(folders):
     """Load files into Panda dataframes
 
-    CSV files read in are named output*.dat and output_good*.dat, and are
-    pulled from the folders listed in the arg.
+    CSV files are read in from the folders listed in the arg.
+    Certain columns are dropped.
+    Cross-section information is added, both scaled (relative to SM) and absolute.
+    A subset dataframe is made for points passing experimental contraints.
+    Subsets of this are made for bosons with a particular mass range.
+
+    All these dataframes are returned.
     """
 
     print "Making one big dataframe..."
@@ -222,17 +227,7 @@ if __name__ == "__main__":
         print "You need to specify an input directory"
         sys.exit(1)
 
-    job_folders = [
-        "/Users/robina/Dropbox/4Tau/NMSSM-Scan/data/jobs_50_MICRO_28_Apr_15_1404",
-        "/Users/robina/Dropbox/4Tau/NMSSM-Scan/data/jobs_50_MICRO_28_Apr_15_2016",
-        "/Users/robina/Dropbox/4Tau/NMSSM-Scan/data/jobs_50_MICRO_28_Apr_15_2017",
-        "/Users/robina/Dropbox/4Tau/NMSSM-Scan/data/jobs_50_MICRO_28_Apr_15_2018",
-    ]
-
-    # can use either command-line input, or manually add in folders here if easier
-    # note that command line arg takes precedent
-    folders = args.input if args.input else job_folders
-    df_orig, df_pass_all, df_ma1Lt10, df_h1SM, df_h2SM = make_dataframes(folders)
+    df_orig, df_pass_all, df_ma1Lt10, df_h1SM, df_h2SM = make_dataframes(args.input)
 
     print "Saving as HDF5..."
     store = pd.HDFStore(args.output, complevel=9, comlib='bzip2')
