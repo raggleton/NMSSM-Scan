@@ -59,6 +59,22 @@ def plot_histogram(ax, var, df, label, xlabel, ylabel, title, errorbars=True, no
     return y, bins, patches
 
 
+def add_median_line(df=None, var=None, array=None, **kwargs):
+    """Add line showing median. Takes in numpy array, or Series val from DataFrame"""
+    if array is not None:
+        plt.axvline(x=np.median(array), **kwargs)
+    elif df is not None and var:
+        plt.axvline(x=df[var].median(), **kwargs)
+
+
+def add_mean_line(df=None, var=None, array=None, **kwargs):
+    """Add line showing mean. Takes in numpy array, or Series val from DataFrame"""
+    if array is not None:
+        plt.axvline(x=np.mean(array), **kwargs)
+    elif df is not None and var:
+        plt.axvline(x=df[var].mean(), **kwargs)
+
+
 def plot_many_hists_compare(var, dfs, title, labels, xlabel, ylabel, colors, normed=False, **kwargs):
     """
     Plot hists of same var on same set of axes, to compare the distributions
@@ -323,8 +339,7 @@ def plot_input_params_scatters(df, yvar, ylabel, yrange=None, title="", **kwargs
 
 def make_highlight_region(ax, limits, axis, **kwargs):
     """
-    Make a semi-transparent patch to show an in/exclusion region on a
-    given axis.
+    Make a semi-transparent patch to highlight a region on a given axis.
 
     ax is the Axes object you want to plot it on.
     limits is a list of [min, max] for the variable
@@ -341,4 +356,5 @@ def make_highlight_region(ax, limits, axis, **kwargs):
         xmin, xmax = ax.get_xlim()
 
     patch = patches.Rectangle((xmin, ymin), xmax-xmin, ymax-ymin, **kwargs)
+    ax.add_patch(patch)
     return patch
