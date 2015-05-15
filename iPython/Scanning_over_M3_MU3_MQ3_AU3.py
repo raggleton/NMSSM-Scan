@@ -86,7 +86,7 @@ df_M3MU3MQ3AU3_h1SM = store_M3MU3MQ3AU3_scan.full12loop_good_posMuMagMom_planckU
 store_M3MU3MQ3AU3_scan.close()
 
 
-# In[5]:
+# In[4]:
 
 len(df_M3MU3MQ3AU3_pass_all.index)
 
@@ -104,7 +104,7 @@ df_M3MU3MQ3AU3_defMass_h1SM = store_M3MU3MQ3AU3_scan_defMass.full12loop_good_pos
 store_M3MU3MQ3AU3_scan_defMass.close()
 
 
-# In[8]:
+# In[6]:
 
 len(df_M3MU3MQ3AU3_defMass_pass_all.index)
 
@@ -130,26 +130,26 @@ len(df_pass_all.index)
 
 # Since this is the first time scanning over a range of M3, etc, it is wise to check that the range of the other input parametes ($\tan\beta$ etc) are still sensible. Below are histograms of their distributions, and scatter plots against $m_{a_1}$, to make sure we are not excluding low mass $a_1$. (Note that these plots look almost identical for I4 = 0). We look at the distributions with and without experimental constraints.
 
-# In[9]:
+# In[7]:
 
 plot_input_params_hists(df_M3MU3MQ3AU3_pass_all, ylabel="N", title="I4 = 1, with exp. constraints", 
                         errorbars=True, bins=20)
 
 
-# In[11]:
+# In[8]:
 
 plot_input_params_hists(df_M3MU3MQ3AU3_orig, ylabel="N", title="I4 = 1, without exp. constraints", 
                         errorbars=True, bins=20)
 
 
-# In[12]:
+# In[9]:
 
 plot_input_params_scatters(df_M3MU3MQ3AU3_pass_all, yvar="ma1", 
                            ylabel=r"$m_{a_1}\ \mathrm{[GeV]}$", 
                            yrange=[0, 100], title="I4 = 1, with exp. constraints")
 
 
-# In[13]:
+# In[10]:
 
 plot_input_params_scatters(df_M3MU3MQ3AU3_orig, yvar="ma1", 
                            ylabel=r"$m_{a_1}\ \mathrm{[GeV]}$", 
@@ -160,14 +160,14 @@ plot_input_params_scatters(df_M3MU3MQ3AU3_orig, yvar="ma1",
 
 # Let's plot some distributions that may be interesting, given that we now scan over M3, etc.
 
-# In[10]:
+# In[11]:
 
 dfs_pass = [df_M3MU3MQ3AU3_pass_all, df_M3MU3MQ3AU3_defMass_pass_all]
 labels_pass = ['I4 = 1', 'I4 = 0']
 colors_pass = ['green', 'blue']
 
 
-# In[77]:
+# In[12]:
 
 dfs_with_without_con = [df_M3MU3MQ3AU3_pass_all, df_M3MU3MQ3AU3_orig]
 labels_with_without_con = ["With exp. constraints", "Without exp. constraints"]
@@ -175,13 +175,13 @@ colours_with_without_con = ['green', 'darkorchid']
 title_with_without_con = "With and without exp. constraints (I4 = 1)"
 
 
-# In[85]:
+# In[13]:
 
 dfs_with_without_con_defMass = [df_M3MU3MQ3AU3_defMass_pass_all, df_M3MU3MQ3AU3_defMass_orig]
 title_with_without_con_defMass = "With and without exp. constraints (I4 = 0)"
 
 
-# In[78]:
+# In[14]:
 
 plot_many_hists_compare("m3", dfs_with_without_con,
                         title_with_without_con, labels_with_without_con, 
@@ -191,7 +191,7 @@ plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=20)
 plt.gcf().get_axes()[0].set_ylim(top=0.08)
 
 
-# In[86]:
+# In[15]:
 
 plot_many_hists_compare("m3", dfs_with_without_con_defMass,
                         title_with_without_con_defMass, labels_with_without_con, 
@@ -201,7 +201,7 @@ plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=20)
 plt.gcf().get_axes()[0].set_ylim(top=0.08)
 
 
-# In[72]:
+# In[16]:
 
 plot_many_hists_compare("mu3", dfs_with_without_con,
                         title_with_without_con, labels_with_without_con, 
@@ -211,7 +211,7 @@ plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=20)
 plt.gcf().get_axes()[0].set_ylim(top=0.08)
 
 
-# In[87]:
+# In[17]:
 
 plot_many_hists_compare("mu3", dfs_with_without_con_defMass,
                         title_with_without_con_defMass, labels_with_without_con, 
@@ -221,7 +221,7 @@ plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=20)
 plt.gcf().get_axes()[0].set_ylim(top=0.08)
 
 
-# In[73]:
+# In[18]:
 
 plot_many_hists_compare("mq3", dfs_with_without_con,
                         title_with_without_con, labels_with_without_con, 
@@ -231,7 +231,7 @@ plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=20)
 plt.gcf().get_axes()[0].set_ylim(top=0.09)
 
 
-# In[88]:
+# In[19]:
 
 plot_many_hists_compare("mq3", dfs_with_without_con_defMass,
                         title_with_without_con_defMass, labels_with_without_con, 
@@ -241,7 +241,7 @@ plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=20)
 plt.gcf().get_axes()[0].set_ylim(top=0.09)
 
 
-# In[74]:
+# In[20]:
 
 plot_many_hists_compare("au3", dfs_with_without_con,
                         title_with_without_con, labels_with_without_con, 
@@ -251,7 +251,7 @@ plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=20)
 plt.gcf().get_axes()[0].set_ylim(top=0.12)
 
 
-# In[89]:
+# In[21]:
 
 plot_many_hists_compare("au3", dfs_with_without_con_defMass,
                         title_with_without_con_defMass, labels_with_without_con, 
@@ -327,13 +327,13 @@ plot_many_hists_compare("mh1", dfs_pass,
 plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=20)
 
 
-# In[21]:
+# In[24]:
 
 plot_many_hists_compare("mh2", dfs_pass,
                         "Passing all constraints", labels_pass, 
                         r"$m_{h_2}\ \mathrm{[GeV]}$", "p.d.f.", colors_pass, normed=True,
-                        range=[100,1800], bins=30, histtype="step", linewidth=1.5, log=False)
-plt.ylim(top=0.12)
+                        range=[100,2000], bins=30, histtype="step", linewidth=1.5, log=False)
+plt.ylim(top=0.14)
 plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=20)
 
 
@@ -346,12 +346,12 @@ plot_many_hists_compare("ma1", dfs_pass,
 plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=20)
 
 
-# In[23]:
+# In[25]:
 
 plot_many_hists_compare("ma1", dfs_pass,
                         "Passing all constraints", labels_pass, 
                         r"$m_{a_1}\ \mathrm{[GeV]}$", "p.d.f.", colors_pass, normed=True,
-                        range=[0,20], bins=20, histtype="step", linewidth=1.5, log=False)
+                        range=[0,20], bins=10, histtype="step", linewidth=1.5, log=False)
 plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=20)
 
 
@@ -371,7 +371,7 @@ fig
 
 # Now replicating with my datasets, including scanning over M3, MU3, MQ3, AU3. LH plots: z-axis is $\tan \beta$. RH plots: z-axis is $\lambda$
 
-# In[24]:
+# In[26]:
 
 paper_compare_plot1(df_M3MU3MQ3AU3_h1SM, "I4 = 1")
 
@@ -393,7 +393,7 @@ paper_compare_plot1(df_M3MU3MQ3AU3_defMass_h1SM, "I4 = 0")
 
 # First, let's look at the gluon-gluon-higgs cross-section. instead of the absolute cross-section, we consider the reduced coupling - i.e. relative to the the SM ggh coupling. We'll look at $h_1$ first, then $h_2$
 
-# In[26]:
+# In[27]:
 
 plot_many_hists_compare("h1ggrc2", dfs_pass,
 #                         [df_M3MU3MQ3AU3_pass_all[df_M3MU3MQ3AU3_pass_all.ma1<10], df_M3MU3MQ3AU3_defMass_pass_all[df_M3MU3MQ3AU3_defMass_pass_all.ma1<10]],
@@ -405,7 +405,7 @@ ax = plt.gcf().get_axes()[0]
 plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=20)
 
 
-# In[27]:
+# In[28]:
 
 plot_many_hists_compare("h2ggrc2", dfs_pass,
 #                         [df_M3MU3MQ3AU3_pass_all[df_M3MU3MQ3AU3_pass_all.ma1<10], df_M3MU3MQ3AU3_defMass_pass_all[df_M3MU3MQ3AU3_defMass_pass_all.ma1<10]],
@@ -419,7 +419,7 @@ plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=20)
 
 # There are 2 regimes here - when the coupling is either heavily supressed, or when it is almost SM like. This corresponds to when $h_2$ is not $h(125)$, and when it is, respectively:
 
-# In[92]:
+# In[29]:
 
 # for when we comapre h1 = h(125) and h2= h(125)
 df_M3MU3MQ3AU3_h2SM = df_M3MU3MQ3AU3_pass_all[(df_M3MU3MQ3AU3_pass_all.mh2<128.1)&(df_M3MU3MQ3AU3_pass_all.mh2>122.1)]
@@ -428,7 +428,7 @@ colors_h = ["red", "purple"]
 labels_h = [r"$h_1 = h(125)$", r"$h_2 = h(125)$"]
 
 
-# In[93]:
+# In[30]:
 
 plot_many_hists_compare("h2ggrc2", 
                         df_h,
@@ -444,7 +444,7 @@ plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=20)
 
 # Now let us consider the BR for the first higgs decaying into a pair of CP-odd or CP-even higgses.
 
-# In[94]:
+# In[31]:
 
 plot_many_hists_compare("Brh1a1a1", dfs_pass,
                         "Passing all constraints", labels_pass, 
@@ -459,7 +459,7 @@ plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=20)
 
 # From now on, we choose to compare the two h(125) scenarios, isntead of the two I4 scenarios, since the latter provides no difference.
 
-# In[95]:
+# In[32]:
 
 plot_many_hists_compare("Brh1a1a1", 
                         df_h,
@@ -471,19 +471,20 @@ ax = plt.gcf().get_axes()[0]
 plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=20)
 
 
-# In[96]:
+# In[37]:
 
 plot_many_hists_compare("Brh2a1a1", df_h,
                         "Passing all constraints, I4 = 1", labels_h, 
                         r"$BR(h_2\to a_1a_1)$", "p.d.f.", colors_h, normed=True,
                         range=[0,1], bins=25, histtype="step", linewidth=1.5, log=False)
-plt.gcf().get_axes()[0].set_ylim(top=0.8)
+# plt.gcf().get_axes()[0].set_ylim(top=0.8)
+plt.ylim(top=1)
 plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=20)
 
 
 # Noticeably, there is a distinct peak in the scenario where $h_1 = h(125)$. Note that this is not correlated with $m_{a_1}$ - at all masses of $a_1$ you see this behaviour, with points at very low BR, and then points at around 0.7:
 
-# In[97]:
+# In[34]:
 
 df_M3MU3MQ3AU3_h1SM.plot(kind='scatter', x='Brh2a1a1', y='ma1', color='red')
 plt.xlabel(r'$BR(h_2 \to a_1a_1)$')
@@ -492,12 +493,12 @@ plt.ylabel(r'$m_{a_1}\ \mathrm{[GeV]}$')
 plt.ylim([0, 100])
 
 
-# In[98]:
+# In[42]:
 
 plot_many_hists_compare("Brh2h1h1", df_h,
                         "Passing all constraints", labels_h, 
                         r"$BR(h_2\to h_1h_1)$", "p.d.f.", colors_h, normed=True,
-                        range=[0,1], bins=25, histtype="step", linewidth=1.5, log=False)
+                        range=[0,1], bins=50, histtype="step", linewidth=1.5, log=False)
 plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=20)
 
 
@@ -507,7 +508,7 @@ plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=20)
 
 # (Ignore the purple line across - plotting artefact)
 
-# In[99]:
+# In[43]:
 
 plot_many_hists_compare("Bra1tautau", df_h,
                         "Passing all constraints", labels_h, 
@@ -519,37 +520,104 @@ plt.ylim([0.0001, 1])
 
 # Oddly, whilst a large BR is possible for $h_1 = h(125)$, it is not possible when $h_2 = h(125)$. Is this a low stats issue? 
 
-# In[118]:
+# Let's look at $BR(a_1 \to \tau\tau)$ in more detail, this time as a function of $m_{a_1}$.
 
-df_M3MU3MQ3AU3_pass_all[df_M3MU3MQ3AU3_pass_all.ma1<12].plot(kind='scatter', x='ma1', y='Bra1tautau', c='skyblue')
+# In[44]:
+
+ax = df_M3MU3MQ3AU3_pass_all[df_M3MU3MQ3AU3_pass_all.ma1<12].plot(kind='scatter', x='ma1', y='Bra1tautau', c='skyblue')
+# df_M3MU3MQ3AU3_pass_all[df_M3MU3MQ3AU3_pass_all.ma1<12].plot(kind='scatter', x='ma1', y='Bra1gg', c='red', ax=ax)
+plt.xlim([4,12])
+plt.xlabel(r"$m_{a_1}\ \mathrm{[GeV]}$")
+plt.ylim(0.7,1)
+# plt.ylim(0,1)
+plt.ylabel(r"$BR(a_1\to\tau\tau)$")
+plt.title("With exp. constraints, I4 = 1")
+plt.minorticks_on()
+
+
+# In[45]:
+
+ax = df_M3MU3MQ3AU3_orig[df_M3MU3MQ3AU3_orig.ma1<12].plot(kind='scatter', x='ma1', y='Bra1tautau', c='skyblue')
 plt.xlim([4,12])
 plt.xlabel(r"$m_{a_1}\ \mathrm{[GeV]}$")
 plt.ylim(0.7,1)
 plt.ylabel(r"$BR(a_1\to\tau\tau)$")
+plt.title("Without exp. constraints, I4 = 1")
+plt.minorticks_on()
+
+
+# We still see this odd 'lump' at $BR \sim 0.8$ for $m_{a_1} \sim 9 - 10$ GeV. Note, there are only 60 points here, so bit stat limited. However even without experimental constraints, we still see the same shape, indicating that the cause of this is **not** due to an experimental constraint.
+
+# Let's see how the other BRs respond in this region:
+
+# In[75]:
+
+ax = df_M3MU3MQ3AU3_pass_all[df_M3MU3MQ3AU3_pass_all.ma1<12].plot(kind='scatter', x='ma1', y='Bra1tautau', 
+                                                                  c='skyblue', label=r"$BR(a_1\to\tau\tau)$", s=40)
+df_M3MU3MQ3AU3_pass_all[df_M3MU3MQ3AU3_pass_all.ma1<12].plot(kind='scatter', x='ma1', y='Bra1mumu', 
+                                                             c='magenta', ax=ax, label=r"$BR(a_1\to \mu\mu)$", s=40)
+df_M3MU3MQ3AU3_pass_all[df_M3MU3MQ3AU3_pass_all.ma1<12].plot(kind='scatter', x='ma1', y='Bra1gg', 
+                                                             c='red', ax=ax, label=r"$BR(a_1\to gg)$", s=40)
+df_M3MU3MQ3AU3_pass_all[df_M3MU3MQ3AU3_pass_all.ma1<12].plot(kind='scatter', x='ma1', y='Bra1cc', 
+                                                             c='orange', ax=ax, label=r"$BR(a_1\to c\bar{c})$", s=40)
+df_M3MU3MQ3AU3_pass_all[df_M3MU3MQ3AU3_pass_all.ma1<12].plot(kind='scatter', x='ma1', y='Bra1ss', 
+                                                             c='purple', ax=ax, label=r"$BR(a_1\to s\bar{s})$", s=40)
+df_M3MU3MQ3AU3_pass_all[df_M3MU3MQ3AU3_pass_all.ma1<12].plot(kind='scatter', x='ma1', y='Bra1bb', 
+                                                             c='lime', ax=ax, label=r"$BR(a_1\to b\bar{b})$", s=40)
+
+fig = plt.gcf()
+fig.set_size_inches(7,4)
+plt.xlim([1,12])
+plt.xlabel(r"$m_{a_1}\ \mathrm{[GeV]}$")
+# plt.ylim(0.7,1)
+plt.ylim(0,1)
+plt.ylabel(r"$BR(a_1\to XX)$")
+plt.title("With exp. constraints, I4 = 1")
+plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=20)
+plt.minorticks_on()
+
+
+# In[92]:
+
+ax = df_M3MU3MQ3AU3_orig[df_M3MU3MQ3AU3_orig.ma1<12].plot(kind='scatter', x='ma1', y='Bra1tautau', 
+                                                                  c='skyblue', label=r"$BR(a_1\to\tau\tau)$", s=40)
+df_M3MU3MQ3AU3_orig[df_M3MU3MQ3AU3_orig.ma1<12].plot(kind='scatter', x='ma1', y='Bra1gg', 
+                                                             c='red', ax=ax, label=r"$BR(a_1\to gg)$", s=40)
+df_M3MU3MQ3AU3_orig[df_M3MU3MQ3AU3_orig.ma1<12].plot(kind='scatter', x='ma1', y='Bra1cc', 
+                                                             c='orange', ax=ax, label=r"$BR(a_1\to c\bar{c})$", s=40)
+df_M3MU3MQ3AU3_orig[df_M3MU3MQ3AU3_orig.ma1<12].plot(kind='scatter', x='ma1', y='Bra1ss', 
+                                                             c='purple', ax=ax, label=r"$BR(a_1\to s\bar{s})$", s=40)
+df_M3MU3MQ3AU3_orig[df_M3MU3MQ3AU3_orig.ma1<12].plot(kind='scatter', x='ma1', y='Bra1mumu', 
+                                                             c='magenta', ax=ax, label=r"$BR(a_1\to \mu\mu)$", s=40)
+df_M3MU3MQ3AU3_orig[df_M3MU3MQ3AU3_orig.ma1<12].plot(kind='scatter', x='ma1', y='Bra1bb', 
+                                                             c='lime', ax=ax, label=r"$BR(a_1\to b\bar{b})$", s=40)
+
+plt.xlim([1,12])
+plt.xlabel(r"$m_{a_1}\ \mathrm{[GeV]}$")
+# plt.ylim(0.7,1)
+plt.ylim(0,1)
+plt.ylabel(r"$BR(a_1\to XX)$")
+plt.title("Without exp. constraints, I4 = 1")
+plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=20)
+plt.minorticks_on()
+
+
+# Interestingly, the gluon-gluon BR shape is a mirror image of the tau-tau BR shape (in and around the lump region)
+
+# Let's look at the reduced coupling instead.
+
+# In[47]:
+
+df_M3MU3MQ3AU3_pass_all[(df_M3MU3MQ3AU3_pass_all.ma1<12) & (df_M3MU3MQ3AU3_pass_all.Bra1tautau>0.7)].plot(kind='scatter', x='ma1', y='a1tautaurc2', c='skyblue')
+plt.xlim([4,12])
+plt.xlabel(r"$m_{a_1}\ \mathrm{[GeV]}$")
+plt.ylim(0.0001,1)
+plt.yscale('log')
+plt.ylabel(r"$(g_{a_1\tau\tau}/g_{a_1\tau\tau}^{SM})^2$")
 plt.title("With exp. constraints, I4 = 1")
 
 
-# In[7]:
-
-df_M3MU3MQ3AU3_orig[df_M3MU3MQ3AU3_orig.ma1<12].plot(kind='scatter', x='ma1', y='Bra1tautau', c='skyblue')
-plt.xlim([4,12])
-plt.xlabel(r"$m_{a_1}\ \mathrm{[GeV]}$")
-plt.ylim(0.7,1)
-plt.ylabel(r"$BR(a_1\to\tau\tau)$")
-plt.title("Without exp. constraints, I4 = 1")
-
-
-# In[10]:
-
-df_M3MU3MQ3AU3_orig[df_M3MU3MQ3AU3_orig.ma1<20].plot(kind='scatter', x='ma1', y='Bra1bb', c='skyblue')
-plt.xlim([4,12])
-plt.xlabel(r"$m_{a_1}\ \mathrm{[GeV]}$")
-# plt.ylim(0.7,1)
-plt.ylabel(r"$BR(a_1\to bb)$")
-plt.title("Without exp. constraints, I4 = 1")
-
-
-# We still see this odd 'lump' at $BR \sim 0.8$ for $m_{a_1} \sim 9 - 10$ GeV. Note, there are only 60 points here, so bit stat limited. However even without experimental constraints, we still see the same shape, indicating that the casue of this is **not** due to an experimental constraint.
+# So there isn't anything odd going on in the reduced coupling.
 
 # ## Thoughts
 
@@ -585,7 +653,7 @@ plt.title("Without exp. constraints, I4 = 1")
 
 # Note that the cross-seciton results are very similar for both I4 = 1 and I4 = 0
 
-# In[122]:
+# In[56]:
 
 plot_many_scatters_compare(varx="h1ggrc2", vary="xsec_h1_2a1_4tau", 
                            dfs=df_h, title=r"$\sqrt{s} = 13\ \mathrm{TeV},\ \mathrm{I4 = 1}$", 
@@ -597,16 +665,15 @@ plt.legend()
 fig = plt.gcf()
 fig.set_size_inches(8,6)
 ax = fig.get_axes()
-ax[0].set_ylim([0.0001,10])
-# ax[0].set_xlim([122, 128])
-ax[0].set_xlim([-0.05, 1.05])
-ax[0].set_yscale('log')
+plt.ylim([0.0001,10])
+plt.xlim([-0.05, 1.05])
+plt.yscale('log')
 # fig.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=20)
 
 
 # As a function of $m_{h_1}$, for both I4 settings (blue: I4 = 1, green: I4 = 0) since we are curious about whether the higgs mass changes anything:
 
-# In[60]:
+# In[59]:
 
 plot_many_scatters_compare(varx="mh1", vary="xsec_h1_2a1_4tau", 
                            dfs=dfs_pass, title=r"$\sqrt{s} = 13\ \mathrm{TeV}$", 
@@ -618,10 +685,10 @@ plt.legend()
 fig = plt.gcf()
 fig.set_size_inches(8,6)
 ax = fig.get_axes()
-ax[0].set_ylim([0.0001,10])
-ax[0].set_xlim([122, 128])
+plt.ylim([0.0001,20])
+plt.xlim([122, 128])
 # ax[0].set_xlim([-0.05, 1.05])
-ax[0].set_yscale('log')
+plt.yscale('log')
 plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=20)
 
 
@@ -639,7 +706,7 @@ plt.legend()
 fig = plt.gcf()
 fig.set_size_inches(8,6)
 ax = fig.get_axes()
-ax[0].set_ylim([0.0001,10])
+ax[0].set_ylim([0.0001,20])
 ax[0].set_xlim([0, 40])
 ax[0].set_yscale('log')
 plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=20)
@@ -667,7 +734,7 @@ plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=20)
 
 # Here, the cross-section is much more supressed. Interestingly, whilst the majority of points have $\sigma \sim 1E-3 $ pb, there is a small number with $\sigma \sim 0.1$ pb in the case where $h_1 = h(125)$ and where $h_2 \sim 140 - 320$ GeV. Further investigation show that these points are for low masses of $a_1$ (as expected), thereby imparting a very large boost to the di-tau systems (since $h_2$ is several hundred GeV at least)
 
-# In[151]:
+# In[64]:
 
 df_M3MU3MQ3AU3_h1SM[df_M3MU3MQ3AU3_h1SM.xsec_h1_2a1_4tau>0.05].plot(kind='scatter', x='mh2', y='xsec_h2_2a1_4tau', c='red')
 # plt.yscale('log')
@@ -677,7 +744,7 @@ plt.ylim(0,0.8)
 plt.ylabel(r"$\sigma(gg \to h_2 \to 2a_1 \to 4\tau)\ \mathrm{[pb]}$")
 
 
-# In[125]:
+# In[66]:
 
 plot_many_scatters_compare(varx="h2ggrc2", vary="xsec_h2_2h1_4tau", 
                            dfs=df_h, title=r"$\sqrt{s} = 13\ \mathrm{TeV},\ \mathrm{I4 = 1}$", 
@@ -698,7 +765,7 @@ ax[0].set_yscale('log')
 
 # Let's also look at the most promising scenario as a function of input parameters, to see if a correlation exists. Answer = not really - only interesting ones are $A_{\kappa} \sim 0$ and $\kappa < 0.3$, which presumably give the low mass $a_1$
 
-# In[66]:
+# In[67]:
 
 plot_input_params_scatters(df_M3MU3MQ3AU3_pass_all, yvar="xsec_h1_2a1_4tau", 
                            ylabel=r"$\sigma(gg \to h_1 \to 2a_1 \to 4\tau)\ \mathrm{[pb]}$", 
