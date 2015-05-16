@@ -23,16 +23,23 @@ nmssm_params = {"lambda_": Param(label=r"$\lambda$", color="orange", bins=25, ra
                 }
 
 
-def plot_histogram(ax, var, df, label, xlabel, ylabel, title, errorbars=True, normed=False, **kwargs):
+def plot_histogram(ax, array=None, var=None, df=None, label="", xlabel="", ylabel="N", title="", errorbars=True, normed=False, **kwargs):
     """
-    Generic histogram plotter for a varaible in a dataframe on a set of axes
+    Generic histogram plotter. Can either plot variable var in DataFrame df,
+    or plot a numpy array.
 
     errorbars: can optionally show error bars
     normed: can optionally normalise so sum of bin contents = 1
     (irrespective of bin wdith)
     kwargs: can pass in other args
     """
-    vals = df[var].values
+    if array is not None:
+        vals = array
+    elif var is not None and df is not None:
+        vals = df[var].values
+    else:
+        raise Exception("plot_histogram needs a numpy array or varaible name+dataframe")
+
     weights = None
     if normed:
         weights = np.ones_like(vals)/len(vals)
@@ -51,9 +58,6 @@ def plot_histogram(ax, var, df, label, xlabel, ylabel, title, errorbars=True, no
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     ax.set_title(title, y=1.04)
-    # plt.xlabel(xlabel)
-    # plt.ylabel(ylabel)
-    # plt.title(title)
     plt.minorticks_on()
     plt.tight_layout()
     return y, bins, patches
@@ -81,17 +85,6 @@ def plot_many_hists_compare(var, dfs, title, labels, xlabel, ylabel, colors, nor
     Note that normed here normalises the bins such that total bin contents
     sum to 1, irrespective of the bin width.
     """
-    # ax = dfs[0][var].plot(kind="hist", title=title, color=colors[0], label=labels[0], edgecolor=colors[0], **kwargs)
-    # ax.set_title(title)
-    # for i, df in enumerate(dfs):
-    #     vals = df[var].values
-    #     weights = None
-    #     if normed:
-    #         weights = np.ones_like(vals)/len(vals)
-    #     ax.hist(df[var].values, color=colors[i], label=labels[i], edgecolor=colors[i], weights=weights, **kwargs)
-    # ax.set_xlabel(xlabel)
-    # ax.set_ylabel(ylabel)
-
     fig = plt.figure()
     ax = fig.add_subplot(1,1,1)
     max_y = 0

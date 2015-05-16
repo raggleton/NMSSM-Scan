@@ -66,6 +66,14 @@
 # 
 # - Since SuperIso requires the output SLHA from NMSSMTools, it is not possible to run SuperIso and NMSSMTools in parallel. This can slow generation & analysis significantly e.g it takes approx. 45 min to generate 10K points with NMSSMTools, and just over 1 hour to run over them with SuperIso, thereby doubling total time.
 
+# **Conclusion**: for the processes considered ($b\to s\gamma$, $B_s\to\mu\mu$, $\Delta a_{\mu}$), using SuperIso instead of NMSSMTools would have very little effect when considering the number of points passing or failing those constraints.
+# 
+# **Comment 1**: this was done over the whole range of parameter space scanned, and thus is an average over it. One could also investigate particular areas of parameter space, e.g. low mass $a_1$. I repeated the point-by-point difference plots for $m_{a_1} < 10.5$ GeV, and the conclusions were identical.
+# 
+# **Comment 2**: all the point-by-point distributions shown below have some points at extremely large differences. Whilst they are negligible in the overall total, they show that it **is** possible to get radically different values out of the two programs. This could be investigated. Or it may just be points in parameter space that cause problems with the numerical methods, or are excluded by other constraints.
+# 
+# **Comment 3**: I have not investigated if applying other experimental constraints affects the distributions. One could imagine that by requiring a particualr set of experimental cosntraints to be passed, one would be forced into a particular region of phase space, thereby invalidating the conclusions (see Comment 1).
+
 # In[164]:
 
 import pandas as pd
@@ -95,7 +103,7 @@ mpl.rcParams['legend.framealpha'] = 0.6
 mpl.rcParams.update({'font.size': 24, 'font.family': 'STIXGeneral', 'mathtext.fontset': 'stix'})
 
 
-# In[195]:
+# In[227]:
 
 from common_plots import *
 
@@ -158,7 +166,7 @@ df_M3MU3MQ3AU3_orig.loc[:, ['bsgamma', 'bsgamma_si']].describe()
 
 # First we plot the distributions of each value:
 
-# In[196]:
+# In[228]:
 
 fig = plt.figure()
 fig.set_size_inches(14,6)
@@ -169,13 +177,13 @@ br_range = [3E-4, 6.5E-4]
 
 # Lin y axis
 ax1 = fig.add_subplot(1,2,1)
-y11, bins11, patches11 = plot_histogram(ax1, 'bsgamma', df_M3MU3MQ3AU3_orig, "NMSSMTools", 
-                                     xlabel, "p.d.f", title, errorbars=False, normed=True, 
+y11, bins11, patches11 = plot_histogram(ax1, var='bsgamma', df=df_M3MU3MQ3AU3_orig, label="NMSSMTools", 
+                                     xlabel=xlabel, ylabel="p.d.f", title=title, errorbars=False, normed=True, 
                                      color='red', range=br_range, bins=bins, histtype="step", linewidth=1.5)
 add_median_line(df=df_M3MU3MQ3AU3_orig, var='bsgamma', c='red', ls='--', lw=1.5, label='NMSSMTools median')
 add_mean_line(df=df_M3MU3MQ3AU3_orig, var='bsgamma', c='red', ls='-.', lw=1.5, label='NMSSMTools mean')
-y21, bins21, patches21 = plot_histogram(ax1, 'bsgamma_si', df_M3MU3MQ3AU3_orig, "SuperIso", 
-                                     xlabel, "p.d.f", title, errorbars=False, normed=True, 
+y21, bins21, patches21 = plot_histogram(ax1, var='bsgamma_si', df=df_M3MU3MQ3AU3_orig, label="SuperIso", 
+                                     xlabel=xlabel, ylabel="p.d.f", title=title, errorbars=False, normed=True, 
                                      color='green', range=br_range, bins=bins, histtype="step", linewidth=1.5)
 add_median_line(df_M3MU3MQ3AU3_orig, 'bsgamma_si', c='green', ls='--', lw=1.5, label='SuperIso median')
 add_mean_line(df_M3MU3MQ3AU3_orig, 'bsgamma_si', c='green', ls='-.', lw=1.5, label='SuperIso mean')
@@ -188,13 +196,13 @@ ax1.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
 
 # log y axis
 ax2 = fig.add_subplot(1,2,2)
-y12, bins12, patches12 = plot_histogram(ax2, 'bsgamma', df_M3MU3MQ3AU3_orig, "NMSSMTools", 
-                                     xlabel, "p.d.f", title, errorbars=False, normed=True, 
+y12, bins12, patches12 = plot_histogram(ax2, var='bsgamma', df=df_M3MU3MQ3AU3_orig, label="NMSSMTools", 
+                                     xlabel=xlabel, ylabel="p.d.f", title=title, errorbars=False, normed=True, 
                                      color='red', range=br_range, bins=bins, histtype="step", linewidth=1.5, log=True)
 add_median_line(df=df_M3MU3MQ3AU3_orig, var='bsgamma', c='red', ls='--', lw=1.5, label='NMSSMTools median')
 add_mean_line(df=df_M3MU3MQ3AU3_orig, var='bsgamma', c='red', ls='-.', lw=1.5, label='NMSSMTools mean')
-y22, bins22, patches22 = plot_histogram(ax2, 'bsgamma_si', df_M3MU3MQ3AU3_orig, "SuperIso", 
-                                     xlabel, "p.d.f", title, errorbars=False, normed=True, 
+y22, bins22, patches22 = plot_histogram(ax2, var='bsgamma_si', df=df_M3MU3MQ3AU3_orig, label="SuperIso", 
+                                     xlabel=xlabel, ylabel="p.d.f", title=title, errorbars=False, normed=True, 
                                      color='green', range=br_range, bins=bins, histtype="step", linewidth=1.5, log=True)
 add_median_line(df_M3MU3MQ3AU3_orig, 'bsgamma_si', c='green', ls='--', lw=1.5, label='SuperIso median')
 add_mean_line(df_M3MU3MQ3AU3_orig, 'bsgamma_si', c='green', ls='-.', lw=1.5, label='SuperIso mean')
@@ -207,10 +215,8 @@ ax2.legend(fontsize=18)
 ax2.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
 fig.tight_layout()
 
-# print df_M3MU3MQ3AU3_pass_all[df_M3MU3MQ3AU3_pass_all.constraints.str.contains(r"b \-> s")].constraints
 
-
-# So we can see that in general NMSSMTools tends to provide slightly smaller values of BR than SuperIso. Therefore, on the whole, the difference is fairly small, i.e. $\langle {BR}_{\mathrm{NMSSMTools}}\rangle - \langle {BR}_{\mathrm{SuperIso}}\rangle \ll \langle {BR}_{NMSSMTools}\rangle$ (difference in means is about 3%, difference in medians is about 1.5%)
+# So we can see that in general NMSSMTools tends to provide slightly smaller values of BR than SuperIso. On the whole, the difference is fairly small, i.e. $\langle {BR}_{\mathrm{NMSSMTools}}\rangle - \langle {BR}_{\mathrm{SuperIso}}\rangle \ll \langle {BR}_{NMSSMTools}\rangle$ (difference in means is about 3%, difference in medians is about 1.5%)
 
 # We can also look at the difference on a point-by-point basis, i.e. for each parameter point calculate BR using both NMSSMTools and SuperIso, and compare:
 
@@ -223,7 +229,7 @@ bsgamma_without = bsgamma_without.subtract(bsgamma_si_without)
 bsgamma_without.describe()
 
 
-# In[172]:
+# In[207]:
 
 fig = plt.figure()
 fig.set_size_inches(14,6)
@@ -236,8 +242,8 @@ weights = np.ones_like(bsgamma_val)/len(bsgamma_val)
 y, bins, patches = plt.hist(bsgamma_val, weights=weights, bins=40, 
                             range=br_range, log=False, color='cornflowerblue', alpha=0.8)
 ax = plt.gca()
-add_median_line(array=bsgamma_val, c='cornflowerblue', lw=2, ls='--', label="Median")
-add_mean_line(array=bsgamma_val, c='cornflowerblue', lw=1.5, ls='-.', label="Mean")
+add_median_line(array=bsgamma_val, c='blue', lw=2, ls='--', label="Median")
+add_mean_line(array=bsgamma_val, c='blue', lw=1.5, ls='-.', label="Mean")
 make_highlight_region(ax, [bsgamma_lim[0]-(0.5*sum(bsgamma_lim)), bsgamma_lim[1]-(0.5*sum(bsgamma_lim))], 
                       'x', color='gray', alpha=0.2, label=r"$\pm 2 \sigma$ exp. uncertainty")
 plt.xlabel(r"${BR}_{NMSSMTools} - {BR}_{SuperIso}$")
@@ -249,28 +255,28 @@ plt.minorticks_on()
 plt.legend(loc='best', fontsize=18)
 
 
-# So we can see that even on a point-by-point basis NMSSMTools tends to provide slightly smaller values of BR than SuperIso. The mean difference, $-1.1\times 10^{-5}$, is about 3% of the NMSSMTools mean value (if one takes the median, then that difference is about 1.5% of the NMSSMTools median value). So the difference between NMSSMTools and SuperIso per point is fairly small, i.e. $\langle {BR}_{\mathrm{NMSSMTools}} - {BR}_{\mathrm{SuperIso}}\rangle \ll \langle {BR}_{NMSSMTools}\rangle$. However, the mean difference when compared to the $2\sigma$ uncertainty band on the experimental value ($4.4\times 10^{-5}$) is non-negligible, about 10% (using the median value). 
+# The grey shaded region shows the $\pm 2 \sigma$ uncertainty on the central experimental value about $\Delta BR = 0$. So we can see that even on a point-by-point basis NMSSMTools tends to provide slightly smaller values of BR than SuperIso. The mean difference, $-1.1\times 10^{-5}$, is about 3% of the NMSSMTools mean value (if one takes the median, then that difference is about 1.5% of the NMSSMTools median value). So the difference between NMSSMTools and SuperIso per point is fairly small, i.e. $\langle {BR}_{\mathrm{NMSSMTools}} - {BR}_{\mathrm{SuperIso}}\rangle \ll \langle {BR}_{NMSSMTools}\rangle$. The mean difference is $\sim 0.5 \sigma$, whilst the median difference is $\sim 0.1 \sigma$. Thus the difference on a point-by-point basis is fairly small. 
 # 
 # 
 # (Aside: sometimes there are some _very_ large differences)
 
 # We can calculate the percentage of points that failed the constraint using the value from NMSSMTools that would instead pass using the value from SuperIso (& vice versa):
 
-# In[173]:
+# In[210]:
 
 below_bsgamma, above_bsgamma = calc_num_could_pass(df_M3MU3MQ3AU3_orig, "bsgamma", "bsgamma_si", bsgamma_lim)
 # print below_bsgamma, above_bsgamma
 below_bsgamma2, above_bsgamma2 = calc_num_could_pass(df_M3MU3MQ3AU3_orig, "bsgamma_si", "bsgamma", bsgamma_lim)
 # print below_bsgamma2, above_bsgamma2
-print "%.3f%% more events (without exp. constraints) would have passed using SuperIso than NMSSMTools" % (100.*(below_bsgamma+above_bsgamma)/len(df_M3MU3MQ3AU3_orig.index))
-print "%.3f%% more events (without exp. constraints) would have passed using NMSSMTools than SuperIso" % (100.*(below_bsgamma2+above_bsgamma2)/len(df_M3MU3MQ3AU3_orig.index))
+print "%.3f%% more events (without other exp. constraints) would have passed using SuperIso than NMSSMTools" % (100.*(below_bsgamma+above_bsgamma)/len(df_M3MU3MQ3AU3_orig.index))
+print "%.3f%% more events (without other exp. constraints) would have passed using NMSSMTools than SuperIso" % (100.*(below_bsgamma2+above_bsgamma2)/len(df_M3MU3MQ3AU3_orig.index))
 
 
 # Note that using the SuperIso value would not have increased the number of events passing the constraint. **However, this is only the central value, and does not take into account theoretical uncertainties, which can be sizeable.** Including these corrections would reduce the number significantly.
 
 # One should note that NMSSMTools tends to assign a large theoretical uncertainty to the BR, $\delta_{theoretical}^{BR}$, such that even if the BR falls above the upper limit (3.87E-4), $BR-\delta_{theoretical}^{BR}$ can easily bring it below the upper limit. This can be seen when we plot the BR with and without the BR constraint (taking the BR from NMSSMTools and ignoring all other experimental constraints), and comparing against the upper limit applied in NMSSMTools (grey band).
 
-# In[174]:
+# In[229]:
 
 fig = plt.figure()
 fig.set_size_inches(14,6)
@@ -285,11 +291,11 @@ df_pass_bsgamma = df_M3MU3MQ3AU3_orig[~ df_M3MU3MQ3AU3_orig.constraints.str.cont
 
 # Lin y axis
 ax1 = fig.add_subplot(1,2,1)
-y11, bins11, patches11 = plot_histogram(ax1, 'bsgamma', df_M3MU3MQ3AU3_orig, "Without BR exp. con.", 
-                                     xlabel, "p.d.f", title, errorbars=False, normed=True, 
+y11, bins11, patches11 = plot_histogram(ax1, var='bsgamma', df=df_M3MU3MQ3AU3_orig, label="Without BR exp. con.", 
+                                     xlabel=xlabel, ylabel="p.d.f", title=title, errorbars=False, normed=True, 
                                      color='red', range=br_range, bins=bins, histtype="step", linewidth=1.5)
-y21, bins21, patches21 = plot_histogram(ax1, 'bsgamma', df_pass_bsgamma, "With BR exp. con.", 
-                                     xlabel, "p.d.f", title, errorbars=False, normed=True, 
+y21, bins21, patches21 = plot_histogram(ax1, var='bsgamma', df=df_pass_bsgamma, label="With BR exp. con.", 
+                                     xlabel=xlabel, ylabel="p.d.f", title=title, errorbars=False, normed=True, 
                                      color='purple', range=br_range, bins=bins, histtype="step", linewidth=1.5)
 make_highlight_region(ax=ax1, limits=bsgamma_lim, axis='x', 
                                label=r"Exp. $\pm 2\sigma$", alpha=0.2, facecolor='grey')
@@ -299,11 +305,11 @@ ax1.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
 
 # log y axis
 ax2 = fig.add_subplot(1,2,2)
-y12, bins12, patches12 = plot_histogram(ax2, 'bsgamma', df_M3MU3MQ3AU3_orig, "Without BR exp. con.", 
-                                     xlabel, "p.d.f", title, errorbars=False, normed=True, 
+y12, bins12, patches12 = plot_histogram(ax2, var='bsgamma', df=df_M3MU3MQ3AU3_orig, label="Without BR exp. con.", 
+                                     xlabel=xlabel, ylabel="p.d.f", title=title, errorbars=False, normed=True, 
                                      color='red', range=br_range, bins=bins, histtype="step", linewidth=1.5, log=True)
-y22, bins22, patches22 = plot_histogram(ax2, 'bsgamma', df_pass_bsgamma, "With BR exp. con.", 
-                                     xlabel, "p.d.f", title, errorbars=False, normed=True, 
+y22, bins22, patches22 = plot_histogram(ax2, var='bsgamma', df=df_pass_bsgamma, label="With BR exp. con.", 
+                                     xlabel=xlabel, ylabel="p.d.f", title=title, errorbars=False, normed=True, 
                                      color='purple', range=br_range, bins=bins, histtype="step", linewidth=1.5, log=True)
 make_highlight_region(ax=ax2, limits=bsgamma_lim, axis='x', 
                       label=r"Exp. $\pm 2\sigma$", alpha=0.2, facecolor='grey')
@@ -314,17 +320,22 @@ ax2.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
 fig.tight_layout()
 
 
-# Thus, the theoretical uncertainty is as large as (5.776 - 3.87)E-4 = 1.9E-4 $\sim 50\%$ of the $BR+2\sigma$ constraint! 
-# 
-# 
-# **Conclusion**: changing to the SuperIso value won't really affect the number of points passing the constraint, since:
-# 
-# 1) $\langle {BR}_{\mathrm{NMSSMTools}}\rangle - \langle{BR}_{\mathrm{SuperIso}}\rangle \ll \langle {BR}_{NMSSMTools}\rangle$
-# 
-# 2) $\langle {BR}_{\mathrm{NMSSMTools}} - {BR}_{\mathrm{SuperIso}}\rangle \ll \langle {BR}_{NMSSMTools}\rangle$
-# 
-# 
-# 3) Any differences, even on a point-by-point basis, are $\ll \delta_{theoretical}^{BR}$ 
+# Thus, the theoretical uncertainty is as large as (5.776 - 3.87)E-4 = 1.9E-4 (compare it with the $\pm 2 \sigma$ band size, $0.44\times 10^{-4}$). Therefore, the actual inclusion band is dominated by the theoreical uncertainty, and the number of points that would have have passed instead of failed (or vice versa) is much smaller. If we assume that we can extend the inclusion band by the difference between the point with the largest BR passing the constraint and the upper limit on the exp. constraint, then the count is:
+
+# In[217]:
+
+print "Now including maximum theoretical uncertainty:"
+theory = max(df_pass_bsgamma.bsgamma)-bsgamma_lim[1]
+# print theory
+below_bsgamma, above_bsgamma = calc_num_could_pass(df_M3MU3MQ3AU3_orig, "bsgamma", "bsgamma_si", [bsgamma_lim[0]-theory, bsgamma_lim[1]+theory])
+# print below_bsgamma, above_bsgamma
+below_bsgamma2, above_bsgamma2 = calc_num_could_pass(df_M3MU3MQ3AU3_orig, "bsgamma_si", "bsgamma", [bsgamma_lim[0]-theory, bsgamma_lim[1]+theory])
+# print below_bsgamma2, above_bsgamma2
+print "%.3f%% more events (without other exp. constraints) would have passed using SuperIso than NMSSMTools" % (100.*(below_bsgamma+above_bsgamma)/len(df_M3MU3MQ3AU3_orig.index))
+print "%.3f%% more events (without other exp. constraints) would have passed using NMSSMTools than SuperIso" % (100.*(below_bsgamma2+above_bsgamma2)/len(df_M3MU3MQ3AU3_orig.index))
+
+
+# **Conclusion**: changing to the SuperIso value won't really affect the number of points passing the constraint since any differences, even on a point-by-point basis, are $\ll \delta_{theoretical}^{BR}$ 
 
 # #$BR(B_s \to \mu \mu)$
 
@@ -349,7 +360,7 @@ df_M3MU3MQ3AU3_orig.loc[:, ['bsmumu', 'bsmumu_si']].describe()
 
 # First we plot the distributions of each value:
 
-# In[177]:
+# In[231]:
 
 fig = plt.figure()
 fig.set_size_inches(14,6)
@@ -360,11 +371,11 @@ br_range = [0, 10E-9]
 
 # Lin y axis
 ax1 = fig.add_subplot(1,2,1)
-y11, bins11, patches11 = plot_histogram(ax1, 'bsmumu', df_M3MU3MQ3AU3_orig, "NMSSMTools", 
-                                     xlabel, "p.d.f", title, errorbars=False, normed=True, 
+y11, bins11, patches11 = plot_histogram(ax1, var='bsmumu', df=df_M3MU3MQ3AU3_orig, label="NMSSMTools", 
+                                     xlabel=xlabel, ylabel="p.d.f", title=title, errorbars=False, normed=True, 
                                      color='red', range=br_range, bins=bins, histtype="step", linewidth=1.5)
-y21, bins21, patches21 = plot_histogram(ax1, 'bsmumu_si', df_M3MU3MQ3AU3_orig, "SuperIso", 
-                                     xlabel, "p.d.f", title, errorbars=False, normed=True, 
+y21, bins21, patches21 = plot_histogram(ax1, var='bsmumu_si', df=df_M3MU3MQ3AU3_orig, label="SuperIso", 
+                                     xlabel=xlabel, ylabel="p.d.f", title=title, errorbars=False, normed=True, 
                                      color='green', range=br_range, bins=bins, histtype="step", linewidth=1.5)
 add_median_line(df=df_M3MU3MQ3AU3_orig, var='bsmumu', c='red', ls='--', lw=1.5, label='NMSSMTools median')
 add_median_line(df=df_M3MU3MQ3AU3_orig, var='bsmumu_si', c='green', ls='--', lw=1.5, label='SuperIso median')
@@ -382,11 +393,11 @@ ax1.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
 
 # log y axis
 ax2 = fig.add_subplot(1,2,2)
-y12, bins12, patches12 = plot_histogram(ax2, 'bsmumu', df_M3MU3MQ3AU3_orig, "NMSSMTools", 
-                                     xlabel, "p.d.f", title, errorbars=False, normed=True, 
+y12, bins12, patches12 = plot_histogram(ax2, var='bsmumu', df=df_M3MU3MQ3AU3_orig, label="NMSSMTools", 
+                                     xlabel=xlabel, ylabel="p.d.f", title=title, errorbars=False, normed=True, 
                                      color='red', range=br_range, bins=bins, histtype="step", linewidth=1.5, log=True)
-y22, bins22, patches22 = plot_histogram(ax2, 'bsmumu_si', df_M3MU3MQ3AU3_orig, "SuperIso", 
-                                     xlabel, "p.d.f", title, errorbars=False, normed=True, 
+y22, bins22, patches22 = plot_histogram(ax2, var='bsmumu_si', df=df_M3MU3MQ3AU3_orig, label="SuperIso", 
+                                     xlabel=xlabel, ylabel="p.d.f", title=title, errorbars=False, normed=True, 
                                      color='green', range=br_range, bins=bins, histtype="step", linewidth=1.5, log=True)
 add_median_line(df=df_M3MU3MQ3AU3_orig, var='bsmumu', c='red', ls='--', lw=1.5, label='NMSSMTools median')
 add_median_line(df=df_M3MU3MQ3AU3_orig, var='bsmumu_si', c='green', ls='--', lw=1.5, label='SuperIso median')
@@ -419,7 +430,7 @@ bsmumu_without = bsmumu_without.subtract(bsmumu_si_without)
 bsmumu_without.describe()
 
 
-# In[179]:
+# In[206]:
 
 fig = plt.figure()
 fig.set_size_inches(14,6)
@@ -435,6 +446,7 @@ y, bins, patches = ax2.hist(bsmumu_val, weights=weights, bins=47,
                             range=br_range, log=False, color='cornflowerblue', alpha=0.8)
 make_highlight_region(ax2, [bsmumu_lim[0]-(0.5*sum(bsmumu_lim)), bsmumu_lim[1]-(0.5*sum(bsmumu_lim))], 
                       'x', color='gray', alpha=0.2, label=r"$\pm 2 \sigma$ exp. uncertainty")
+add_median_line(array=bsmumu_val, c='blue', lw=1.5, ls='--', label='Median')
 ax2.set_xlabel(r"${BR}_{NMSSMTools} - {BR}_{SuperIso}$")
 ax2.set_ylabel("p.d.f.")
 ax2.set_xlim(br_range)
@@ -453,6 +465,7 @@ y, bins, patches = ax.hist(bsmumu_val, weights=weights, bins=47,
                             range=br_range, log=True, color='cornflowerblue', alpha=0.8)
 make_highlight_region(ax, [bsmumu_lim[0]-(0.5*sum(bsmumu_lim)), bsmumu_lim[1]-(0.5*sum(bsmumu_lim))], 
                       'x', color='gray', alpha=0.2, label=r"$\pm 2 \sigma$ exp. uncertainty")
+add_median_line(array=bsmumu_val, c='blue', lw=1.5, ls='--', label='Median')
 ax.set_xlabel(r"${BR}_{NMSSMTools} - {BR}_{SuperIso}$")
 ax.set_ylabel("p.d.f.")
 ax.set_xlim(br_range)
@@ -463,18 +476,18 @@ plt.tight_layout()
 plt.legend(loc='best', fontsize=18)
 
 
-# The mean difference is $-1.55\times 10^{-11}$, which corresponds to 0.8% of the $2\sigma$ range $(2\times10^{-9})$. Thus, the difference is negligible.
+# The median difference is $-1.55\times 10^{-11}$, which corresponds to 0.8% of the $2\sigma$ range $(2\times10^{-9})$. Thus, the difference is negligible.
 
 # We can calculate the percentage of points that failed the constraint using the value from NMSSMTools that would instead pass using the value from SuperIso (& vice versa):
 
-# In[180]:
+# In[211]:
 
 below_bsmumu, above_bsmumu = calc_num_could_pass(df_M3MU3MQ3AU3_orig, "bsmumu", "bsmumu_si", bsgamma_lim)
 # print below_bsmumu, above_bsmumu
 below_bsmumu2, above_bsmumu2 = calc_num_could_pass(df_M3MU3MQ3AU3_orig, "bsmumu_si", "bsmumu", bsgamma_lim)
 # print below_bsmumu2, above_bsmumu2
-print "%.3f%% more events (without exp. constraints) would have passed using SuperIso than NMSSMTools" % (100.*(below_bsmumu+above_bsmumu)/len(df_M3MU3MQ3AU3_orig.index))
-print "%.3f%% more events (without exp. constraints) would have passed using NMSSMTools than SuperIso" % (100.*(below_bsmumu2+above_bsmumu2)/len(df_M3MU3MQ3AU3_orig.index))
+print "%.3f%% more events (without other exp. constraints) would have passed using SuperIso than NMSSMTools" % (100.*(below_bsmumu+above_bsmumu)/len(df_M3MU3MQ3AU3_orig.index))
+print "%.3f%% more events (without other exp. constraints) would have passed using NMSSMTools than SuperIso" % (100.*(below_bsmumu2+above_bsmumu2)/len(df_M3MU3MQ3AU3_orig.index))
 
 
 # Very small difference between using NMSSMTools and SuperIso, and this doesn't even take into account theoretical uncertainties.
@@ -500,7 +513,7 @@ df_M3MU3MQ3AU3_orig.loc[:, ["Del_a_mu", "a_mu_si"]].describe()
 
 # First we plot the distributions of each value:
 
-# In[183]:
+# In[232]:
 
 fig = plt.figure()
 fig.set_size_inches(14,6)
@@ -511,11 +524,11 @@ br_range = [-1E-9, 4E-9]
 
 # Lin y axis
 ax1 = fig.add_subplot(1,2,1)
-y11, bins11, patches11 = plot_histogram(ax1, 'Del_a_mu', df_M3MU3MQ3AU3_orig, "NMSSMTools", 
-                                     xlabel, "p.d.f", title, errorbars=False, normed=True, 
+y11, bins11, patches11 = plot_histogram(ax1, var='Del_a_mu', df=df_M3MU3MQ3AU3_orig, label="NMSSMTools", 
+                                     xlabel=xlabel, ylabel="p.d.f", title=title, errorbars=False, normed=True, 
                                      color='red', range=br_range, bins=bins, histtype="step", linewidth=1.5)
-y21, bins21, patches21 = plot_histogram(ax1, 'a_mu_si', df_M3MU3MQ3AU3_orig, "SuperIso", 
-                                     xlabel, "p.d.f", title, errorbars=False, normed=True, 
+y21, bins21, patches21 = plot_histogram(ax1, var='a_mu_si', df=df_M3MU3MQ3AU3_orig, label="SuperIso", 
+                                     xlabel=xlabel, ylabel="p.d.f", title=title, errorbars=False, normed=True, 
                                      color='green', range=br_range, bins=bins, histtype="step", linewidth=1.5)
 
 make_highlight_region(ax=ax1, limits=del_a_mu_lim, axis='x', 
@@ -529,11 +542,11 @@ ax1.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
 
 # log y axis
 ax2 = fig.add_subplot(1,2,2)
-y12, bins12, patches12 = plot_histogram(ax2, 'Del_a_mu', df_M3MU3MQ3AU3_orig, "NMSSMTools", 
-                                     xlabel, "p.d.f", title, errorbars=False, normed=True, 
+y12, bins12, patches12 = plot_histogram(ax2, var='Del_a_mu', df=df_M3MU3MQ3AU3_orig, label="NMSSMTools", 
+                                     xlabel=xlabel, ylabel="p.d.f", title=title, errorbars=False, normed=True, 
                                      color='red', range=br_range, bins=bins, histtype="step", linewidth=1.5, log=True)
-y22, bins22, patches22 = plot_histogram(ax2, 'a_mu_si', df_M3MU3MQ3AU3_orig, "SuperIso", 
-                                     xlabel, "p.d.f", title, errorbars=False, normed=True, 
+y22, bins22, patches22 = plot_histogram(ax2, var='a_mu_si', df=df_M3MU3MQ3AU3_orig, label="SuperIso", 
+                                     xlabel=xlabel, ylabel="p.d.f", title=title, errorbars=False, normed=True, 
                                      color='green', range=br_range, bins=bins, histtype="step", linewidth=1.5, log=True)
 
 make_highlight_region(ax=ax2, limits=del_a_mu_lim, axis='x', 
@@ -548,7 +561,9 @@ ax2.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
 fig.tight_layout()
 
 
-# It appears that SuperIso tends to gives larger values of $\Delta a_{\mu}$.
+# It appears that SuperIso tends to gives larger values of $\Delta a_{\mu}$. 
+# 
+# (*Aside*: note that we also never get close to the upper limit on $\Delta a_{\mu}$.)
 
 # Let's look at the distributions on a point-by-point basis like before:
 
@@ -561,7 +576,7 @@ del_a_mu_without = del_a_mu_without.subtract(del_a_mu_si_without)
 del_a_mu_without.describe()
 
 
-# In[185]:
+# In[219]:
 
 fig = plt.figure()
 fig.set_size_inches(14,6)
@@ -577,6 +592,7 @@ y, bins, patches = ax2.hist(del_a_mu_val, weights=weights, bins=20,
                             range=br_range, log=False, color='cornflowerblue', alpha=0.8)
 make_highlight_region(ax2, [del_a_mu_lim[0]-(0.5*sum(del_a_mu_lim)), del_a_mu_lim[1]-(0.5*sum(del_a_mu_lim))], 
                       'x', color='gray', alpha=0.2, label=r"$\pm 2 \sigma$ exp. uncertainty")
+add_median_line(array=del_a_mu_val, c='blue', lw=1.5, ls="--", label="Median")
 ax2.set_xlabel(r"$\Delta a_{\mu}^{NMSSMTools} - \Delta a_{\mu}^{SuperIso}$")
 ax2.set_ylabel("p.d.f.")
 ax2.set_xlim(br_range)
@@ -593,6 +609,7 @@ y, bins, patches = ax.hist(del_a_mu_val, weights=weights, bins=24,
                             range=br_range, log=True, color='cornflowerblue', alpha=0.8)
 make_highlight_region(ax, [del_a_mu_lim[0]-(0.5*sum(del_a_mu_lim)), del_a_mu_lim[1]-(0.5*sum(del_a_mu_lim))], 
                       'x', color='gray', alpha=0.2, label=r"$\pm 2 \sigma$ exp. uncertainty")
+add_median_line(array=del_a_mu_val, c='blue', lw=1.5, ls="--", label="Median")
 ax.set_xlabel(r"$\Delta a_{\mu}^{NMSSMTools} - \Delta a_{\mu}^{SuperIso}$")
 ax.set_ylabel("p.d.f.")
 ax.set_xlim(br_range)
@@ -607,153 +624,157 @@ plt.legend(loc='best', fontsize=18)
 
 # We can calculate the percentage of points that failed the constraint using the value from NMSSMTools that would instead pass using the value from SuperIso (& vice versa):
 
-# In[186]:
+# In[212]:
 
 below_del_a_mu, _ = calc_num_could_pass(df_M3MU3MQ3AU3_orig, "Del_a_mu", "a_mu_si", del_a_mu_lim)
 below_del_a_mu2, above_del_a_mu2 = calc_num_could_pass(df_M3MU3MQ3AU3_orig, "a_mu_si", "Del_a_mu", del_a_mu_lim)
-print "%.3f%% more events (without exp. constraints) would have passed using SuperIso than NMSSMTools" % (100.*below_del_a_mu/len(df_M3MU3MQ3AU3_orig.index))
-print "%.3f%% more events (without exp. constraints) would have passed using NMSSMTools than SuperIso" % (100.*(below_del_a_mu2+above_del_a_mu2)/len(df_M3MU3MQ3AU3_orig.index))
+print "%.3f%% more events (without other exp. constraints) would have passed using SuperIso than NMSSMTools" % (100.*below_del_a_mu/len(df_M3MU3MQ3AU3_orig.index))
+print "%.3f%% more events (without other exp. constraints) would have passed using NMSSMTools than SuperIso" % (100.*(below_del_a_mu2+above_del_a_mu2)/len(df_M3MU3MQ3AU3_orig.index))
 
 
-# Again, this does not take into account theoretical uncertainties. To show the size of theoretical uncertainties, we can show the distribution with the g-2 constraint applied and compare to the constraint region.
+# Again, this does not take into account theoretical uncertainties. To show the size of theoretical uncertainties, we can find the smallest $\Delta a_{\mu}$ that still passes the lower bound.
 
-# In[187]:
+# In[220]:
 
 df_M3MU3MQ3AU3_pass_del_a_mu = df_M3MU3MQ3AU3_orig[~df_M3MU3MQ3AU3_orig.constraints.str.contains("Muon magn. mom. more than 2 sigma away")]
 print "Smallest del_a_mu passing g-2 constraint:", min(df_M3MU3MQ3AU3_pass_del_a_mu.Del_a_mu)
 print "Lower bount on g-2:", del_a_mu_lim[0]
-print "Size of theoretical error:", min(df_M3MU3MQ3AU3_pass_del_a_mu.Del_a_mu) - del_a_mu_lim[0]
+print "Size of theoretical uncertainty:", abs(min(df_M3MU3MQ3AU3_pass_del_a_mu.Del_a_mu) - del_a_mu_lim[0])
+
+
+# Let us repeat the calculation taking into account this uncertainty:
+
+# In[216]:
+
+print "Now including maximum theoretical uncertainty:"
+theory = abs(del_a_mu_lim[0] - min(df_M3MU3MQ3AU3_pass_del_a_mu.Del_a_mu))
+below_del_a_mu, _ = calc_num_could_pass(df_M3MU3MQ3AU3_orig, "Del_a_mu", "a_mu_si", [del_a_mu_lim[0]-theory, del_a_mu_lim[1]+theory])
+below_del_a_mu2, above_del_a_mu2 = calc_num_could_pass(df_M3MU3MQ3AU3_orig, "a_mu_si", "Del_a_mu", [del_a_mu_lim[0]-theory, del_a_mu_lim[1]+theory])
+print "%.3f%% more events (without other exp. constraints) would have passed using SuperIso than NMSSMTools" % (100.*below_del_a_mu/len(df_M3MU3MQ3AU3_orig.index))
+print "%.3f%% more events (without other exp. constraints) would have passed using NMSSMTools than SuperIso" % (100.*(below_del_a_mu2+above_del_a_mu2)/len(df_M3MU3MQ3AU3_orig.index))
 
 
 # **Conclusion**: We can therefore conlude that, even in the event we apply a lower bound on $\Delta a_{\mu}$, it would make little difference if the value came from NMSSMTools or SuperIso. The difference between them is generally small.
 
 # #$B^+ \to \tau^+ \nu_{\tau}$ - IGNORE THIS SECTION
 
-# In[188]:
+# This is erroneous, ended up comparing $B^+ \to \tau^+ \nu$ in NMSSMTools to $B_u \to \tau\nu$ in SuperIso, not the same thing (I believe).
 
-# central experimental value +- 2 sigma
-btaunu_lim = [0.7E-4, 1.58E-4]
-# SM prediction, ±2 sigma bands
-btaunu_sm_central = 3.66E-9
-btaunu_sm_lim = [3.2E-9 ,4.12E-9]
+# In[239]:
 
-
-# Summary of the BRs, comparing NMSSMTools (`btaunu`) and SuperIso (`btaunu_si`) without experimental constraints:
-
-# In[189]:
-
-df_M3MU3MQ3AU3_orig.loc[:, ['btaunu', 'btaunu_si']].describe()
+# # central experimental value +- 2 sigma
+# btaunu_lim = [0.7E-4, 1.58E-4]
+# # SM prediction, ±2 sigma bands
+# btaunu_sm_central = 3.66E-9
+# btaunu_sm_lim = [3.2E-9 ,4.12E-9]
 
 
-# First we plot the distributions of each value:
+# In[238]:
 
-# In[190]:
-
-fig = plt.figure()
-fig.set_size_inches(14,6)
-title = r"Without exp. constraints"
-xlabel = r"$BR(B^+\to \tau^+\nu_{\tau})$"
-bins = 100
-br_range = [0.4E-4, 1.2E-4]
-
-# Lin y axis
-ax1 = fig.add_subplot(1,2,1)
-y11, bins11, patches11 = plot_histogram(ax1, 'btaunu', df_M3MU3MQ3AU3_orig, "NMSSMTools", 
-                                     xlabel, "p.d.f", title, errorbars=False, normed=True, 
-                                     color='red', range=br_range, bins=bins, histtype="step", linewidth=1.5)
-y21, bins21, patches21 = plot_histogram(ax1, 'btaunu_si', df_M3MU3MQ3AU3_orig, "SuperIso", 
-                                     xlabel, "p.d.f", title, errorbars=False, normed=True, 
-                                     color='green', range=br_range, bins=bins, histtype="step", linewidth=1.5)
-
-ax1.add_patch(make_highlight_region(ax=ax1, limits=btaunu_lim, axis='x', 
-                               label=r"Exp. $\pm 2\sigma$", alpha=0.2, facecolor='grey'))
-# SM range
-# ax1.add_patch(make_highlight_region(ax=ax1, limits=btaunu_sm_lim, axis='x', 
-#                                label=r"SM. $\pm 2\sigma$ (new)", alpha=0.3, facecolor='palegreen'))
-ax1.set_xlim(br_range)
-ax1.legend(fontsize=20, loc=2)
-ax1.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
-
-# log y axis
-ax2 = fig.add_subplot(1,2,2)
-y12, bins12, patches12 = plot_histogram(ax2, 'btaunu', df_M3MU3MQ3AU3_orig, "NMSSMTools", 
-                                     xlabel, "p.d.f", title, errorbars=False, normed=True, 
-                                     color='red', range=br_range, bins=bins, histtype="step", linewidth=1.5, log=True)
-y22, bins22, patches22 = plot_histogram(ax2, 'btaunu_si', df_M3MU3MQ3AU3_orig, "SuperIso", 
-                                     xlabel, "p.d.f", title, errorbars=False, normed=True, 
-                                     color='green', range=br_range, bins=bins, histtype="step", linewidth=1.5, log=True)
-
-ax2.add_patch(make_highlight_region(ax=ax2, limits=btaunu_lim, axis='x', 
-                               label=r"Exp. $\pm 2\sigma$", alpha=0.2, facecolor='grey'))
-# SM range
-# ax2.add_patch(make_highlight_region(ax=ax2, limits=btaunu_sm_lim, axis='x', 
-#                                label=r"SM. $\pm 2\sigma$ (new)", alpha=0.3, facecolor='palegreen'))
-ax2.set_xlim(br_range)
-ax2.set_ylim(bottom=5E-5)
-ax2.legend(fontsize=20, loc=2)
-ax2.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
-fig.tight_layout()
+# df_M3MU3MQ3AU3_orig.loc[:, ['btaunu', 'btaunu_si']].describe()
 
 
-# We can see that the overall distributions are very different. The shapes are similar, with both having a sharp dropoff (although there are a handful of points above this sharp dropoff). However the dropoff is at 0.8E-4 for SuperIso, and at 1.1E-4 for NMSSMTools. Is this important when considering the experimental constraint?
+# In[237]:
 
-# In[191]:
+# fig = plt.figure()
+# fig.set_size_inches(14,6)
+# title = r"Without exp. constraints"
+# xlabel = r"$BR(B^+\to \tau^+\nu_{\tau})$"
+# bins = 100
+# br_range = [0.4E-4, 1.2E-4]
 
-tot = len(df_M3MU3MQ3AU3_orig.index)
-print 'Percentage of points failing lower bound: NMSSMTools: %.3f%%  SuperIso: %.3f%%' % (100.0*len(df_M3MU3MQ3AU3_orig[df_M3MU3MQ3AU3_orig.btaunu < btaunu_lim[0]].index)/tot, 100.*len(df_M3MU3MQ3AU3_orig[df_M3MU3MQ3AU3_orig.btaunu_si < btaunu_lim[0]].index)/tot)
+# # Lin y axis
+# ax1 = fig.add_subplot(1,2,1)
+# y11, bins11, patches11 = plot_histogram(ax1, 'btaunu', df_M3MU3MQ3AU3_orig, "NMSSMTools", 
+#                                      xlabel, "p.d.f", title, errorbars=False, normed=True, 
+#                                      color='red', range=br_range, bins=bins, histtype="step", linewidth=1.5)
+# y21, bins21, patches21 = plot_histogram(ax1, 'btaunu_si', df_M3MU3MQ3AU3_orig, "SuperIso", 
+#                                      xlabel, "p.d.f", title, errorbars=False, normed=True, 
+#                                      color='green', range=br_range, bins=bins, histtype="step", linewidth=1.5)
 
+# ax1.add_patch(make_highlight_region(ax=ax1, limits=btaunu_lim, axis='x', 
+#                                label=r"Exp. $\pm 2\sigma$", alpha=0.2, facecolor='grey'))
+# # SM range
+# # ax1.add_patch(make_highlight_region(ax=ax1, limits=btaunu_sm_lim, axis='x', 
+# #                                label=r"SM. $\pm 2\sigma$ (new)", alpha=0.3, facecolor='palegreen'))
+# ax1.set_xlim(br_range)
+# ax1.legend(fontsize=20, loc=2)
+# ax1.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
 
-# Let's look at the distributions on a point-by-point basis like before:
+# # log y axis
+# ax2 = fig.add_subplot(1,2,2)
+# y12, bins12, patches12 = plot_histogram(ax2, 'btaunu', df_M3MU3MQ3AU3_orig, "NMSSMTools", 
+#                                      xlabel, "p.d.f", title, errorbars=False, normed=True, 
+#                                      color='red', range=br_range, bins=bins, histtype="step", linewidth=1.5, log=True)
+# y22, bins22, patches22 = plot_histogram(ax2, 'btaunu_si', df_M3MU3MQ3AU3_orig, "SuperIso", 
+#                                      xlabel, "p.d.f", title, errorbars=False, normed=True, 
+#                                      color='green', range=br_range, bins=bins, histtype="step", linewidth=1.5, log=True)
 
-# In[192]:
-
-# Make new series with diff between NMSSMTools and SuperIso without exp. con
-btaunu_without = df_M3MU3MQ3AU3_orig.btaunu.copy(deep=True)
-btaunu_si_without = df_M3MU3MQ3AU3_orig.btaunu_si
-btaunu_without = btaunu_without.subtract(btaunu_si_without)
-btaunu_without.describe()
-
-
-# In[193]:
-
-fig = plt.figure()
-fig.set_size_inches(14,6)
-
-# lin y axis
-ax2 = fig.add_subplot(1,2,1)
-title = r"$B^+ \to \tau^+\nu_{\tau}$ without exp. constraints"
-br_range = [2E-5, 2.8E-5]
-
-btaunu_val = btaunu_without.values
-weights = np.ones_like(btaunu_val)/len(btaunu_val)
-y, bins, patches = ax2.hist(btaunu_val, weights=weights, bins=25, 
-                            range=br_range, log=False, color='cornflowerblue', alpha=0.8)
-ax2.set_xlabel(r"${BR}_{NMSSMTools} - {BR}_{SuperIso}$")
-ax2.set_ylabel("p.d.f.")
-ax2.set_xlim(br_range)
-ax2.set_title(title, y=1.05)
-ax2.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
-ax2.minorticks_on()
-plt.tight_layout()
-
-# log y axis
-ax = fig.add_subplot(1,2,2)
-br_range = [2E-5, 2.8E-5]
-y, bins, patches = ax.hist(btaunu_val, weights=weights, bins=28, 
-                            range=br_range, log=True, color='cornflowerblue', alpha=0.8)
-ax.set_xlabel(r"${BR}_{NMSSMTools} - {BR}_{SuperIso}$")
-ax.set_ylabel("p.d.f.")
-ax.set_xlim(br_range)
-ax.set_title(title, y=1.05)
-ax.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
-ax.minorticks_on()
-plt.tight_layout()
+# ax2.add_patch(make_highlight_region(ax=ax2, limits=btaunu_lim, axis='x', 
+#                                label=r"Exp. $\pm 2\sigma$", alpha=0.2, facecolor='grey'))
+# # SM range
+# # ax2.add_patch(make_highlight_region(ax=ax2, limits=btaunu_sm_lim, axis='x', 
+# #                                label=r"SM. $\pm 2\sigma$ (new)", alpha=0.3, facecolor='palegreen'))
+# ax2.set_xlim(br_range)
+# ax2.set_ylim(bottom=5E-5)
+# ax2.legend(fontsize=20, loc=2)
+# ax2.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
+# fig.tight_layout()
 
 
-# In[194]:
+# In[236]:
 
-btaunu_mean = btaunu_without.mean()
-print "Mean difference: %.3e, and as a percentage of central exp. constraint: %.3f%%" %(btaunu_mean, 100.*(btaunu_mean/(0.5*sum(btaunu_lim))))
+# tot = len(df_M3MU3MQ3AU3_orig.index)
+# print 'Percentage of points failing lower bound: NMSSMTools: %.3f%%  SuperIso: %.3f%%' % (100.0*len(df_M3MU3MQ3AU3_orig[df_M3MU3MQ3AU3_orig.btaunu < btaunu_lim[0]].index)/tot, 100.*len(df_M3MU3MQ3AU3_orig[df_M3MU3MQ3AU3_orig.btaunu_si < btaunu_lim[0]].index)/tot)
 
 
-# So it is a fairly big difference on a point-by-point basis. However, we should also consider the fact that this is without any experimental constraints - how does it actually affect the parameter space we're interested in?
+# In[235]:
+
+# # Make new series with diff between NMSSMTools and SuperIso without exp. con
+# btaunu_without = df_M3MU3MQ3AU3_orig.btaunu.copy(deep=True)
+# btaunu_si_without = df_M3MU3MQ3AU3_orig.btaunu_si
+# btaunu_without = btaunu_without.subtract(btaunu_si_without)
+# btaunu_without.describe()
+
+
+# In[234]:
+
+# fig = plt.figure()
+# fig.set_size_inches(14,6)
+
+# # lin y axis
+# ax2 = fig.add_subplot(1,2,1)
+# title = r"$B^+ \to \tau^+\nu_{\tau}$ without exp. constraints"
+# br_range = [2E-5, 2.8E-5]
+
+# btaunu_val = btaunu_without.values
+# weights = np.ones_like(btaunu_val)/len(btaunu_val)
+# y, bins, patches = ax2.hist(btaunu_val, weights=weights, bins=25, 
+#                             range=br_range, log=False, color='cornflowerblue', alpha=0.8)
+# ax2.set_xlabel(r"${BR}_{NMSSMTools} - {BR}_{SuperIso}$")
+# ax2.set_ylabel("p.d.f.")
+# ax2.set_xlim(br_range)
+# ax2.set_title(title, y=1.05)
+# ax2.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
+# ax2.minorticks_on()
+# plt.tight_layout()
+
+# # log y axis
+# ax = fig.add_subplot(1,2,2)
+# br_range = [2E-5, 2.8E-5]
+# y, bins, patches = ax.hist(btaunu_val, weights=weights, bins=28, 
+#                             range=br_range, log=True, color='cornflowerblue', alpha=0.8)
+# ax.set_xlabel(r"${BR}_{NMSSMTools} - {BR}_{SuperIso}$")
+# ax.set_ylabel("p.d.f.")
+# ax.set_xlim(br_range)
+# ax.set_title(title, y=1.05)
+# ax.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
+# ax.minorticks_on()
+# plt.tight_layout()
+
+
+# In[233]:
+
+# btaunu_mean = btaunu_without.mean()
+# print "Mean difference: %.3e, and as a percentage of central exp. constraint: %.3f%%" %(btaunu_mean, 100.*(btaunu_mean/(0.5*sum(btaunu_lim))))
+
