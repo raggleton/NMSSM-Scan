@@ -74,7 +74,7 @@
 # 
 # **Comment 3**: I have not investigated if applying other experimental constraints affects the distributions. One could imagine that by requiring a particualr set of experimental cosntraints to be passed, one would be forced into a particular region of phase space, thereby invalidating the conclusions (see Comment 1).
 
-# In[164]:
+# In[1]:
 
 import pandas as pd
 import numpy as np
@@ -103,7 +103,7 @@ mpl.rcParams['legend.framealpha'] = 0.6
 mpl.rcParams.update({'font.size': 24, 'font.family': 'STIXGeneral', 'mathtext.fontset': 'stix'})
 
 
-# In[227]:
+# In[2]:
 
 from common_plots import *
 
@@ -122,12 +122,12 @@ df_M3MU3MQ3AU3_h1SM = store_M3MU3MQ3AU3_scan.full12loop_good_posMuMagMom_planckU
 store_M3MU3MQ3AU3_scan.close()
 
 
-# In[165]:
+# In[4]:
 
 print 'Without exp. constraints:', len(df_M3MU3MQ3AU3_orig.index), ', with exp. constraints:', len(df_M3MU3MQ3AU3_pass_all.index)
 
 
-# In[166]:
+# In[5]:
 
 def calc_num_could_pass(df, var1, var2, limits):
     """
@@ -151,7 +151,7 @@ def calc_num_could_pass(df, var1, var2, limits):
 
 # #$BR(b\to s\gamma)$
 
-# In[167]:
+# In[55]:
 
 # central experimental value +- 2 sigma
 bsgamma_lim = [2.99E-4, 3.87E-4]
@@ -159,9 +159,9 @@ bsgamma_lim = [2.99E-4, 3.87E-4]
 
 # Summary of the BRs, comparing NMSSMTools (`bsgamma`) and SuperIso (`bsgamma_si`) without experimental constraints:
 
-# In[168]:
+# In[27]:
 
-df_M3MU3MQ3AU3_orig.loc[:, ['bsgamma', 'bsgamma_si']].describe()
+df_M3MU3MQ3AU3_orig.loc[:, ['bsgamma', 'bsgamma_si']].describe(percentiles=[.05, .25, .75, .95])
 
 
 # First we plot the distributions of each value:
@@ -220,13 +220,13 @@ fig.tight_layout()
 
 # We can also look at the difference on a point-by-point basis, i.e. for each parameter point calculate BR using both NMSSMTools and SuperIso, and compare:
 
-# In[171]:
+# In[28]:
 
 # Make new series with diff between NMSSMTools and SuperIso without exp. con
 bsgamma_without = df_M3MU3MQ3AU3_orig.bsgamma.copy(deep=True)
 bsgamma_si_without = df_M3MU3MQ3AU3_orig.bsgamma_si
 bsgamma_without = bsgamma_without.subtract(bsgamma_si_without)
-bsgamma_without.describe()
+bsgamma_without.describe(percentiles=[.05, .25, .75, .95])
 
 
 # In[207]:
@@ -276,7 +276,7 @@ print "%.3f%% more events (without other exp. constraints) would have passed usi
 
 # One should note that NMSSMTools tends to assign a large theoretical uncertainty to the BR, $\delta_{theoretical}^{BR}$, such that even if the BR falls above the upper limit (3.87E-4), $BR-\delta_{theoretical}^{BR}$ can easily bring it below the upper limit. This can be seen when we plot the BR with and without the BR constraint (taking the BR from NMSSMTools and ignoring all other experimental constraints), and comparing against the upper limit applied in NMSSMTools (grey band).
 
-# In[229]:
+# In[57]:
 
 fig = plt.figure()
 fig.set_size_inches(14,6)
@@ -322,11 +322,11 @@ fig.tight_layout()
 
 # Thus, the theoretical uncertainty is as large as (5.776 - 3.87)E-4 = 1.9E-4 (compare it with the $\pm 2 \sigma$ band size, $0.44\times 10^{-4}$). Therefore, the actual inclusion band is dominated by the theoreical uncertainty, and the number of points that would have have passed instead of failed (or vice versa) is much smaller. If we assume that we can extend the inclusion band by the difference between the point with the largest BR passing the constraint and the upper limit on the exp. constraint, then the count is:
 
-# In[217]:
+# In[58]:
 
 print "Now including maximum theoretical uncertainty:"
 theory = max(df_pass_bsgamma.bsgamma)-bsgamma_lim[1]
-# print theory
+print "Maximum theoretical error:", theory
 below_bsgamma, above_bsgamma = calc_num_could_pass(df_M3MU3MQ3AU3_orig, "bsgamma", "bsgamma_si", [bsgamma_lim[0]-theory, bsgamma_lim[1]+theory])
 # print below_bsgamma, above_bsgamma
 below_bsgamma2, above_bsgamma2 = calc_num_could_pass(df_M3MU3MQ3AU3_orig, "bsgamma_si", "bsgamma", [bsgamma_lim[0]-theory, bsgamma_lim[1]+theory])
@@ -339,7 +339,7 @@ print "%.3f%% more events (without other exp. constraints) would have passed usi
 
 # #$BR(B_s \to \mu \mu)$
 
-# In[175]:
+# In[54]:
 
 # central experimental value +- 2 sigma
 bsmumu_lim = [1.2E-9, 5.2E-9]
@@ -351,9 +351,9 @@ bsmumu_sm_lim = [3.2E-9 ,4.12E-9]
 
 # Summary of the BRs, comparing NMSSMTools (`bsmumu`) and SuperIso (`bsmumu_si`) without experimental constraints:
 
-# In[176]:
+# In[29]:
 
-df_M3MU3MQ3AU3_orig.loc[:, ['bsmumu', 'bsmumu_si']].describe()
+df_M3MU3MQ3AU3_orig.loc[:, ['bsmumu', 'bsmumu_si']].describe(percentiles=[.05, .25, .75, .95])
 
 
 # We should look at the median, rather than the mean here, since some **very** large values of BR completely distort the mean.
@@ -421,13 +421,13 @@ fig.tight_layout()
 
 # Let's look at the distributions on a point-by-point basis like before:
 
-# In[178]:
+# In[30]:
 
 # Make new series with diff between NMSSMTools and SuperIso without exp. con
 bsmumu_without = df_M3MU3MQ3AU3_orig.bsmumu.copy(deep=True)
 bsmumu_si_without = df_M3MU3MQ3AU3_orig.bsmumu_si
 bsmumu_without = bsmumu_without.subtract(bsmumu_si_without)
-bsmumu_without.describe()
+bsmumu_without.describe(percentiles=[.05, .25, .75, .95])
 
 
 # In[206]:
@@ -500,15 +500,15 @@ print "%.3f%% more events (without other exp. constraints) would have passed usi
 
 # NB: this section is slightly moot, given we ignore the lower bound on $\Delta a_{\mu}$, and there are not points above the upper bound.
 
-# In[181]:
+# In[52]:
 
 # central experimental value +- 2 sigma
 del_a_mu_lim = [8.77306222E-10, 4.61144414E-09]
 
 
-# In[182]:
+# In[31]:
 
-df_M3MU3MQ3AU3_orig.loc[:, ["Del_a_mu", "a_mu_si"]].describe()
+df_M3MU3MQ3AU3_orig.loc[:, ["Del_a_mu", "a_mu_si"]].describe(percentiles=[.05, .25, .75, .95])
 
 
 # First we plot the distributions of each value:
@@ -567,13 +567,13 @@ fig.tight_layout()
 
 # Let's look at the distributions on a point-by-point basis like before:
 
-# In[184]:
+# In[32]:
 
 # Make new series with diff between NMSSMTools and SuperIso without exp. con
 del_a_mu_without = df_M3MU3MQ3AU3_orig.Del_a_mu.copy(deep=True)
 del_a_mu_si_without = df_M3MU3MQ3AU3_orig.a_mu_si
 del_a_mu_without = del_a_mu_without.subtract(del_a_mu_si_without)
-del_a_mu_without.describe()
+del_a_mu_without.describe(percentiles=[.05, .25, .75, .95])
 
 
 # In[219]:
@@ -634,11 +634,11 @@ print "%.3f%% more events (without other exp. constraints) would have passed usi
 
 # Again, this does not take into account theoretical uncertainties. To show the size of theoretical uncertainties, we can find the smallest $\Delta a_{\mu}$ that still passes the lower bound.
 
-# In[220]:
+# In[53]:
 
 df_M3MU3MQ3AU3_pass_del_a_mu = df_M3MU3MQ3AU3_orig[~df_M3MU3MQ3AU3_orig.constraints.str.contains("Muon magn. mom. more than 2 sigma away")]
 print "Smallest del_a_mu passing g-2 constraint:", min(df_M3MU3MQ3AU3_pass_del_a_mu.Del_a_mu)
-print "Lower bount on g-2:", del_a_mu_lim[0]
+print "Lower bound on g-2:", del_a_mu_lim[0]
 print "Size of theoretical uncertainty:", abs(min(df_M3MU3MQ3AU3_pass_del_a_mu.Del_a_mu) - del_a_mu_lim[0])
 
 
@@ -656,125 +656,164 @@ print "%.3f%% more events (without other exp. constraints) would have passed usi
 
 # **Conclusion**: We can therefore conlude that, even in the event we apply a lower bound on $\Delta a_{\mu}$, it would make little difference if the value came from NMSSMTools or SuperIso. The difference between them is generally small.
 
-# #$B^+ \to \tau^+ \nu_{\tau}$ - IGNORE THIS SECTION
+# #$B^+ \to \tau^+ \nu_{\tau}$
 
-# This is erroneous, ended up comparing $B^+ \to \tau^+ \nu$ in NMSSMTools to $B_u \to \tau\nu$ in SuperIso, not the same thing (I believe).
+# In[9]:
 
-# In[239]:
-
-# # central experimental value +- 2 sigma
-# btaunu_lim = [0.7E-4, 1.58E-4]
-# # SM prediction, ±2 sigma bands
-# btaunu_sm_central = 3.66E-9
-# btaunu_sm_lim = [3.2E-9 ,4.12E-9]
+# central experimental value +- 2 sigma
+btaunu_lim = [0.7E-4, 1.58E-4]
 
 
-# In[238]:
+# Summary of the BRs from NMSSMTools (`btaunu`) and SuperIso (`btaunu_si`) without any experimental constraints.
 
-# df_M3MU3MQ3AU3_orig.loc[:, ['btaunu', 'btaunu_si']].describe()
+# In[26]:
 
-
-# In[237]:
-
-# fig = plt.figure()
-# fig.set_size_inches(14,6)
-# title = r"Without exp. constraints"
-# xlabel = r"$BR(B^+\to \tau^+\nu_{\tau})$"
-# bins = 100
-# br_range = [0.4E-4, 1.2E-4]
-
-# # Lin y axis
-# ax1 = fig.add_subplot(1,2,1)
-# y11, bins11, patches11 = plot_histogram(ax1, 'btaunu', df_M3MU3MQ3AU3_orig, "NMSSMTools", 
-#                                      xlabel, "p.d.f", title, errorbars=False, normed=True, 
-#                                      color='red', range=br_range, bins=bins, histtype="step", linewidth=1.5)
-# y21, bins21, patches21 = plot_histogram(ax1, 'btaunu_si', df_M3MU3MQ3AU3_orig, "SuperIso", 
-#                                      xlabel, "p.d.f", title, errorbars=False, normed=True, 
-#                                      color='green', range=br_range, bins=bins, histtype="step", linewidth=1.5)
-
-# ax1.add_patch(make_highlight_region(ax=ax1, limits=btaunu_lim, axis='x', 
-#                                label=r"Exp. $\pm 2\sigma$", alpha=0.2, facecolor='grey'))
-# # SM range
-# # ax1.add_patch(make_highlight_region(ax=ax1, limits=btaunu_sm_lim, axis='x', 
-# #                                label=r"SM. $\pm 2\sigma$ (new)", alpha=0.3, facecolor='palegreen'))
-# ax1.set_xlim(br_range)
-# ax1.legend(fontsize=20, loc=2)
-# ax1.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
-
-# # log y axis
-# ax2 = fig.add_subplot(1,2,2)
-# y12, bins12, patches12 = plot_histogram(ax2, 'btaunu', df_M3MU3MQ3AU3_orig, "NMSSMTools", 
-#                                      xlabel, "p.d.f", title, errorbars=False, normed=True, 
-#                                      color='red', range=br_range, bins=bins, histtype="step", linewidth=1.5, log=True)
-# y22, bins22, patches22 = plot_histogram(ax2, 'btaunu_si', df_M3MU3MQ3AU3_orig, "SuperIso", 
-#                                      xlabel, "p.d.f", title, errorbars=False, normed=True, 
-#                                      color='green', range=br_range, bins=bins, histtype="step", linewidth=1.5, log=True)
-
-# ax2.add_patch(make_highlight_region(ax=ax2, limits=btaunu_lim, axis='x', 
-#                                label=r"Exp. $\pm 2\sigma$", alpha=0.2, facecolor='grey'))
-# # SM range
-# # ax2.add_patch(make_highlight_region(ax=ax2, limits=btaunu_sm_lim, axis='x', 
-# #                                label=r"SM. $\pm 2\sigma$ (new)", alpha=0.3, facecolor='palegreen'))
-# ax2.set_xlim(br_range)
-# ax2.set_ylim(bottom=5E-5)
-# ax2.legend(fontsize=20, loc=2)
-# ax2.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
-# fig.tight_layout()
+df_M3MU3MQ3AU3_orig.loc[:, ['btaunu', 'btaunu_si']].describe(percentiles=[.05, .25, .75, .95])
 
 
-# In[236]:
+# Notice that the medians are quite different. First plot the distributions from each:
 
-# tot = len(df_M3MU3MQ3AU3_orig.index)
-# print 'Percentage of points failing lower bound: NMSSMTools: %.3f%%  SuperIso: %.3f%%' % (100.0*len(df_M3MU3MQ3AU3_orig[df_M3MU3MQ3AU3_orig.btaunu < btaunu_lim[0]].index)/tot, 100.*len(df_M3MU3MQ3AU3_orig[df_M3MU3MQ3AU3_orig.btaunu_si < btaunu_lim[0]].index)/tot)
+# In[49]:
 
+fig = plt.figure()
+fig.set_size_inches(14,6)
+title = r"Without exp. constraints"
+xlabel = r"$BR(B^+\to \tau^+\nu_{\tau})$"
+bins = 100
+br_range = [0.4E-4, 1.2E-4]
 
-# In[235]:
+# Lin y axis
+ax1 = fig.add_subplot(1,2,1)
+y11, bins11, patches11 = plot_histogram(ax1, var='btaunu', df=df_M3MU3MQ3AU3_orig, label="NMSSMTools", 
+                                     xlabel=xlabel, ylabel="p.d.f", title=title, errorbars=False, normed=True, 
+                                     color='red', range=br_range, bins=bins, histtype="step", linewidth=1.5)
+y21, bins21, patches21 = plot_histogram(ax1, var='btaunu_si', df=df_M3MU3MQ3AU3_orig, label="SuperIso", 
+                                     xlabel=xlabel, ylabel="p.d.f", title=title, errorbars=False, normed=True, 
+                                     color='green', range=br_range, bins=bins, histtype="step", linewidth=1.5)
 
-# # Make new series with diff between NMSSMTools and SuperIso without exp. con
-# btaunu_without = df_M3MU3MQ3AU3_orig.btaunu.copy(deep=True)
-# btaunu_si_without = df_M3MU3MQ3AU3_orig.btaunu_si
-# btaunu_without = btaunu_without.subtract(btaunu_si_without)
-# btaunu_without.describe()
+ax1.add_patch(make_highlight_region(ax=ax1, limits=btaunu_lim, axis='x', 
+                               label=r"Exp. $\pm 2\sigma$", alpha=0.2, facecolor='grey'))
+ax1.set_xlim(br_range)
+ax1.legend(fontsize=18, loc=2)
+ax1.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
 
+# log y axis
+ax2 = fig.add_subplot(1,2,2)
+y12, bins12, patches12 = plot_histogram(ax2, var='btaunu', df=df_M3MU3MQ3AU3_orig, label="NMSSMTools", 
+                                     xlabel=xlabel, ylabel="p.d.f", title=title, errorbars=False, normed=True, 
+                                     color='red', range=br_range, bins=bins, histtype="step", linewidth=1.5, log=True)
+y22, bins22, patches22 = plot_histogram(ax2, var='btaunu_si', df=df_M3MU3MQ3AU3_orig, label="SuperIso", 
+                                     xlabel=xlabel, ylabel="p.d.f", title=title, errorbars=False, normed=True, 
+                                     color='green', range=br_range, bins=bins, histtype="step", linewidth=1.5, log=True)
 
-# In[234]:
-
-# fig = plt.figure()
-# fig.set_size_inches(14,6)
-
-# # lin y axis
-# ax2 = fig.add_subplot(1,2,1)
-# title = r"$B^+ \to \tau^+\nu_{\tau}$ without exp. constraints"
-# br_range = [2E-5, 2.8E-5]
-
-# btaunu_val = btaunu_without.values
-# weights = np.ones_like(btaunu_val)/len(btaunu_val)
-# y, bins, patches = ax2.hist(btaunu_val, weights=weights, bins=25, 
-#                             range=br_range, log=False, color='cornflowerblue', alpha=0.8)
-# ax2.set_xlabel(r"${BR}_{NMSSMTools} - {BR}_{SuperIso}$")
-# ax2.set_ylabel("p.d.f.")
-# ax2.set_xlim(br_range)
-# ax2.set_title(title, y=1.05)
-# ax2.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
-# ax2.minorticks_on()
-# plt.tight_layout()
-
-# # log y axis
-# ax = fig.add_subplot(1,2,2)
-# br_range = [2E-5, 2.8E-5]
-# y, bins, patches = ax.hist(btaunu_val, weights=weights, bins=28, 
-#                             range=br_range, log=True, color='cornflowerblue', alpha=0.8)
-# ax.set_xlabel(r"${BR}_{NMSSMTools} - {BR}_{SuperIso}$")
-# ax.set_ylabel("p.d.f.")
-# ax.set_xlim(br_range)
-# ax.set_title(title, y=1.05)
-# ax.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
-# ax.minorticks_on()
-# plt.tight_layout()
+ax2.add_patch(make_highlight_region(ax=ax2, limits=btaunu_lim, axis='x', 
+                               label=r"Exp. $\pm 2\sigma$", alpha=0.2, facecolor='grey'))
+ax2.set_xlim(br_range)
+ax2.set_ylim(bottom=5E-5)
+ax2.legend(fontsize=18, loc=2)
+ax2.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
+fig.tight_layout()
 
 
-# In[233]:
+# The distributions have the same shape, but there is a large offset between them. We can see that the lower values from SuperIso tend to fail the constraint more often. To quantify this:
 
-# btaunu_mean = btaunu_without.mean()
-# print "Mean difference: %.3e, and as a percentage of central exp. constraint: %.3f%%" %(btaunu_mean, 100.*(btaunu_mean/(0.5*sum(btaunu_lim))))
+# In[11]:
 
+tot = len(df_M3MU3MQ3AU3_orig.index)
+print 'Percentage of points failing lower bound: NMSSMTools: %.3f%%  SuperIso: %.3f%%' % (100.0*len(df_M3MU3MQ3AU3_orig[df_M3MU3MQ3AU3_orig.btaunu < btaunu_lim[0]].index)/tot, 100.*len(df_M3MU3MQ3AU3_orig[df_M3MU3MQ3AU3_orig.btaunu_si < btaunu_lim[0]].index)/tot)
+
+
+# Let us look at this on a point-by-point basis, looking at the difference between the values from NMSSMTools and SuperIso for each point:
+
+# In[25]:
+
+# Make new series with diff between NMSSMTools and SuperIso without exp. con
+btaunu_without = df_M3MU3MQ3AU3_orig.btaunu.copy(deep=True)
+btaunu_si_without = df_M3MU3MQ3AU3_orig.btaunu_si
+btaunu_without = btaunu_without.subtract(btaunu_si_without)
+btaunu_without.describe(percentiles=[.05, .25, .75, .95])
+
+
+# In[48]:
+
+fig = plt.figure()
+fig.set_size_inches(14,6)
+
+# lin y axis
+ax2 = fig.add_subplot(1,2,1)
+title = r"$B^+ \to \tau^+\nu_{\tau}$ without exp. constraints"
+br_range = [2.35E-5, 2.65E-5]
+
+btaunu_val = btaunu_without.values
+weights = np.ones_like(btaunu_val)/len(btaunu_val)
+y, bins, patches = ax2.hist(btaunu_val, weights=weights, bins=30, 
+                            range=br_range, log=False, color='cornflowerblue', alpha=0.8)
+make_highlight_region(ax2, [btaunu_lim[0]-(0.5*sum(btaunu_lim)), btaunu_lim[1]-(0.5*sum(btaunu_lim))], 
+                      'x', color='gray', alpha=0.2, label=r"$\pm 2 \sigma$ exp. uncertainty")
+add_median_line(array=btaunu_val, c='blue', lw=1.5, ls="--", label="Median")
+ax2.set_xlabel(r"${BR}_{NMSSMTools} - {BR}_{SuperIso}$")
+ax2.set_ylabel("p.d.f.")
+ax2.set_xlim(br_range)
+ax2.set_title(title, y=1.05)
+ax2.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
+ax2.minorticks_on()
+plt.legend(loc='best', fontsize=18)
+plt.tight_layout()
+
+# log y axis
+ax = fig.add_subplot(1,2,2)
+br_range = [0, 2.8E-5]
+y, bins, patches = ax.hist(btaunu_val, weights=weights, bins=28, 
+                            range=br_range, log=True, color='cornflowerblue', alpha=0.8)
+make_highlight_region(ax, [btaunu_lim[0]-(0.5*sum(btaunu_lim)), btaunu_lim[1]-(0.5*sum(btaunu_lim))], 
+                      'x', color='gray', alpha=0.2, label=r"$\pm 2 \sigma$ exp. uncertainty")
+add_median_line(array=btaunu_val, c='blue', lw=1.5, ls="--", label="Median")
+ax.set_xlabel(r"${BR}_{NMSSMTools} - {BR}_{SuperIso}$")
+ax.set_ylabel("p.d.f.")
+ax.set_xlim(br_range)
+ax.set_title(title, y=1.05)
+ax.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
+ax.minorticks_on()
+plt.legend(loc='best', fontsize=18)
+plt.tight_layout()
+
+
+# In[24]:
+
+btaunu_mean = btaunu_without.mean()
+print "Mean difference: %.3e, and as a percentage of central exp. constraint (%.3e): %.3f%%" %(btaunu_mean, 0.5*sum(btaunu_lim), 100.*(btaunu_mean/(0.5*sum(btaunu_lim))))
+
+
+# There is a **large** difference between the two distributions. The shapes are the same, but there is a overall constant difference. However we can also see that they are both well within the experimental uncertainties. How much difference would it make using the SuperIso value? (ignoring the theoretical uncertainty first)
+
+# In[33]:
+
+below_btaunu, _ = calc_num_could_pass(df_M3MU3MQ3AU3_orig, "btaunu", "btaunu_si", btaunu_lim)
+below_btaunu2, above_btaunu2 = calc_num_could_pass(df_M3MU3MQ3AU3_orig, "btaunu_si", "btaunu", btaunu_lim)
+print "%.3f%% more events (without other exp. constraints) would have passed using SuperIso than NMSSMTools" % (100.*below_btaunu/len(df_M3MU3MQ3AU3_orig.index))
+print "%.3f%% more events (without other exp. constraints) would have passed using NMSSMTools than SuperIso" % (100.*(below_btaunu2+above_btaunu2)/len(df_M3MU3MQ3AU3_orig.index))
+
+
+# We can also estimate the size of the theoretical uncertainty that NMSSMTools assigns to the BR:
+
+# In[50]:
+
+df_M3MU3MQ3AU3_pass_btaunu = df_M3MU3MQ3AU3_orig[~df_M3MU3MQ3AU3_orig.constraints.str.contains(r"B\+ \-> tau nu_tau more than 2 sigma away")]
+# df_M3MU3MQ3AU3_pass_btaunu.constraints
+print "Smallest BR passing BR(B->tau nu) constraint:", min(df_M3MU3MQ3AU3_pass_btaunu.btaunu)
+print "Lower bound on BR(B->tau nu):", btaunu_lim[0]
+print "Size of theoretical uncertainty:", abs(min(df_M3MU3MQ3AU3_pass_btaunu.btaunu) - btaunu_lim[0])
+
+
+# Interestingly, this is about the same size as the median difference between SuperIso and NMSSMTools. Let's repeat the previous estimate but now with the theoretical uncertainty included (assuming we can extend the lower limit by the max theoretical uncertainty)
+
+# In[40]:
+
+theory_btaunu = abs(min(df_M3MU3MQ3AU3_pass_btaunu.btaunu) - btaunu_lim[0])
+below_btaunu, _ = calc_num_could_pass(df_M3MU3MQ3AU3_orig, "btaunu", "btaunu_si", [btaunu_lim[0]-theory_btaunu, btaunu_lim[1]+theory_btaunu])
+below_btaunu2, above_btaunu2 = calc_num_could_pass(df_M3MU3MQ3AU3_orig, "btaunu_si", "btaunu", [btaunu_lim[0]-theory_btaunu, btaunu_lim[1]+theory_btaunu])
+print "%.3f%% more events (without other exp. constraints) would have passed using SuperIso than NMSSMTools" % (100.*below_btaunu/len(df_M3MU3MQ3AU3_orig.index))
+print "%.3f%% more events (without other exp. constraints) would have passed using NMSSMTools than SuperIso" % (100.*(below_btaunu2+above_btaunu2)/len(df_M3MU3MQ3AU3_orig.index))
+
+
+# So in the grand scheme of things, it makes very little difference.
