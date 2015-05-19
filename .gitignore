@@ -18,3 +18,5 @@ data
 *.h5
 *.tmp
 *.csv
+*.html
+.idea
