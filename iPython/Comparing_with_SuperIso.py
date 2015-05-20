@@ -7,7 +7,7 @@
 # 
 # - $BR(B_s \to \mu\mu)$ - $[1.2, 5.2]\times 10^{-9}$ - **NEW MAY 2015 LIMIT** $[1.6, 4.2]\times 10^{-9}$ - have stuck with old one in NMSSMTools for now but makes virtually no difference
 # 
-# - $BR(B^+ \to \tau^+ \nu_{\tau})$ - $[0.70, 1.58]\times 10^{-4}$ - **_Not calculated by SuperIso? Does $B_u\to\tau\nu_{\tau}$ instead but calls if B->taunu urgh_**
+# - $BR(B^+ \to \tau^+ \nu_{\tau})$ - $[0.70, 1.58]\times 10^{-4}$
 # 
 # - $\Delta M_d$ - $[5.04, 5.16]\times 10^{-1}\ \mathrm{ps}^{-1}$ - **_Not calculated by SuperIso_**
 # 
@@ -15,7 +15,7 @@
 # 
 # - $\Delta a_{\mu}$ - $[0.8773, 4.611]\times 10^{-9}$
 # 
-# whereas SuperIso calculates a much larger range of observables. Thus, we will only compare those 3 common observables listed above. One could also add in additional experimental constraints based on the extra observables SuperIso calculates, this is on the TODO list, although will takes some time to find references for all the experimental measurements.
+# whereas SuperIso calculates a much larger range of observables. Thus, we will only compare those 4 common observables listed above. One could also add in additional experimental constraints based on the extra observables SuperIso calculates, this is on the TODO list, although will takes some time to find references for all the experimental measurements.
 # 
 # 
 # For the plots below, the following parameter space was scanned:
