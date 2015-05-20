@@ -658,7 +658,7 @@ print "%.3f%% more events (without other exp. constraints) would have passed usi
 
 # #$B^+ \to \tau^+ \nu_{\tau}$
 
-# In[9]:
+# In[6]:
 
 # central experimental value +- 2 sigma
 btaunu_lim = [0.7E-4, 1.58E-4]
@@ -666,14 +666,14 @@ btaunu_lim = [0.7E-4, 1.58E-4]
 
 # Summary of the BRs from NMSSMTools (`btaunu`) and SuperIso (`btaunu_si`) without any experimental constraints.
 
-# In[26]:
+# In[7]:
 
 df_M3MU3MQ3AU3_orig.loc[:, ['btaunu', 'btaunu_si']].describe(percentiles=[.05, .25, .75, .95])
 
 
 # Notice that the medians are quite different. First plot the distributions from each:
 
-# In[49]:
+# In[8]:
 
 fig = plt.figure()
 fig.set_size_inches(14,6)
@@ -717,7 +717,7 @@ fig.tight_layout()
 
 # The distributions have the same shape, but there is a large offset between them. We can see that the lower values from SuperIso tend to fail the constraint more often. To quantify this:
 
-# In[11]:
+# In[9]:
 
 tot = len(df_M3MU3MQ3AU3_orig.index)
 print 'Percentage of points failing lower bound: NMSSMTools: %.3f%%  SuperIso: %.3f%%' % (100.0*len(df_M3MU3MQ3AU3_orig[df_M3MU3MQ3AU3_orig.btaunu < btaunu_lim[0]].index)/tot, 100.*len(df_M3MU3MQ3AU3_orig[df_M3MU3MQ3AU3_orig.btaunu_si < btaunu_lim[0]].index)/tot)
@@ -725,7 +725,7 @@ print 'Percentage of points failing lower bound: NMSSMTools: %.3f%%  SuperIso: %
 
 # Let us look at this on a point-by-point basis, looking at the difference between the values from NMSSMTools and SuperIso for each point:
 
-# In[25]:
+# In[11]:
 
 # Make new series with diff between NMSSMTools and SuperIso without exp. con
 btaunu_without = df_M3MU3MQ3AU3_orig.btaunu.copy(deep=True)
@@ -817,3 +817,28 @@ print "%.3f%% more events (without other exp. constraints) would have passed usi
 
 
 # So in the grand scheme of things, it makes very little difference.
+
+# In[37]:
+
+# Make new series with ratio of NMSSMTools : SuperIso values, wihtout exp. constraints.
+# btaunu_without = df_M3MU3MQ3AU3_orig.btaunu.copy(deep=True)
+# btaunu_si_without = df_M3MU3MQ3AU3_orig.btaunu_si
+btaunu_without_ratio = btaunu_without.divide(btaunu_si_without)
+btaunu_without_ratio.describe(percentiles=[.05, .25, .75, .95])
+
+
+# In[32]:
+
+fig = plt.figure(1)
+fig.set_size_inches(8,6)
+ax = fig.add_subplot(1,1,1)
+ratio_range = [0.25, 0.55]
+y, bins, patches = plot_histogram(ax, array=btaunu_without_ratio, label="", 
+                                  xlabel=r"$BR_{\mathrm{NMSSMTools}}:BR_{\mathrm{SuperIso}}$", ylabel="p.d.f.", 
+                                  title="", errorbars=False, normed=True, range=ratio_range, 
+                                  bins=60, log=True, color='purple')
+plt.xlim(ratio_range)
+plt.minorticks_on()
+
+
+# Thus there isn't just a simple factor of $2\pi$ missing in one program, although there does seem to be a very common ratio between the points.
