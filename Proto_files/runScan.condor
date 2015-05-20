@@ -1,4 +1,4 @@
-Executable = /storage/ra12451/NMSSM-Scan/Proto_files/setupRun.sh
+Executable = /users/ra12451/NMSSM-Scan/Proto_files/setupRun.sh
 Universe = vanilla
 Output = logFiles/scan.$(cluster).$(process).out
 Error = logFiles/scan.$(cluster).$(process).err
@@ -13,7 +13,7 @@ request_memory = 500
 # use the ENV that is provided
 getenv = true
 initialdir = SEDINITIAL
-transfer_input_files = /storage/ra12451/NMSSMTools_4.5.1.tgz,/storage/ra12451/NMSSM-Scan/NMSSM_scan.pl,/storage/ra12451/NMSSM-Scan/Proto_files/inp_PROTO.dat,/storage/ra12451/NMSSMTools_4.5.1/run.patch,/storage/ra12451/superiso_v3.4.tgz
+transfer_input_files = /users/ra12451/NMSSMTools_4.5.1.tgz,/users/ra12451/NMSSM-Scan/NMSSM_scan.pl,/users/ra12451/NMSSM-Scan/Proto_files/inp_PROTO.dat,/users/ra12451/NMSSM-Scan/run.patch,/users/ra12451/superiso_v3.4.tgz
 transfer_output_files = NMSSM_scan.pl, paramRange.txt
 arguments =  /hdfs/user/ra12451/NMSSM-Scan/SEDOUTDIR $(process)
 

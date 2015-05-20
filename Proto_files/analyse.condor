@@ -1,4 +1,4 @@
-Executable = /storage/ra12451/NMSSM-Scan/Proto_files/analyse_condor.sh
+Executable = /users/ra12451/NMSSM-Scan/Proto_files/analyse_condor.sh
 Universe = vanilla
 Output = logFiles/analyse.$(cluster).$(process).out
 Error = logFiles/analyse.$(cluster).$(process).err
@@ -12,8 +12,8 @@ request_memory = 500
 
 # use the ENV that is provided
 getenv = true
-initialdir = /storage/ra12451/NMSSM-Scan/SEDJOBDIR
-transfer_input_files = /storage/ra12451/NMSSM-Scan/Analyse_scans.pl,/storage/ra12451/superiso_v3.4.tgz
+initialdir = /users/ra12451/NMSSM-Scan/SEDJOBDIR
+transfer_input_files = /users/ra12451/NMSSM-Scan/Analyse_scans.pl,/users/ra12451/superiso_v3.4.tgz
 arguments = SEDJOBDIR $(process)
 
 queue SEDNUM
