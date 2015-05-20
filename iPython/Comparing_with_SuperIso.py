@@ -89,7 +89,7 @@ get_ipython().magic(u'pylab inline')
 get_ipython().magic(u'load_ext autoreload')
 get_ipython().magic(u'autoreload 2')
 
-get_ipython().magic(u"config InlineBackend.figure_formats = 'pdf', 'png'")
+get_ipython().magic(u"config InlineBackend.figure_formats = 'png',")
 
 mpl.rcParams['figure.figsize'] = (7.0, 4.0)  # default size of plots
 mpl.rcParams['axes.labelsize'] = 30
@@ -816,29 +816,87 @@ print "%.3f%% more events (without other exp. constraints) would have passed usi
 print "%.3f%% more events (without other exp. constraints) would have passed using NMSSMTools than SuperIso" % (100.*(below_btaunu2+above_btaunu2)/len(df_M3MU3MQ3AU3_orig.index))
 
 
-# So in the grand scheme of things, it makes very little difference.
+# So in the grand scheme of things, it shouldn't make a huge difference. However the large discrepancy between values in general **is** worrying.
 
-# In[37]:
+# Let's look at the *ratio* BR(NMSSMTools):BR(SuperIso) instead between the two programs, on a point-by-point basis:
+
+# In[7]:
 
 # Make new series with ratio of NMSSMTools : SuperIso values, wihtout exp. constraints.
-# btaunu_without = df_M3MU3MQ3AU3_orig.btaunu.copy(deep=True)
-# btaunu_si_without = df_M3MU3MQ3AU3_orig.btaunu_si
-btaunu_without_ratio = btaunu_without.divide(btaunu_si_without)
+btaunu_without2 = df_M3MU3MQ3AU3_orig.btaunu.copy(deep=True)
+btaunu_si_without2 = df_M3MU3MQ3AU3_orig.btaunu_si
+btaunu_without_ratio = btaunu_without2.divide(btaunu_si_without2)
 btaunu_without_ratio.describe(percentiles=[.05, .25, .75, .95])
 
 
-# In[32]:
+# In[8]:
+
+get_ipython().magic(u"config InlineBackend.figure_formats = 'pdf', 'png'")
 
 fig = plt.figure(1)
 fig.set_size_inches(8,6)
 ax = fig.add_subplot(1,1,1)
-ratio_range = [0.25, 0.55]
+ratio_range = [0.6, 2]
 y, bins, patches = plot_histogram(ax, array=btaunu_without_ratio, label="", 
                                   xlabel=r"$BR_{\mathrm{NMSSMTools}}:BR_{\mathrm{SuperIso}}$", ylabel="p.d.f.", 
-                                  title="", errorbars=False, normed=True, range=ratio_range, 
-                                  bins=60, log=True, color='purple')
+                                  title="Ratio without exp. constraints", errorbars=False, normed=True, range=ratio_range, 
+                                  bins=56, log=True, color='purple')
 plt.xlim(ratio_range)
 plt.minorticks_on()
 
 
-# Thus there isn't just a simple factor of $2\pi$ missing in one program, although there does seem to be a very common ratio between the points.
+# Thus there isn't just a simple factor of $2\pi$ missing in one program, although there does seem to be a very common ratio between the points. So it's probably some comon factor, with some point-specific subtle correction.
+
+# From http://arxiv.org/pdf/hep-ph/0306037v2.pdf (which NMSSMTools refers to), the higher-order correction term $1/(1+\tilde{\epsilon}_0\tan\beta)$ *can* have a large impact for different $m_{H^{\pm}}$ or large $\tan\beta$. Let's see if this is the case:
+
+# In[30]:
+
+tgbeta_vals = df_M3MU3MQ3AU3_orig.tgbeta.values
+mhc_vals = df_M3MU3MQ3AU3_orig.mhc.values
+# print len(tgbeta_vals), len(mhc_vals), len(btaunu_without_ratio)
+
+get_ipython().magic(u"config InlineBackend.figure_formats = 'png',")
+
+fig = plt.figure(1)
+fig.set_size_inches(14,6)
+ax1 = fig.add_subplot(1,2,1)
+plt.scatter(x=tgbeta_vals, y=btaunu_without_ratio)
+plt.xlabel(r"$\tan \beta$")
+plt.ylabel(r"$BR_{\mathrm{NMSSMTools}}:BR_{\mathrm{SuperIso}}$")
+plt.xlim([0,50])
+plt.ylim([1,300])
+plt.minorticks_on()
+plt.yscale('log')
+plt.tight_layout()
+
+ax2 = fig.add_subplot(1,2,2)
+plt.scatter(x=mhc_vals, y=btaunu_without_ratio)
+plt.xlabel(r"$m_{H^{\pm}}$")
+plt.ylabel(r"$BR_{\mathrm{NMSSMTools}}:BR_{\mathrm{SuperIso}}$")
+plt.xlim([0,1000])
+plt.ylim([1,300])
+plt.yscale('log')
+plt.minorticks_on()
+plt.tight_layout()
+
+
+# So the largest differences are at large $\tan(\beta)$ and small $m_{H^{\pm}}$
+
+# In[62]:
+
+df_temp = pd.DataFrame({'tgbeta':tgbeta_vals, 'mhc': mhc_vals, 'ratio': btaunu_without_ratio})
+df_temp2 = df_temp[(df_temp.ratio>1.4) | (df_temp.ratio<1.2)]
+df_temp2.plot(kind='scatter', x='tgbeta', y='mhc', s=df_temp2.ratio*3)
+plt.xlabel(r"$\tan\beta$")
+plt.ylabel(r"$m_{H^{\pm}}$")
+plt.title("For points with ratio < 1.2 or ratio > 1.4, size $\sim$ ratio", y=1.05)
+# plt.tight_layout()
+plt.minorticks_on()
+
+
+# So we can see that points that have a larger difference between the 2 programs are confined to smaller $m_{H^{\pm}}$ and larger $\tan\beta$.
+
+# In[ ]:
+
+
+
