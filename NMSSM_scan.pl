@@ -178,7 +178,7 @@ for(my $icount = 0; $icount < $nfinal; $icount++){
   # writing the input files
   my $newInput = "inp_${unique}_${icount}.dat";
   my $inputCard = "${outDir}/${newInput}";
-  open(INPUT,	  ">$inputCard") or die;
+  open(INPUT,   ">$inputCard") or die;
 
   if ($icount % 500 == 0) {
     print("Making input card $inputCard\n");
@@ -210,6 +210,59 @@ for(my $icount = 0; $icount < $nfinal; $icount++){
 
   # remove input file to save space
   unlink "$inputCard";
+
+  #
+  # Do NMSSMCALC input file
+  #
+  # Read prototype NMSSMCALC input file into array so quicker
+  open(INPUT_PROTO, "$ScriptPath/inp_nmssmcalc_PROTO.dat") or die;
+  chomp(my @protoNMSSMCALC = (<INPUT_PROTO>));
+  close(INPUT_PROTO);
+
+  my $newInputNMSSMCALC = "inp_nmssmcalc_${unique}_${icount}.dat";
+  my $inputCardNMSSMCALC = "${outDir}/${newInputNMSSMCALC}";
+  open(INPUT,   ">$inputCardNMSSMCALC") or die;
+  if ($icount % 500 == 0) {
+    print("Making input card $inputCardNMSSMCALC\n");
+  }
+
+  foreach my $line (@protoNMSSMCALC) {
+    my $newline = $line;
+    $newline =~ s/SED_TGBETA/$tgbeta/g;
+    $newline =~ s/SED_LAMBDA/$lambda/g;
+    $newline =~ s/SED_KAPPA/$kappa/g;
+    $newline =~ s/SED_ALAMBDA/$alambda/g;
+    $newline =~ s/SED_AKAPPA/$akappa/g;
+    $newline =~ s/SED_MUEFF/$mueff/g;
+    $newline =~ s/SED_COMMENTS/$comments/g;
+    $newline =~ s/SED_M3/$m3/g;
+    $newline =~ s/SED_MQ3/$mq3/g;
+    $newline =~ s/SED_MU3/$mu3/g;
+    $newline =~ s/SED_MD3/$md3/g;
+    $newline =~ s/SED_AU3/$au3/g;
+    $newline =~ s/SED_AD3/$ad3/g;
+
+    $newline .= "\n";
+    print INPUT $newline;
+  }
+  close(INPUT);
+
+  # run NMSSMCALC with new input file
+  # because the FORTRAN inquire function only take RELATIVE not ABSOLUTE paths
+  # we have to convert out absolute path to a relative one.
+  # easiest way to do this is via python
+  # so we make a temp bash var that has the relpath
+  # Yes, this is ridiculous. Should prob just convert to using relpaths throughout?
+  my $outputNMSSMCALC = "${outDir}/nmssmcalc_${unique}_${icount}.dat";
+  my $relpathCalcIn = `cd nmssmcalc && python -c "import os.path; print os.path.relpath('$inputCardNMSSMCALC')"`;
+  chomp $relpathCalcIn; # important to strip off newlines, otherwise ./run fails
+  my $relpathCalcOut = `cd nmssmcalc && python -c "import os.path; print os.path.relpath('$outputNMSSMCALC')"`;
+  chomp $relpathCalcOut;
+  system("cd nmssmcalc && ./run $relpathCalcIn slha.in $relpathCalcOut");
+
+  # remove input file
+  unlink "$inputCardNMSSMCALC";
+
 
 } # end loop on number of random points to scan
 

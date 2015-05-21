@@ -2,7 +2,7 @@
 host=`hostname`
 echo "Running on $host"
 echo "With parameters: $@"
-# parameters are: [job dir on hdfs] [batch number]
+# parameters are: [job dir to put output] [batch number]
 jobdir=$1
 batchNum=$2
 
@@ -11,14 +11,26 @@ batchNum=$2
 ###################
 tar -xvzf NMSSMTools_*.tgz
 cd NMSSMTools_*
-# patch bug in moving output files
+# patch bug in moving output files due to relpaths eurgh
 patch run < ../run.patch
 make init
 make
 cd ..
-ls
+# ls
 
-# Setup SusHi
+###################
+# Setup NMSSMCALC
+###################
+mkdir nmssmcalc
+tar -xvzf nmssmcalc.tar.gz -C nmssmcalc
+cd nmssmcalc
+make
+cd ..
+# ls
+
+###################
+# Setup SusHi - BROKEN
+###################
 # Need to tell it where LHAPDF is - check this is right!
 # make sure that the gcc lhapdf was compiled against matches the version that
 # gfortran was made with, otherwise you're gonna have a bad time
@@ -37,18 +49,20 @@ perl NMSSM_scan.pl $PWD $2
 ###################
 # Setup SuperIso
 ###################
-tar -xvzf superiso_v*.tgz
-cd superiso*
-make slha
-# Run SuperIso over files and output screen info to file
-for s in ../spectr*.dat;
-do
-    id=`basename $s`
-    id=${id%.dat}
-    id=${id#spectr}
-    ./slha.x $s > ../superiso$id.dat
-done
-cd ..
+# tar -xvzf superiso_v*.tgz
+# cd superiso*
+# make slha
+# # Run SuperIso over files and output screen info to file
+# for s in ../spectr*.dat;
+# do
+#     id=`basename $s`
+#     id=${id%.dat}
+#     id=${id#spectr}
+#     ./slha.x $s > ../superiso$id.dat
+# done
+# cd ..
+# ls
+
 ls
 
 ###################
@@ -56,11 +70,17 @@ ls
 ###################
 tar -cvzf $jobdir/spectr$batchNum.tgz spectr*.dat paramRange.txt NMSSM_scan.pl
 tar -cvzf $jobdir/omega$batchNum.tgz omega*.dat
-tar -cvzf $jobdir/superiso$batchNum.tgz superiso*.dat
+# tar -cvzf $jobdir/superiso$batchNum.tgz superiso*.dat
+tar -cvzf $jobdir/nmssmcalc$batchNum.tgz nmssmcalc_*.dat
 
 ###################
 # Tidy up
 ###################
 rm spectr*.dat
 rm omega*.dat
-rm superiso*.dat
+# rm superiso*.dat
+rm NMSSMTools_*.tgz
+rm nmssmcalc.tar.gz
+rm -r nmssmcalc
+rm -r NMSSMTools_*
+# rm -r superiso*
