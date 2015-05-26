@@ -81,7 +81,7 @@ my $userbounds=0;
 ###########################################
 
 my $ninit = 1;
-my $nfinal = 10000; ## EDITME - number of points to scan over
+my $nfinal = 5000; ## EDITME - number of points to scan over
 
 my $npoints = $nfinal - $ninit + 1;
 print("Running over $npoints points\n");
@@ -206,7 +206,7 @@ for(my $icount = 0; $icount < $nfinal; $icount++){
   close(INPUT);
 
   # run NMSSM Tools with new input file
-  system("cd NMSSMTools_?.?.?/ && ./run $inputCard");
+  system("cd NMSSMTools_?.?.?/ && ./run $inputCard && cd ..");
 
   # remove input file to save space
   unlink "$inputCard";
@@ -258,7 +258,9 @@ for(my $icount = 0; $icount < $nfinal; $icount++){
   chomp $relpathCalcIn; # important to strip off newlines, otherwise ./run fails
   my $relpathCalcOut = `cd nmssmcalc && python -c "import os.path; print os.path.relpath('$outputNMSSMCALC')"`;
   chomp $relpathCalcOut;
-  system("cd nmssmcalc && ./run $relpathCalcIn slha.in $relpathCalcOut");
+  print("$relpathCalcIn\n");
+  print("$relpathCalcOut\n");
+  system("cd nmssmcalc && ./run $relpathCalcIn slha.in $relpathCalcOut && cd ..");
 
   # remove input file
   unlink "$inputCardNMSSMCALC";

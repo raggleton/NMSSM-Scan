@@ -42,7 +42,9 @@ cd ..
 # make
 # cd ..
 
+###################
 # Run NMSSMTools over parameter points
+###################
 # First arg is job dir - where the input.dat and spectr.dat files get made
 perl NMSSM_scan.pl $PWD $2
 
