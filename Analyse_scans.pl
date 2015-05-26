@@ -39,7 +39,21 @@ if (scalar(@superIsoFiles) == 0) {
   print "# spectrum files != # SuperIso files - not including their results\n";
   $doSuperIso = 0;
 }
-print $doSuperIso, "\n";
+print "doSuperIso:", $doSuperIso, "\n";
+
+# get list of all nmssmcalc* failes in dir
+# if none, we won't include their results
+my @nmssmcalcFiles = glob("$spectrDir/nmssmcalc_*");
+my $doNMSSMCALC = 1;
+if (scalar(@nmssmcalcFiles) == 0) {
+  print "No NMSSMCALC files - won't include their results\n";
+  $doNMSSMCALC = 0;
+}
+# elseif (scalar(@nmssmcalcFiles) != scalar(spectrFiles)) {
+#    print " # nmssmcalc files != # spectrums files - not including their results"
+# }
+print "doNMSSMCALC:", $doNMSSMCALC, "\n";
+
 
 # output dir
 my $outDir = $ARGV[1];
@@ -83,6 +97,18 @@ my @columns = ("mtau", "mh1", "mh2", "mh3", "ma1", "ma2", "mhc", "mstop1", "msto
 if ($doSuperIso){
   my @superIsoColumns = ("bsgamma_si", "bsmumu_si", "btaunu_si");
   push(@columns, @superIsoColumns);
+}
+
+# add in optional columns for NMSSMCALC results
+# make sure names don't clash!
+if ($doNMSSMCALC) {
+  my @nmssmcalcColumns = ("mh1_nc", "mh2_nc", "mh3_nc", "ma1_nc", "ma2_nc", "mhc_nc",
+                          "mstop1_nc", "mstop2_nc", "msbottom1_nc", "msbottom2_nc",
+                          "Brh1bb_nc", "Brh1tautau_nc", "Brh1mumu_nc", "Brh1ss_nc", "Brh1cc_nc", "Brh1gg_nc", "Brh1gammagamma_nc", "Brh1zgamma_nc", "Brh1ww_nc", "Brh1zz_nc", "Brh1a1a1_nc", "Brh1a1z_nc",
+                          "Brh2bb_nc", "Brh2tautau_nc", "Brh2gg_nc", "Brh2gammagamma_nc", "Brh2zgamma_nc", "Brh2ww_nc", "Brh2zz_nc", "Brh2h1h1_nc", "Brh2a1a1_nc", "Brh2a1z_nc",
+                          "Bra1bb_nc", "Bra1tautau_nc", "Bra1mumu_nc", "Bra1ss_nc", "Bra1cc_nc", "Bra1gg_nc"
+                          );
+  push (@columns, @nmssmcalcColumns);
 }
 
 # Make hash to hold results - need to do here and not in loop to ensure that
@@ -300,19 +326,82 @@ foreach $file (@spectrFiles) {
     my $superIsoFile = $file;
     $superIsoFile =~ s/spectr/superiso/g;
     if (not(grep {$_ eq $superIsoFile} @superIsoFiles)) {
-      print "Cannot find superisofile $superIsoFile";
-      $doSuperIso = 0;
+      print "Cannot find superisofile $superIsoFile\n";
+      # $doSuperIso = 0;
+    } else {
+      # If it exists, loop over and pull relevant quantities & store
+      # print "Openign $superIsoFile\n";
+      open(DATAISO, $superIsoFile) or die;
+      while(<DATAISO>){
+        $results{"bsgamma_si"} = $1 if /BR\(b\->s gamma\)\s+([eE\d\.\-\+]+)/;
+        $results{"bsmumu_si"} = $1 if /BR\(Bs\->mu mu\)\s+([eE\d\.\-\+]+)/;
+        $results{"btaunu_si"} = $1 if /BR\(B\->tau nu\)\s+([eE\d\.\-\+]+)/;
+      }
+      close(DATAISO);
     }
+  }
 
-    # If it exists, loop over and pull relevant quantities & store
-    # print "Openign $superIsoFile\n";
-    open(DATAISO, $superIsoFile) or die;
-    while(<DATAISO>){
-      $results{"bsgamma_si"} = $1 if /BR\(b\->s gamma\)\s+([eE\d\.\-\+]+)/;
-      $results{"bsmumu_si"} = $1 if /BR\(Bs\->mu mu\)\s+([eE\d\.\-\+]+)/;
-      $results{"btaunu_si"} = $1 if /BR\(B\->tau nu\)\s+([eE\d\.\-\+]+)/;
+  # Open corresponding NMSSMCALC file
+  if ($doNMSSMCALC) {
+    # Check corresponding file exists - spectrum file has name spectr_1_2.dat
+    # so nmssmcalc files should be named nmssmcalc_1_2.dat
+    my $nmssmcalcFile = $file;
+    $nmssmcalcFile =~ s/spectr/nmssmcalc/g;
+    if (not(grep {$_ eq $nmssmcalcFile} @nmssmcalcFiles)) {
+      print "Cannot find nmssmcalcFile $nmssmcalcFile\n";
+    } else {
+      # If it exists, loop over and pull relevant quantities & store
+      # print "Opening $nmssmcalcFile\n";
+      open(DATANC, $nmssmcalcFile) or die;
+      while(<DATANC>){
+        # higgs masses
+        $results{"mh1_nc"} = $1 if /^\s+25 +([eE\d\.\-\+]+) +\# H1/;
+        $results{"mh2_nc"} = $1 if /^\s+35 +([eE\d\.\-\+]+) +\# H2/;
+        $results{"mh3_nc"} = $1 if /^\s+45 +([eE\d\.\-\+]+) +\# H3/;
+        $results{"ma1_nc"} = $1 if /^\s+36 +([eE\d\.\-\+]+) +\# A1/;
+        $results{"ma2_nc"} = $1 if /^\s+46 +([eE\d\.\-\+]+) +\# A2/;
+        $results{"mhc_nc"} = $1 if /^\s+37 +([eE\d\.\-\+]+) +\# H\+/;
+
+        # squark masses
+        $results{"mstop1_nc"} = $1 if /^\s+1000006 +([eE\d\.\-\+]+) +\# ~t_1/;
+        $results{"mstop2_nc"} = $1 if /^\s+2000006 +([eE\d\.\-\+]+) +\# ~t_2/;
+        $results{"msbottom1_nc"} = $1 if /^\s+1000005 +([eE\d\.\-\+]+) +\# ~b_1/;
+        $results{"msbottom2_nc"} = $1 if /^\s+2000005 +([eE\d\.\-\+]+) +\# ~b_2/;
+
+        # higgs BRs
+        $results{"Brh1bb_nc"} = $1 if /^\s+([eE\d\.\-\+]+)    2           5        -5   \# BR\(H1\-> b       bb     \)/;
+        $results{"Brh1tautau_nc"} = $1 if /^\s+([eE\d\.\-\+]+)    2         -15        15   \# BR\(H1\-> tau\+    tau-   \)/;
+        $results{"Brh1mumu_nc"} = $1 if /^\s+([eE\d\.\-\+]+)    2         -13        13   \# BR\(H1\-> mu\+     mu-    \)/;
+        $results{"Brh1ss_nc"} = $1 if /^\s+([eE\d\.\-\+]+)    2           3        -3   \# BR\(H1\-> s       sb     \)/;
+        $results{"Brh1cc_nc"} = $1 if /^\s+([eE\d\.\-\+]+)    2           4        -4   \# BR\(H1\-> c       cb     \)/;
+        $results{"Brh1gg_nc"} = $1 if /^\s+([eE\d\.\-\+]+)    2          21        21   \# BR\(H1\-> g       g      \)/;
+        $results{"Brh1gammagamma_nc"} = $1 if /^\s+([eE\d\.\-\+]+)    2          22        22   \# BR\(H1\-> gam     gam    \)/;
+        $results{"Brh1zgamma_nc"} = $1 if /^\s+([eE\d\.\-\+]+)    2          22        23   \# BR\(H1\-> Z       gam    \)/;
+        $results{"Brh1ww_nc"} = $1 if /^\s+([eE\d\.\-\+]+)    2          24       -24   \# BR\(H1\-> W\+      W\-     \)/;
+        $results{"Brh1zz_nc"} = $1 if /^\s+([eE\d\.\-\+]+)    2          23        23   \# BR\(H1\-> Z       Z      \)/;
+        $results{"Brh1a1a1_nc"} = $1 if /^\s+([eE\d\.\-\+]+)    2          36        36   \# BR\(H1\-> A1      A1     \)/;
+        $results{"Brh1a1z_nc"} = $1 if /^\s+([eE\d\.\-\+]+)    2          23        36   \# BR\(H1\-> Z       A1     \)/;
+
+        $results{"Brh2bb_nc"} = $1 if /^\s+([eE\d\.\-\+]+)    2           5        -5   \# BR\(H2\-> b       bb     \)/;
+        $results{"Brh2tautau_nc"} = $1 if /^\s+([eE\d\.\-\+]+)    2         -15        15   \# BR\(H2\-> tau\+    tau-   \)/;
+        $results{"Brh2gg_nc"} = $1 if /^\s+([eE\d\.\-\+]+)    2          21        21   \# BR\(H2\-> g       g      \)/;
+        $results{"Brh2gammagamma_nc"} = $1 if /^\s+([eE\d\.\-\+]+)    2          22        22   \# BR\(H2\-> gam     gam    \)/;
+        $results{"Brh2zgamma_nc"} = $1 if /^\s+([eE\d\.\-\+]+)    2          23        22   \# BR\(H2\-> Z       gam    \)/;
+        $results{"Brh2ww_nc"} = $1 if /^\s+([eE\d\.\-\+]+)    2          24       -24   \# BR\(H2\-> W\+      W-     \)/;
+        $results{"Brh2zz_nc"} = $1 if /^\s+([eE\d\.\-\+]+)    2          23        23   \# BR\(H2\-> Z       Z      \)/;
+        $results{"Brh2h1h1_nc"} = $1 if /^\s+([eE\d\.\-\+]+)    2          25        25   \# BR\(H2\-> H1      H1     \)/;
+        $results{"Brh2a1a1_nc"} = $1 if /^\s+([eE\d\.\-\+]+)    2          36        36   \# BR\(H2\-> A1      A1     \)/;
+        $results{"Brh2a1z_nc"} = $1 if /^\s+([eE\d\.\-\+]+)    2          23        36   \# BR\(H2\-> Z       A1     \)/;
+
+        $results{"Bra1bb_nc"} = $1 if /^\s+([eE\d\.\-\+]+) +2           5        -5   \# BR\(A1\-> b       bb     \)/;
+        $results{"Bra1tautau_nc"} = $1 if /^\s+([eE\d\.\-\+]+) +2         -15        15   \# BR\(A1\-> tau\+    tau\-   \)/;
+        $results{"Bra1mumu_nc"} = $1 if /^\s+([eE\d\.\-\+]+) +2         -13        13   \# BR\(A1\-> mu\+     mu\-    \)/;
+        $results{"Bra1ss_nc"} = $1 if /^\s+([eE\d\.\-\+]+) +2           3        -3   \# BR\(A1\-> s       sb     \)/;
+        $results{"Bra1cc_nc"} = $1 if /^\s+([eE\d\.\-\+]+) +2           4        -4   \# BR\(A1\-> c       cb     \)/;
+        $results{"Bra1gg_nc"} = $1 if /^\s+([eE\d\.\-\+]+) +2          21        21   \# BR\(A1\-> g       g      \)/;
+      }
+      close(DATANC);
     }
-    close(DATAISO);
   }
 
   # Convert to number for testing
