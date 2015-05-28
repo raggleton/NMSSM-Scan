@@ -21,11 +21,11 @@ cd ..
 ###################
 # Setup NMSSMCALC
 ###################
-mkdir nmssmcalc
-tar -xvzf nmssmcalc.tar.gz -C nmssmcalc
-cd nmssmcalc
-make
-cd ..
+# mkdir nmssmcalc
+# tar -xvzf nmssmcalc.tar.gz -C nmssmcalc
+# cd nmssmcalc
+# make
+# cd ..
 # ls
 
 ###################
@@ -73,7 +73,7 @@ ls
 tar -cvzf $jobdir/spectr$batchNum.tgz spectr*.dat paramRange.txt NMSSM_scan.pl
 tar -cvzf $jobdir/omega$batchNum.tgz omega*.dat
 # tar -cvzf $jobdir/superiso$batchNum.tgz superiso*.dat
-tar -cvzf $jobdir/nmssmcalc$batchNum.tgz nmssmcalc_*.dat
+# tar -cvzf $jobdir/nmssmcalc$batchNum.tgz nmssmcalc_*.dat
 
 ###################
 # Tidy up
@@ -82,7 +82,7 @@ rm spectr*.dat
 rm omega*.dat
 # rm superiso*.dat
 rm NMSSMTools_*.tgz
-rm nmssmcalc.tar.gz
-rm -r nmssmcalc
 rm -r NMSSMTools_*
+# rm nmssmcalc.tar.gz
+# rm -r nmssmcalc
 # rm -r superiso*

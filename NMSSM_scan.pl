@@ -37,40 +37,40 @@ my ${unique} = $ARGV[1];
 ###########################################
 ## EDIT ME
 my $tgbetamax=50;
-my $tgbetamin=1.5;
+my $tgbetamin=15;
 
-my $mueffmax=300;
+my $mueffmax=250;
 my $mueffmin=100;
   
-my $lambdamax=0.7;
+my $lambdamax=0.4;
 my $lambdamin=0;
   
-my $kappamax=0.7;
+my $kappamax=0.4;
 my $kappamin=0;
 
-my $alambdamax=+4000;
-my $alambdamin=-1000;
+my $alambdamax=+3000;
+my $alambdamin=-200;
 
-my $akappamax=2.5;
-my $akappamin=-30;
+my $akappamax=5;
+my $akappamin=-20;
 
-my $m3min=500;
-my $m3max=2000;
+my $m3min=1000;
+my $m3max=1000;
 
-my $mq3min=500;
-my $mq3max=2500;
+my $mq3min=1000;
+my $mq3max=1000;
 
-my $mu3min=500;
-my $mu3max=2500;
+my $mu3min=1000;
+my $mu3max=1000;
 
-my $md3min=500;
-my $md3max=2500;
+my $md3min=1000;
+my $md3max=1000;
 
-my $au3min=500;
-my $au3max=3000;
+my $au3min=2500;
+my $au3max=2500;
 
-my $ad3min=500;
-my $ad3max=3000;
+my $ad3min=2500;
+my $ad3max=2500;
 
 # imposing dependant bounds on min or max parameters
 # (edit corresponding part in loop overicount)
@@ -81,7 +81,7 @@ my $userbounds=0;
 ###########################################
 
 my $ninit = 1;
-my $nfinal = 5000; ## EDITME - number of points to scan over
+my $nfinal = 10000; ## EDITME - number of points to scan over
 
 my $npoints = $nfinal - $ninit + 1;
 print("Running over $npoints points\n");
@@ -215,55 +215,55 @@ for(my $icount = 0; $icount < $nfinal; $icount++){
   # Do NMSSMCALC input file
   #
   # Read prototype NMSSMCALC input file into array so quicker
-  open(INPUT_PROTO, "$ScriptPath/inp_nmssmcalc_PROTO.dat") or die;
-  chomp(my @protoNMSSMCALC = (<INPUT_PROTO>));
-  close(INPUT_PROTO);
+  # open(INPUT_PROTO, "$ScriptPath/inp_nmssmcalc_PROTO.dat") or die;
+  # chomp(my @protoNMSSMCALC = (<INPUT_PROTO>));
+  # close(INPUT_PROTO);
 
-  my $newInputNMSSMCALC = "inp_nmssmcalc_${unique}_${icount}.dat";
-  my $inputCardNMSSMCALC = "${outDir}/${newInputNMSSMCALC}";
-  open(INPUT,   ">$inputCardNMSSMCALC") or die;
-  if ($icount % 500 == 0) {
-    print("Making input card $inputCardNMSSMCALC\n");
-  }
+  # my $newInputNMSSMCALC = "inp_nmssmcalc_${unique}_${icount}.dat";
+  # my $inputCardNMSSMCALC = "${outDir}/${newInputNMSSMCALC}";
+  # open(INPUT,   ">$inputCardNMSSMCALC") or die;
+  # if ($icount % 500 == 0) {
+  #   print("Making input card $inputCardNMSSMCALC\n");
+  # }
 
-  foreach my $line (@protoNMSSMCALC) {
-    my $newline = $line;
-    $newline =~ s/SED_TGBETA/$tgbeta/g;
-    $newline =~ s/SED_LAMBDA/$lambda/g;
-    $newline =~ s/SED_KAPPA/$kappa/g;
-    $newline =~ s/SED_ALAMBDA/$alambda/g;
-    $newline =~ s/SED_AKAPPA/$akappa/g;
-    $newline =~ s/SED_MUEFF/$mueff/g;
-    $newline =~ s/SED_COMMENTS/$comments/g;
-    $newline =~ s/SED_M3/$m3/g;
-    $newline =~ s/SED_MQ3/$mq3/g;
-    $newline =~ s/SED_MU3/$mu3/g;
-    $newline =~ s/SED_MD3/$md3/g;
-    $newline =~ s/SED_AU3/$au3/g;
-    $newline =~ s/SED_AD3/$ad3/g;
+  # foreach my $line (@protoNMSSMCALC) {
+  #   my $newline = $line;
+  #   $newline =~ s/SED_TGBETA/$tgbeta/g;
+  #   $newline =~ s/SED_LAMBDA/$lambda/g;
+  #   $newline =~ s/SED_KAPPA/$kappa/g;
+  #   $newline =~ s/SED_ALAMBDA/$alambda/g;
+  #   $newline =~ s/SED_AKAPPA/$akappa/g;
+  #   $newline =~ s/SED_MUEFF/$mueff/g;
+  #   $newline =~ s/SED_COMMENTS/$comments/g;
+  #   $newline =~ s/SED_M3/$m3/g;
+  #   $newline =~ s/SED_MQ3/$mq3/g;
+  #   $newline =~ s/SED_MU3/$mu3/g;
+  #   $newline =~ s/SED_MD3/$md3/g;
+  #   $newline =~ s/SED_AU3/$au3/g;
+  #   $newline =~ s/SED_AD3/$ad3/g;
 
-    $newline .= "\n";
-    print INPUT $newline;
-  }
-  close(INPUT);
+  #   $newline .= "\n";
+  #   print INPUT $newline;
+  # }
+  # close(INPUT);
 
-  # run NMSSMCALC with new input file
-  # because the FORTRAN inquire function only take RELATIVE not ABSOLUTE paths
-  # we have to convert out absolute path to a relative one.
-  # easiest way to do this is via python
-  # so we make a temp bash var that has the relpath
-  # Yes, this is ridiculous. Should prob just convert to using relpaths throughout?
-  my $outputNMSSMCALC = "${outDir}/nmssmcalc_${unique}_${icount}.dat";
-  my $relpathCalcIn = `cd nmssmcalc && python -c "import os.path; print os.path.relpath('$inputCardNMSSMCALC')"`;
-  chomp $relpathCalcIn; # important to strip off newlines, otherwise ./run fails
-  my $relpathCalcOut = `cd nmssmcalc && python -c "import os.path; print os.path.relpath('$outputNMSSMCALC')"`;
-  chomp $relpathCalcOut;
-  print("$relpathCalcIn\n");
-  print("$relpathCalcOut\n");
-  system("cd nmssmcalc && ./run $relpathCalcIn slha.in $relpathCalcOut && cd ..");
+  # # run NMSSMCALC with new input file
+  # # because the FORTRAN inquire function only take RELATIVE not ABSOLUTE paths
+  # # we have to convert out absolute path to a relative one.
+  # # easiest way to do this is via python
+  # # so we make a temp bash var that has the relpath
+  # # Yes, this is ridiculous. Should prob just convert to using relpaths throughout?
+  # my $outputNMSSMCALC = "${outDir}/nmssmcalc_${unique}_${icount}.dat";
+  # my $relpathCalcIn = `cd nmssmcalc && python -c "import os.path; print os.path.relpath('$inputCardNMSSMCALC')"`;
+  # chomp $relpathCalcIn; # important to strip off newlines, otherwise ./run fails
+  # my $relpathCalcOut = `cd nmssmcalc && python -c "import os.path; print os.path.relpath('$outputNMSSMCALC')"`;
+  # chomp $relpathCalcOut;
+  # print("$relpathCalcIn\n");
+  # print("$relpathCalcOut\n");
+  # system("cd nmssmcalc && ./run $relpathCalcIn slha.in $relpathCalcOut && cd ..");
 
-  # remove input file
-  unlink "$inputCardNMSSMCALC";
+  # # remove input file
+  # unlink "$inputCardNMSSMCALC";
 
 
 } # end loop on number of random points to scan
