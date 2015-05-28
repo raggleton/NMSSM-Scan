@@ -23,27 +23,30 @@ nmssm_params = {"lambda_": Param(label=r"$\lambda$", color="orange", bins=25, ra
                 }
 
 
-def plot_histogram(ax, array=None, var=None, df=None, label="", xlabel="", ylabel="N", title="", errorbars=True, normed=False, **kwargs):
+def plot_histogram(ax, array=None, var=None, df=None,
+                   label="", xlabel="", ylabel="N", title="", errorbars=True, normed=False,
+                   **kwargs):
     """
     Generic histogram plotter. Can either plot variable var in DataFrame df,
     or plot a numpy array.
 
+    ax: Axes object to plot on.
     errorbars: can optionally show error bars
     normed: can optionally normalise so sum of bin contents = 1
-    (irrespective of bin wdith)
-    kwargs: can pass in other args
+    (irrespective of bin width)
+    kwargs: other keyword args to pass to pyplot.histogram()
     """
     if array is not None:
         vals = array
     elif var is not None and df is not None:
         vals = df[var].values
     else:
-        raise Exception("plot_histogram needs a numpy array or varaible name+dataframe")
+        raise Exception("plot_histogram needs a numpy array or variable name + dataframe")
 
     weights = None
     if normed:
         weights = np.ones_like(vals)/len(vals)
-    y, bins, patches = plt.hist(vals, weights=weights, label=label, **kwargs)
+    y, bins, patches = ax.hist(vals, weights=weights, label=label, **kwargs)
     if errorbars:
         # put error bars on
         bincenters = 0.5*(bins[1:]+bins[:-1])
@@ -53,14 +56,40 @@ def plot_histogram(ax, array=None, var=None, df=None, label="", xlabel="", ylabe
             # sqrt(normalised bin), not sqrt(bin)/sum of all bins
             menStd = menStd/np.sqrt(len(vals))
         width = 0.0
-        plt.bar(bincenters, y, width=width, yerr=menStd, alpha=0,
-                ecolor="black", error_kw=dict(elinewidth=2, capthick=2))
+        ecolor = 'black' if 'color' not in kwargs.keys() else kwargs['color']
+        ax.bar(bincenters, y, width=width, yerr=menStd, alpha=0,
+               ecolor=ecolor, error_kw=dict(elinewidth=2, capthick=2))
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     ax.set_title(title, y=1.04)
     plt.minorticks_on()
     plt.tight_layout()
     return y, bins, patches
+
+
+def plot_scatter(ax, xarray=None, yarray=None, xvar=None, yvar=None, df=None,
+                 label="", xlabel="", ylabel="", title="", **kwargs):
+    """
+    Generic scatter plot method. Can either plot variables yvar vs xvar from
+    DataFrame df, or numpy arrays xarray vs yarray.
+
+    ax: Axes object to plot on.
+    kwargs: other keyword args to pass to pyplot.scatter()
+    """
+    if xarray is not None and yarray is not None:
+        vals_x, vals_y = xarray, yarray
+    elif xvar is not None and yvar is not None and df is not None:
+        vals_x, vals_y = df[xvar].values, df[yvar].values
+    else:
+        raise Exception("plot_scatter needs numpy arrays or variable names + dataframe")
+
+    paths = ax.scatter(vals_x, vals_y, **kwargs)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.set_title(title, y=1.04)
+    plt.minorticks_on()
+    plt.tight_layout()
+    return paths
 
 
 def add_median_line(df=None, var=None, array=None, **kwargs):
@@ -336,8 +365,8 @@ def make_highlight_region(ax, limits, axis, **kwargs):
 
     ax is the Axes object you want to plot it on.
     limits is a list of [min, max] for the variable
-    axis is the axis that represents the variable in question
-    can also change the colour, etc.
+    axis is the axis that represents the variable in question, e.g. 'x'
+    kwargs passes keyword arguments to patches.Rectagle
     """
     xmin, xmax = 0, 0
     ymin, ymax = 0, 0
