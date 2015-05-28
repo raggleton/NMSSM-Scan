@@ -42,5 +42,6 @@ ls
 ###################
 # rm spectr*.dat
 # rm omega*.dat
+cd ..
 rm NMSSMTools_*.tgz
 rm -r NMSSMTools_*

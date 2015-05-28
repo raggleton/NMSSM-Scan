@@ -1,0 +1,19 @@
+Executable = /users/ra12451/NMSSM-Scan/daniele_points/analyse_condor.sh
+Universe = vanilla
+Output = logFiles/analyse.$(cluster).$(process).out
+Error = logFiles/analyse.$(cluster).$(process).err
+Log = logFiles/analyse.$(cluster).$(process).log
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT_OR_EVICT
+notify_user = robin.aggleton@bristol.ac.uk
+
+request_cpus = 1
+request_memory = 500
+
+# use the ENV that is provided
+getenv = true
+initialdir = /users/ra12451/NMSSM-Scan/daniele_points
+transfer_input_files = /users/ra12451/NMSSM-Scan/Analyse_scans.pl
+arguments = daniele_points $(process)
+
+queue 1
