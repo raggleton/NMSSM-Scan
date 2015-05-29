@@ -67,12 +67,15 @@ if ($num_args == 3) {
 
 # CSV file to write results to
 # output*.dat contains all points
-# output_good*.dat conatins points that pass constraints
+# output_good*.dat contains points that pass constraints
+# output_ma1Lt11*.dat contains all points that have ma1 < 11
 my $outFile = "$outDir/output$ID.dat";
 my $outFileGood = "$outDir/output_good$ID.dat";
-print "Writing results to $outFile and $outFileGood\n";
+my $outFileMa1Lt11 = "$outDir/output_ma1Lt11$ID.dat";
+print "Writing results to $outFile and $outFileGood and $outFileMa1Lt11\n";
 open(OUTPUT, ">$outFile") or die;
 open(OUTPUTGOOD, ">$outFileGood") or die;
+open(OUTPUTMA1LT11, ">$outFileMa1Lt11") or die;
 
 # list any results that you want to store here. will be used as column headers.
 # then make sure you assign it further down.
@@ -121,10 +124,11 @@ $columnHeader .= "\n";
 print $columnHeader;
 print OUTPUT $columnHeader;
 print OUTPUTGOOD $columnHeader;
+print OUTPUTMA1LT11 $columnHeader;
 
 my $igood = 0; # count number of points passing experimental constraints
 my $iuseful = 0; # count number of points that also have acceptable ma1
-
+my $ima1Lt11 = 0; # count numer o fpoints with mass of a1 < 11
 my $counter = 0; my $last = 50000000; # can limit number of files run over
 
 # Now loop over spectrum files, check if point satisfies experimental constraints
@@ -420,6 +424,11 @@ foreach $file (@spectrFiles) {
     $outStr.= "\n";
     print OUTPUT $outStr;
 
+    if ($results{"ma1"} < 11) {
+      print OUTPUTMA1LT11 $outStr;
+      $ima1Lt11++;
+    }
+
     # Save to "good" file if passes all constraints, except for g-2,
     # where we are happy with a +ve delta a_mu, and omega, where we are happy if it's too small
     if ($results{"constraints"} eq "" || (checkExpPermutations($results{"constraints"}) && ($results{"Del_a_mu"} > 0) )){
@@ -433,6 +442,7 @@ foreach $file (@spectrFiles) {
 } # end loop on number of random points to scan
 close(OUTPUT);
 close(OUTPUTGOOD);
+close(OUTPUTMA1LT11);
 
 # printing stats
 my $itotal = @spectrFiles;
@@ -445,6 +455,7 @@ print("### N. input points         =   $itotal\n");
 print("### N. with 0 < ma1 < 100   =   $iuseful\n");
 print("### N. with 0 < ma1 < 100,\n");
 print(" & passing exp. constraints = $igood\n");
+print("### N. with 0 < ma1 < 11    =   $ima1Lt11\n");
 print("### Fraction useful         =   $fracUseful\n");
 print("### Fraction good           =   $fracGood\n");
 print("#########################################\n");
