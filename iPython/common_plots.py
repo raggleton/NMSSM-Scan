@@ -21,6 +21,16 @@ nmssm_params = {"lambda_": Param(label=r"$\lambda$", color="orange", bins=25, ra
                 "akappa": Param(label=r"$A_{\kappa}\ \mathrm{[GeV]}$", color="red", bins=25, range=[-30, 2.5]),
                 "tgbeta": Param(label=r"$\tan\beta$", color="purple", bins=25, range=[0, 50])
                 }
+param_dict = dict(lambda_=r"$\lambda$", mueff=r"$\mu_{eff}\ \mathrm{[GeV]}$",
+                  kappa=r"$\kappa$", alambda=r"$A_{\lambda}\ \mathrm{[GeV]}$",
+                  akappa=r"$A_{\kappa}\ \mathrm{[GeV]}$", tgbeta=r"$\tan\beta$")
+
+
+def generate_fig(size=[14, 6]):
+    """Simple figure generator, cos I'm really lazy"""
+    fig = plt.figure()
+    fig.set_size_inches(size[0], size[1])
+    return fig
 
 
 def plot_histogram(ax, array=None, var=None, df=None,
@@ -68,7 +78,7 @@ def plot_histogram(ax, array=None, var=None, df=None,
 
 
 def plot_scatter(ax, xarray=None, yarray=None, xvar=None, yvar=None, df=None,
-                 label="", xlabel="", ylabel="", title="", **kwargs):
+                 xlabel="", ylabel="", title="", **kwargs):
     """
     Generic scatter plot method. Can either plot variables yvar vs xvar from
     DataFrame df, or numpy arrays xarray vs yarray.
@@ -84,7 +94,11 @@ def plot_scatter(ax, xarray=None, yarray=None, xvar=None, yvar=None, df=None,
         raise Exception("plot_scatter needs numpy arrays or variable names + dataframe")
 
     paths = ax.scatter(vals_x, vals_y, **kwargs)
+    if xlabel == "":
+        xlabel = xvar
     ax.set_xlabel(xlabel)
+    if ylabel == "":
+        ylabel = yvar
     ax.set_ylabel(ylabel)
     ax.set_title(title, y=1.04)
     plt.minorticks_on()
