@@ -27,25 +27,44 @@ param_dict = dict(lambda_=r"$\lambda$", mueff=r"$\mu_{eff}\ \mathrm{[GeV]}$",
 
 
 def generate_fig(size=[14, 6]):
-    """Simple figure generator, cos I'm really lazy"""
+    """
+    Simple figure generator, cos I'm really lazy.
+
+    Makes a figure, can pass in a custom size.
+    """
     fig = plt.figure()
     fig.set_size_inches(size[0], size[1])
     return fig
 
 
-def plot_histogram(ax, array=None, var=None, df=None,
-                   label="", xlabel="", ylabel="N", title="", errorbars=True, normed=False,
-                   **kwargs):
+def generate_axes(fig=None):
+    """
+    Simple axes generator, cos I'm super lazy.
+
+    Puts 1 Axes object onto the figure (which is optional)
+    """
+    if not fig:
+        fig = generate_fig()
+    ax = fig.add_subplot(1,1,1)
+    return ax
+
+
+def plot_histogram(ax=None, array=None, var=None, df=None,
+                   label="", xlabel="", ylabel="N", title="",
+                   errorbars=True, normed=False, **kwargs):
     """
     Generic histogram plotter. Can either plot variable var in DataFrame df,
     or plot a numpy array.
 
-    ax: Axes object to plot on.
+    ax: Axes object to plot on. If you don't pass one, it will make one for you.
     errorbars: can optionally show error bars
     normed: can optionally normalise so sum of bin contents = 1
     (irrespective of bin width)
     kwargs: other keyword args to pass to pyplot.histogram()
     """
+    if not ax:
+        ax = generate_axes()
+
     if array is not None:
         vals = array
     elif var is not None and df is not None:
@@ -77,15 +96,18 @@ def plot_histogram(ax, array=None, var=None, df=None,
     return y, bins, patches
 
 
-def plot_scatter(ax, xarray=None, yarray=None, xvar=None, yvar=None, df=None,
+def plot_scatter(ax=None, xarray=None, yarray=None, xvar=None, yvar=None, df=None,
                  xlabel="", ylabel="", title="", **kwargs):
     """
     Generic scatter plot method. Can either plot variables yvar vs xvar from
     DataFrame df, or numpy arrays xarray vs yarray.
 
-    ax: Axes object to plot on.
+    ax: Axes object to plot on. If you don't pass one, it will make one for you.
     kwargs: other keyword args to pass to pyplot.scatter()
     """
+    if not ax:
+        ax = generate_axes()
+
     if xarray is not None and yarray is not None:
         vals_x, vals_y = xarray, yarray
     elif xvar is not None and yvar is not None and df is not None:
@@ -122,19 +144,19 @@ def add_mean_line(df=None, var=None, array=None, **kwargs):
         plt.axvline(x=df[var].mean(), **kwargs)
 
 
-def plot_many_hists_compare(var, dfs, title, labels, xlabel, ylabel, colors, normed=False, **kwargs):
+def plot_many_hists_compare(var, dfs, title, labels, xlabel, ylabel,
+                            colors, errorbars=False, normed=False, **kwargs):
     """
     Plot hists of same var on same set of axes, to compare the distributions
     Note that normed here normalises the bins such that total bin contents
     sum to 1, irrespective of the bin width.
     """
-    fig = plt.figure()
-    ax = fig.add_subplot(1,1,1)
+    ax = generate_axes()
     max_y = 0
     for i, df in enumerate(dfs):
         y, bins, patches = plot_histogram(ax=ax, df=df, var=var, xlabel=xlabel,
                                           ylabel=ylable, title=title,
-                                          errorbars=False, normed=normed,
+                                          errorbars=errorbars, normed=normed,
                                           edgecolor=colours[i], **kwargs)
         max_y = max(max_y, max(y))
     ax.set_y(top=max_y)
@@ -142,11 +164,14 @@ def plot_many_hists_compare(var, dfs, title, labels, xlabel, ylabel, colors, nor
     return fig, ax
 
 
-def plot_many_scatters_compare(varx, vary, dfs, title, labels, xlabel, ylabel, colors, **kwargs):
+def plot_many_scatters_compare(varx, vary, dfs, title,
+                               labels, xlabel, ylabel, colors, **kwargs):
     """
-    Plot scatters of same var x & y on same set of axes, to compare the distributions
+    Plot scatters of same var x & y on same set of axes, to compare distributions
     """
     # ax = dfs[0].plot(kind="scatter", x=varx, y=vary, title=title, color=colors[0], label=labels[0], **kwargs)
+    ax = generate_axes()
+    fig = plt.figure()
     plt.title(title)
     for i, df in enumerate(dfs):
         plt.scatter(x=df[varx].values, y=df[vary].values, color=colors[i], **kwargs)
@@ -300,8 +325,9 @@ def plot_constraints(df, title):
     fig, ax = plt.subplots(nrows=1, ncols=1)
     fig.set_size_inches(6, 4)
     vc[:last_i].plot(kind="barh")
-    ax.set_xlabel("Fraction of failing points that fail given experimental constraint\n(encompassing " + str(limit*100) + " % of all failing points)",
-                multialignment='center', fontsize=22)
+    ax.set_xlabel("Fraction of failing points that fail given experimental constraint\n"
+                  "(encompassing " + str(limit*100) + " % of all failing points)",
+                  multialignment='center', fontsize=22)
     ax.set_title(title, y=1.03)
     return ax
 
@@ -390,7 +416,8 @@ def make_highlight_region(ax, limits, axis, **kwargs):
     else:
         ymin, ymax = limits
         xmin, xmax = ax.get_xlim()
-
+    if not kwargs:
+        kwargs = dict(color='grey', alpha=0.2)
     patch = patches.Rectangle((xmin, ymin), xmax-xmin, ymax-ymin, **kwargs)
     ax.add_patch(patch)
     return patch
