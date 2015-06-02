@@ -44,9 +44,11 @@ def get_blocks(filenames, block_name):
 
     return blocks
 
-#
 def make_dataframe(block_name, blocks):
-    """Compare blocks with common params"""
+    """
+    Make DataFrame from blocks, each columns is a different field,
+    each row is for a different file.
+    """
     names = {} # store names corresponding to column ids
     all_rows = [] # store list of dicts of column_id: value
     for k, v in blocks.iteritems():
@@ -72,16 +74,19 @@ def make_dataframe(block_name, blocks):
     df = pd.DataFrame(all_rows, index=blocks.keys())
     # convert column IDs to string names
     df.rename(columns=names, inplace=True)
+    df.reindex_axis(sorted(df.columns), axis=1)
     print df
     return df
 
+
 def main(in_args=sys.argv[1:]):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--blocks", nargs='+', help="BLOCK name to compare")
+    parser.add_argument("--blocks", nargs='+', help="BLOCK names to compare")
     parser.add_argument("--inputs", nargs='+', help="Input SLHA files")
     args = parser.parse_args(args=in_args)
 
     for block in args.blocks:
+        print "BLOCK", block
         blocks = get_blocks(args.inputs, block)
         # pprint(blocks)
         make_dataframe(block, blocks)
