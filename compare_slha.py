@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 Takes a given BLOCK from any number of SLHA files and compares them.
 
@@ -10,7 +11,7 @@ import argparse
 from pprint import pprint
 import numpy as np
 import pandas as pd
-
+import os
 
 pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
@@ -40,7 +41,7 @@ def get_blocks(filenames, block_name):
                 if store:
                     contents.append(line.strip())
 
-            blocks[f_name] = contents
+            blocks[os.path.basename(f_name)] = contents
 
     return blocks
 
@@ -75,6 +76,7 @@ def make_dataframe(block_name, blocks):
     # convert column IDs to string names
     df.rename(columns=names, inplace=True)
     df.reindex_axis(sorted(df.columns), axis=1)
+    df.sort_index(inplace=True)
     print df
     return df
 
