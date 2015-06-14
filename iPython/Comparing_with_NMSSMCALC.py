@@ -33,6 +33,8 @@
 # 
 # - All constraints checked against except the LHC ones, and in addition we require 1) $\Delta a_{\mu} > 0$ and 2) $\Omega h^2 < 0.131$
 # 
+# **ANOTHER CAVEAT:** points are checked against experimental cosntraints, as calculated by NMSSMTools. The masses, BRs etc from NMSSMCALC are NOT used (and could potentially change the conclusions of some plots)
+# 
 # - Plots that are labelled 'without experimental constraints' have points that are only required to pass: 
 #     - $m_h^2 > 1$
 #     - $m_a^2 >1$
@@ -44,7 +46,7 @@
 # - The following results contain plots for both 1-loop and 2-loop masses for NMSSMCALC
 # 
 
-# In[51]:
+# In[1]:
 
 import pandas as pd
 import numpy as np
@@ -73,12 +75,12 @@ mpl.rcParams['legend.framealpha'] = 0.6
 mpl.rcParams.update({'font.size': 24, 'font.family': 'STIXGeneral', 'mathtext.fontset': 'stix'})
 
 
-# In[74]:
+# In[54]:
 
 from common_plots import *
 
 
-# In[4]:
+# In[3]:
 
 # Unpack dataframes from hdf5 binaries
 # I4 = 1 dataset, NMSSMCALC 1 Loop, scanning over M3,MU3,MQ3,AU3 
@@ -91,7 +93,7 @@ df_M3MU3MQ3AU3_1LOOP_pass_all = store_M3MU3MQ3AU3_1LOOP_scan.full12loop_good_pos
 store_M3MU3MQ3AU3_1LOOP_scan.close()
 
 
-# In[6]:
+# In[4]:
 
 # Unpack dataframes from hdf5 binaries
 # I4 = 1 dataset, NMSSMCALC 2 Loop, scanning over M3,MU3,MQ3,AU3 
@@ -104,12 +106,12 @@ df_M3MU3MQ3AU3_2LOOP_pass_all = store_M3MU3MQ3AU3_2LOOP_scan.full12loop_good_pos
 store_M3MU3MQ3AU3_2LOOP_scan.close()
 
 
-# In[9]:
+# In[5]:
 
-# print len(df_M3MU3MQ3AU3_1LOOP_pass_all.index), len(df_M3MU3MQ3AU3_2LOOP_pass_all.index)
+print len(df_M3MU3MQ3AU3_1LOOP_pass_all.index), len(df_M3MU3MQ3AU3_2LOOP_pass_all.index)
 
 
-# In[33]:
+# In[6]:
 
 # experimental constraint on higgs mass 
 mh_range = [122.1,128.1] 
@@ -220,6 +222,62 @@ plt.suptitle(r"With exp. constraints, $m_{h_1}^{\mathrm{NMSSMTools}} \in [122, 1
 plt.ylim(bottom=1E-4)
 plt.legend(fontsize=18)
 
+
+# We can also plot the ratio between the two values on a point-by-point basis:
+
+# In[154]:
+
+print 'Comparison with NMSSMCALC, 1 loop:'
+mh1_1loop_ratio = df_M3MU3MQ3AU3_1LOOP_pass_all.mh1.divide(df_M3MU3MQ3AU3_1LOOP_pass_all.mh1_nc)
+mh1_1loop_ratio.describe(percentiles=[.05, .25, .75, .95])
+
+
+# In[153]:
+
+print 'Comparison with NMSSMCALC, 2 loop:'
+mh1_2loop_ratio = df_M3MU3MQ3AU3_2LOOP_pass_all.mh1.divide(df_M3MU3MQ3AU3_2LOOP_pass_all.mh1_nc)
+mh1_2loop_ratio.describe(percentiles=[.05, .25, .75, .95])
+
+
+# In[162]:
+
+fig = plt.figure()
+fig.set_size_inches(14,6)
+ax = fig.add_subplot(1,2,1)
+bins = 30
+m_range = [0.9,1.2]
+log = False
+
+y11, bins11, patches11 = plot_histogram(ax, array=mh1_1loop_ratio.values, label='1 loop', 
+                                  xlabel=r'$m_{h_1}^{\mathrm{NMSSMTools}}/m_{h_1}^{\mathrm{NMSSMCALC}}\ \ \mathrm{[GeV]}$', ylabel='p.d.f',
+                                  normed=True, color='purple', range=m_range, bins=bins, histtype="step", 
+                                  linewidth=1.5, log=log)
+y12, bins12, patches12 = plot_histogram(ax, array=mh1_2loop_ratio.values, label='2 loop', 
+                                  xlabel=r'$m_{h_1}^{\mathrm{NMSSMTools}}/m_{h_1}^{\mathrm{NMSSMCALC}}\ \ \mathrm{[GeV]}$', ylabel='p.d.f',
+                                  normed=True, color='red', range=m_range, bins=bins, histtype="step", 
+                                  linewidth=1.5, log=log)
+plt.ylim(bottom=0, top=0.6)
+plt.legend(fontsize=18)
+
+ax = fig.add_subplot(1,2,2)
+# bins = 40
+# m_range = [0,20]
+log = True
+
+y21, bins21, patches21 = plot_histogram(ax, array=mh1_1loop_ratio.values, label='1 loop', 
+                                  xlabel=r'$m_{h_1}^{\mathrm{NMSSMTools}}/m_{h_1}^{\mathrm{NMSSMCALC}}\ \ \mathrm{[GeV]}$', ylabel='p.d.f',
+                                  normed=True, color='purple', range=m_range, bins=bins, histtype="step", 
+                                  linewidth=1.5, log=log)
+y22, bins22, patches22 = plot_histogram(ax, array=mh1_2loop_ratio.values, label='2 loop', 
+                                  xlabel=r'$m_{h_1}^{\mathrm{NMSSMTools}}/m_{h_1}^{\mathrm{NMSSMCALC}}\ \ \mathrm{[GeV]}$', ylabel='p.d.f',
+                                  normed=True, color='red', range=m_range, bins=bins, histtype="step", 
+                                  linewidth=1.5, log=log)
+plt.suptitle(r"With exp. constraints, $m_{h_1}^{\mathrm{NMSSMTools}} \in [122, 128]\ \mathrm{GeV}$", y=1.04)
+plt.ylim(bottom=1E-4)
+plt.legend(fontsize=18)
+
+
+# So we can see that, for the most part, the NMSSMTools value is 5% larger than the 2 loop NMSSMCALC values, and almost 10% larger than the 1 loop value. Note also the smaller bump at 1 - these are points where they agree. So perhaps in the 2-loop calculation there is some common factor missing since the distriution is so peaked?
 
 # #$m_{h_2}$ 
 
@@ -402,6 +460,150 @@ plt.ylim(top=0.02, bottom=3E-5)
 # make_highlight_region(ax1, mh_range, 'x', color='grey', alpha=0.3, label=r'$m_{h}$ exp. constraint $\pm 2 \sigma$')
 plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=20)
 
+
+# #$BR(h_1 \to XX)$ 
+
+# NMSSMCALC also calculates BRs for the Higgs. Let's look at $h_1$ first.
+
+# In[8]:
+
+nmssmtools_col = 'green'
+nc_1_col = 'dodgerblue'
+nc_2_col = 'purple'
+
+
+# In[18]:
+
+get_ipython().magic(u"config InlineBackend.figure_formats = 'png', 'pdf'")
+
+fig = plt.figure()
+fig.set_size_inches(14,6)
+title='With exp. constraints'
+br_x=r'$BR(h_1 \to a_1a_1)$'
+bins = 20
+br_range = [0,0.2]
+
+log = True
+ax1 = fig.add_subplot(1,2,1)
+plot_histogram(ax1, var='Brh1a1a1', df=df_M3MU3MQ3AU3_1LOOP_pass_all[(df_M3MU3MQ3AU3_1LOOP_pass_all.Brh1a1a1_nc>0)&(df_M3MU3MQ3AU3_1LOOP_pass_all.Brh1a1a1>0)], 
+               xlabel=br_x, ylabel='p.d.f',
+               label='NMSSMTools', errorbars=True, normed=True, color=nmssmtools_col, histtype="step", 
+               linewidth=1.5, bins=bins, range=br_range, log=log)
+plot_histogram(ax1, var='Brh1a1a1_nc', df=df_M3MU3MQ3AU3_1LOOP_pass_all[(df_M3MU3MQ3AU3_1LOOP_pass_all.Brh1a1a1_nc>0)&(df_M3MU3MQ3AU3_1LOOP_pass_all.Brh1a1a1>0)], xlabel=br_x, ylabel='p.d.f',
+               label='NMSSMCALC (1 Loop)', errorbars=True, normed=True, color=nc_1_col, histtype="step", 
+               linewidth=1.5, bins=bins, range=br_range, log=log)
+plot_histogram(ax1, var='Brh1a1a1_nc', df=df_M3MU3MQ3AU3_2LOOP_pass_all[(df_M3MU3MQ3AU3_2LOOP_pass_all.Brh1a1a1_nc>0)&(df_M3MU3MQ3AU3_2LOOP_pass_all.Brh1a1a1>0)], xlabel=br_x, ylabel='p.d.f',
+               label='NMSSMCALC (2 Loop)', errorbars=True, normed=True, color=nc_2_col, histtype="step", 
+               linewidth=1.5, bins=bins, range=br_range, log=log)
+plt.ylim(bottom=5E-3)
+plt.legend(fontsize=18)
+
+ax2 = fig.add_subplot(1,2,2)
+br_range = [0,1]
+log = True
+plot_histogram(ax2, var='Brh1a1a1', df=df_M3MU3MQ3AU3_1LOOP_pass_all[(df_M3MU3MQ3AU3_1LOOP_pass_all.Brh1a1a1_nc>0)&(df_M3MU3MQ3AU3_1LOOP_pass_all.Brh1a1a1>0)], 
+               xlabel=br_x, ylabel='p.d.f',
+               label='NMSSMTools', errorbars=True, normed=True, color=nmssmtools_col, histtype="step", 
+               linewidth=1.5, bins=bins, range=br_range, log=log)
+plot_histogram(ax2, var='Brh1a1a1_nc', df=df_M3MU3MQ3AU3_1LOOP_pass_all[(df_M3MU3MQ3AU3_1LOOP_pass_all.Brh1a1a1_nc>0)&(df_M3MU3MQ3AU3_1LOOP_pass_all.Brh1a1a1>0)], 
+               xlabel=br_x, ylabel='p.d.f',
+               label='NMSSMCALC (1 Loop)', errorbars=True, normed=True, color=nc_1_col, histtype="step", 
+               linewidth=1.5, bins=bins, range=br_range, log=log)
+plot_histogram(ax2, var='Brh1a1a1_nc', df=df_M3MU3MQ3AU3_2LOOP_pass_all[(df_M3MU3MQ3AU3_2LOOP_pass_all.Brh1a1a1_nc>0)&(df_M3MU3MQ3AU3_2LOOP_pass_all.Brh1a1a1>0)], xlabel=br_x, ylabel='p.d.f',
+               label='NMSSMCALC (2 Loop)', errorbars=True, normed=True, color=nc_2_col, histtype="step", 
+               linewidth=1.5, bins=bins, range=br_range, log=log)
+plt.ylim(bottom=2E-4)
+plt.legend(fontsize=18)
+# plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=20)
+plt.suptitle(title, y=1.04)
+
+
+# In[14]:
+
+df_M3MU3MQ3AU3_1LOOP_pass_all[(df_M3MU3MQ3AU3_1LOOP_pass_all.Brh1a1a1_nc>0)&(df_M3MU3MQ3AU3_1LOOP_pass_all.Brh1a1a1>0)].Brh1a1a1_nc.describe()
+
+
+# Some differences here - most noticeably that NMSSMCALC has non-zero BR > 0.2 or so, whilst there are very few of these points for NMSSMCALC. I guess this is due to more points with $h_{125} = h_2$ in NMSSMCALC compared to NMMSMTools. 
+# 
+# 
+
+# In[11]:
+
+get_ipython().magic(u"config InlineBackend.figure_formats = 'png', 'pdf'")
+
+fig = plt.figure()
+fig.set_size_inches(14,6)
+title='With exp. constraints'
+br_x=r'$BR(a_1 \to \tau\tau)$'
+bins = 20
+br_range = [0,0.2]
+
+log = True
+ax1 = fig.add_subplot(1,2,1)
+plot_histogram(ax1, var='Bra1tautau', df=df_M3MU3MQ3AU3_1LOOP_pass_all, xlabel=br_x, ylabel='p.d.f',
+               label='NMSSMTools', errorbars=True, normed=True, color=nmssmtools_col, histtype="step", 
+               linewidth=1.5, bins=bins, range=br_range, log=log)
+plot_histogram(ax1, var='Bra1tautau_nc', df=df_M3MU3MQ3AU3_1LOOP_pass_all, xlabel=br_x, ylabel='p.d.f',
+               label='NMSSMCALC (1 Loop)', errorbars=True, normed=True, color=nc_1_col, histtype="step", 
+               linewidth=1.5, bins=bins, range=br_range, log=log)
+plot_histogram(ax1, var='Bra1tautau_nc', df=df_M3MU3MQ3AU3_2LOOP_pass_all, xlabel=br_x, ylabel='p.d.f',
+               label='NMSSMCALC (2 Loop)', errorbars=True, normed=True, color=nc_2_col, histtype="step", 
+               linewidth=1.5, bins=bins, range=br_range, log=log)
+plt.ylim(bottom=1E-3)
+# plt.legend(fontsize=18, loc=0)
+
+ax2 = fig.add_subplot(1,2,2)
+br_range = [0,1]
+log = True
+plot_histogram(ax2, var='Bra1tautau', df=df_M3MU3MQ3AU3_1LOOP_pass_all, xlabel=br_x, ylabel='p.d.f',
+               label='NMSSMTools', errorbars=True, normed=True, color=nmssmtools_col, histtype="step", 
+               linewidth=1.5, bins=bins, range=br_range, log=log)
+plot_histogram(ax2, var='Bra1tautau_nc', df=df_M3MU3MQ3AU3_1LOOP_pass_all, xlabel=br_x, ylabel='p.d.f',
+               label='NMSSMCALC (1 Loop)', errorbars=True, normed=True, color=nc_1_col, histtype="step", 
+               linewidth=1.5, bins=bins, range=br_range, log=log)
+plot_histogram(ax2, var='Bra1tautau_nc', df=df_M3MU3MQ3AU3_2LOOP_pass_all, xlabel=br_x, ylabel='p.d.f',
+               label='NMSSMCALC (2 Loop)', errorbars=True, normed=True, color=nc_2_col, histtype="step", 
+               linewidth=1.5, bins=bins, range=br_range, log=log)
+plt.ylim(bottom=2E-4)
+plt.legend(fontsize=18)
+# plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0., fontsize=20)
+plt.suptitle(title, y=1.04)
+
+
+# However, this hides a lot of information, since the BR is hugely dependent on what $m_{a_1}$ we are considering. Let's redo the plot, but this time as a function of $m_{a_1}$ as well.
+
+# In[74]:
+
+get_ipython().magic(u"config InlineBackend.figure_formats = 'png', ")
+fig = plt.figure()
+fig.set_size_inches(14,6)
+title = 'With exp. constraints'
+ylabel = r'$BR(a_1 \to XX)$'
+xlabel = r'$m_{a_1}\ \mathrm{[GeV]}$'
+
+ax1 = fig.add_subplot(1,2,1)
+plot_scatter(ax1, xvar='ma1', yvar='Bra1tautau', df=df_M3MU3MQ3AU3_1LOOP_pass_all, 
+             label='NMSSMTools', c='plum', alpha=1, s=35)
+plot_scatter(ax1, xvar='ma1_nc', yvar='Bra1tautau_nc', df=df_M3MU3MQ3AU3_2LOOP_pass_all, 
+             label='NMSSMCALC (2 loop)', c='purple', alpha=1, s=30, marker='D')
+plot_scatter(ax1, xvar='ma1', yvar='Bra1gg', df=df_M3MU3MQ3AU3_1LOOP_pass_all, 
+             label='NMSSMTools', c='limegreen', alpha=1, s=35)
+plot_scatter(ax1, xvar='ma1_nc', yvar='Bra1gg_nc', df=df_M3MU3MQ3AU3_2LOOP_pass_all, 
+             label='NMSSMCALC (2 loop)', c='darkgreen', alpha=1, s=30, marker='D')
+plot_scatter(ax1, xvar='ma1', yvar='Bra1bb', df=df_M3MU3MQ3AU3_1LOOP_pass_all, 
+             label='NMSSMTools', c='salmon', alpha=1, s=35)
+plot_scatter(ax1, xvar='ma1_nc', yvar='Bra1bb_nc', df=df_M3MU3MQ3AU3_2LOOP_pass_all, 
+             label='NMSSMCALC (2 loop)', c='brown', alpha=1, s=30, marker='D')
+plt.xlabel(xlabel)
+plt.ylabel(ylabel)
+plt.xlim([2,12])
+plt.ylim([0,1])
+plt.legend(loc=0)
+
+
+# Note here that the $m_{a_1}$ on the x axis is the mass as calculated using the relevant tools (so the mass taken from NMSSMCALC for the blue and red points).
+# 
+# **Very** interesting is the region for $9 < m_{a_1} < 11$ GeV - NMSSMTools has a large BR, whilst the BR form NMSSMCALC immediately drops.
 
 # In[ ]:
 
