@@ -7,18 +7,18 @@ BLOCK MODSEL
 	10	0		# ISCAN (0=no scan, 1=grid scan, 2=random scan, 3=MCMC)
 	9	1		# Call micrOmegas (default 0=no, 1=relic density only,
 #				  2=dir. det. rate, 3=indir. det. rate, 4=both det. rates)
-	8       1               # Precision for Higgs masses (default 0: as before,
+	8       2              # Precision for Higgs masses (default 0: as before,
 #                                 1: full 1 loop + full 2 loop from top/bot Yukawas
 #				  2: as 1 + pole masses - 1&2 by courtesy of P. Slavich)
 	13      0               # 1: Sparticle decays via NMSDECAY (default 0)
 
 BLOCK SMINPUTS
 	1	127.92D0	# ALPHA_EM^-1(MZ)
-	2	1.16639D-5	# GF
-	3	.1172D0		# ALPHA_S(MZ)
-	4	91.187D0	# MZ
-	5	4.214D0		# MB(MB) (running mass)
-	6	171.4D0		# MTOP (pole mass)
+	2	1.16637D-5	# GF
+	3	.119D0		# ALPHA_S(MZ)
+	4	91.1876D0	# MZ
+	5	4.16D0		# MB(MB) (running mass)
+	6	172.5D0		# MTOP (pole mass)
 	7	1.777D0		# MTAU
 
 BLOCK MINPAR
