@@ -130,11 +130,11 @@ def subset_pass_constraints(df):
     return df[mask & (df.Del_a_mu > 0)]
 
 
-def subset_mass(df, min_mass, max_mass, mass_var):
-    """Make subset based on range of object mass"""
-    mass_max = df[mass_var] < max_mass
-    mass_min = df[mass_var] > min_mass
-    return df[mass_min & mass_max]
+def subset_mass(df, min_var, max_var, var):
+    """Make subset based on range of object value"""
+    var_max = df[var] < max_var
+    var_min = df[var] > min_var
+    return df[var_min & var_max]
 
 
 def make_dataframes(folders):
