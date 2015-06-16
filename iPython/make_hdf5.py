@@ -96,9 +96,14 @@ def store_xsec(df):
                 process_scaled.append(name)
                 df[name] = df[x+"ggrc2"] * df["Br"+x+y+y] * df["Br"+y+f1] * df["Br"+y+f2] * factor
                 # store actual XS * BR
+                # we store it twice for backwards-compatibility otherwise old script break
                 name = name.replace("_scaled", "")
                 process.append(name)
                 df[name] = df["xsec_ggf13_"+x] * df[x+"ggrc2"] * df["Br"+x+y+y] * df["Br"+y+f1] * df["Br"+y+f2] * factor
+                name_new = name.replace("xsec", "xsec13")
+                df[name_new] = df[name]
+                name = name_new.replace("13", "8")
+                df[name] = df["xsec_ggf8_"+x] * df[x+"ggrc2"] * df["Br"+x+y+y] * df["Br"+y+f1] * df["Br"+y+f2] * factor
 
 
 def subset_pass_constraints(df):
@@ -173,6 +178,7 @@ def make_dataframes(folders):
     masses = cs["MH [GeV]"]
     n_masses = len(masses)
     xsec_ggf13 = cs["ggF 13TeV cross section [pb]"]
+    xsec_ggf8 = cs["ggF 8TeV Cross section [pb]"]
 
     def find_xsec13(mass):
         """Return 13 TeV cross-section for the Higgs masses closest to the mass arg"""
@@ -184,11 +190,25 @@ def make_dataframes(folders):
         m_ind = np.absolute(masses - np.ones_like(n_masses) * mass).argmin()
         return xsec_ggf13[m_ind]
 
+    def find_xsec8(mass):
+        """Return 8 TeV cross-section for the Higgs masses closest to the mass arg"""
+        # use numpy arrays to your advantage and do it all so much faster
+        # get vector of absolute difference between masses in CSV and argument mass
+        # then get the index of the smallest difference
+        # then get the xsec corrresponding to that index
+        # this fn takes ~ 310 us, the old one took ~ 4.4ms -> 10x faster!
+        m_ind = np.absolute(masses - np.ones_like(n_masses) * mass).argmin()
+        return xsec_ggf8[m_ind]
+
     # Store SM cross section for gg fusion at 13 TeV for production of m1 and m2
     df_orig["xsec_ggf13_h1"] = df_orig.apply(lambda row: find_xsec13(row['mh1']), axis=1)
     df_orig["xsec_ggf13_h2"] = df_orig.apply(lambda row: find_xsec13(row['mh2']), axis=1)
+    # Store SM cross section for gg fusion at 8 TeV for production of m1 and m2
+    df_orig["xsec_ggf8_h1"] = df_orig.apply(lambda row: find_xsec8(row['mh1']), axis=1)
+    df_orig["xsec_ggf8_h2"] = df_orig.apply(lambda row: find_xsec8(row['mh2']), axis=1)
 
     store_xsec(df_orig)
+    print df_orig.columns.values
 
     # Make some subsets here:
     print "Making subsets..."
