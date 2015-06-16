@@ -150,7 +150,8 @@ def make_dataframes(folders):
     """
 
     print "Making one big dataframe..."
-    df_orig = load_df(folders, "output")
+    # df_orig = load_df(folders, "output")
+    df_orig = load_df(folders, "output_ma1Lt11")
     # df_orig = load_df(folders, "output_good")
 
     # Drop columns tp save space
@@ -158,10 +159,10 @@ def make_dataframes(folders):
                  'h2u', 'h2d', 'h2b', 'h2V', 'h2G', 'h2A',
                  'Brh3gg', 'Brh3tautau', 'Brh3bb', 'Brh3ww',
                  'Brh3zz', 'Brh3gammagamma', 'Brh3zgamma', 'Brh3h1h1', 'Brh3h2h2', 'Brh3h1h2',
-                 'Brh3a1a1', 'Brh3a1z', 'file']
+                 'Brh3a1a1', 'Brh3a1z', 'bsgamma', 'bsmumu', 'btaunu', 'delms', 'delmd']
     for col in drop_cols:
         df_orig.drop(col, inplace=True, axis=1)
-    print "After dropping columns:", df_orig.columns.values
+    print "After dropping columns:", df_orig.columns.values, len(df_orig.columns.values), "columns"
 
     # Remove any duplicate entries
     df_orig.drop_duplicates(inplace=True)
@@ -235,6 +236,6 @@ if __name__ == "__main__":
     store.put('full12loop_all', df_orig, format='table', data_columns=True)
     store.put('full12loop_good_posMuMagMom_planckUpperOnly', df_pass_all, format='table', data_columns=True)
     # store.put('full12loop_good_posMuMagMom_planckUpperOnly_maLt10', df_ma1Lt10, format='table', data_columns=True)
-    store.put('full12loop_good_posMuMagMom_planckUpperOnly_h1SM', df_h1SM, format='table', data_columns=True)
+    # store.put('full12loop_good_posMuMagMom_planckUpperOnly_h1SM', df_h1SM, format='table', data_columns=True)
     # store.put('full12loop_good_posMuMagMom_planckUpperOnly_h2SM', df_h2SM, format='table', data_columns=True)
 
