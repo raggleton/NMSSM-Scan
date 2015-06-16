@@ -170,16 +170,23 @@ def make_dataframes(folders):
     # Load up the glu-glu cross sections for 13 TeV
     print "Adding in cross-sections..."
     cs = pd.read_csv("parton_lumi_ratio.csv")
-    masses = cs["MH [GeV]"].tolist()
-    xsec_ggf13 = cs["ggF 13TeV cross section [pb]"].tolist()
+    masses = cs["MH [GeV]"]
+    n_masses = len(masses)
+    xsec_ggf13 = cs["ggF 13TeV cross section [pb]"]
 
-    def find_xsec(mass):
-        m = min(range(len(masses)), key=lambda x: abs(masses[x]-mass))
-        return xsec_ggf13[m]
+    def find_xsec13(mass):
+        """Return 13 TeV cross-section for the Higgs masses closest to the mass arg"""
+        # use numpy arrays to your advantage and do it all so much faster
+        # get vector of absolute difference between masses in CSV and argument mass
+        # then get the index of the smallest difference
+        # then get the xsec corrresponding to that index
+        # this fn takes ~ 310 us, the old one took ~ 4.4ms -> 10x faster!
+        m_ind = np.absolute(masses - np.ones_like(n_masses) * mass).argmin()
+        return xsec_ggf13[m_ind]
 
     # Store SM cross section for gg fusion at 13 TeV for production of m1 and m2
-    df_orig["xsec_ggf13_h1"] = df_orig.apply(lambda row: find_xsec(row['mh1']), axis=1)
-    df_orig["xsec_ggf13_h2"] = df_orig.apply(lambda row: find_xsec(row['mh2']), axis=1)
+    df_orig["xsec_ggf13_h1"] = df_orig.apply(lambda row: find_xsec13(row['mh1']), axis=1)
+    df_orig["xsec_ggf13_h2"] = df_orig.apply(lambda row: find_xsec13(row['mh2']), axis=1)
 
     store_xsec(df_orig)
 
