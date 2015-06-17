@@ -88,7 +88,7 @@ my @columns = ("mtau", "mh1", "mh2", "mh3", "ma1", "ma2", "mhc", "mstop1", "msto
               "Brh2gg", "Brh2tautau", "Brh2bb", "Brh2ww", "Brh2zz", "Brh2gammagamma", "Brh2zgamma", "Brh2a1a1", "Brh2a1z", "Brh2h1h1",
               "Brh3gg", "Brh3tautau", "Brh3bb", "Brh3ww", "Brh3zz", "Brh3gammagamma", "Brh3zgamma", "Brh3h1h1", "Brh3h2h2", "Brh3h1h2", "Brh3a1a1", "Brh3a1z",
               "Bra1mumu", "Bra1tautau", "Bra1bb", "Bra1gg", "Bra1cc", "Bra1ss",
-              "h1ggrc2", "h2ggrc2", "h1bbrc2", "h2bbrc2", "a1tautaurc2", "a1bbrc2",
+              "h1ggrc2", "h2ggrc2", "h1bbrc2", "h2bbrc2", "a1tautaurc2", "a1bbrc2", "h2wwrc2",
               # "S11", "S12", "S13", "S21", "S22", "S23", "S31", "S32", "S33",
               # "P11", "P12", "P13", "P21", "P22", "P23",
               "bsgamma", "bsmumu", "btaunu", "delms", "delmd",
@@ -276,6 +276,7 @@ foreach $file (@spectrFiles) {
     $results{"h2ggrc2"} = $1 if / +([E\d\.\-\+]+) +3 +35 +21 +21 \# Higgs\(2\)-gluon-gluon reduced coupling\^2/;
     $results{"h1bbrc2"} = $1 if / +([E\d\.\-\+]+) +[E\d\.\-\+]+ +3 +25 +5 +5 \# Higgs\(1\)-b-b red\. coupling\^2/;
     $results{"h2bbrc2"} = $1 if / +([E\d\.\-\+]+) +[E\d\.\-\+]+ +3 +35 +5 +5 \# Higgs\(2\)-b-b red\. coupling\^2/;
+    $results{"h2wwrc2"} = $1 if / +([E\d\.\-\+]+) +[E\d\.\-\+]+ +3 +35 +24 +24 \# Higgs\(2\)-W-W red\. coupling\^2/;
     $results{"a1tautaurc2"} = $1 if / +[E\d\.\-\+]+ +([E\d\.\-\+]+) +3 +36 +15 +15 \# CP-odd Higgs\(1\)-tau-tau red\. coupling\^2/;
     $results{"a1bbrc2"} = $1 if / +[E\d\.\-\+]+ +([E\d\.\-\+]+) +3 +36 +5 +5 \# CP-odd Higgs\(1\)-b-b red\. coupling\^2/;
 
@@ -563,8 +564,9 @@ sub passExpCheck {
     "chi2\\(H->bb\\) >",
     "chi2\\(H->ZZ\\) >",
     "Excluded by sparticle searches at the LHC",
-    "Excluded by ggF/bb\\->H/A\->tautau at the LHC",
+    "Excluded by ggF/bb\\->H/A->tautau at the LHC",
     "Excluded H_125\\->AA\\->4mu \\(CMS\\)",
+    "Excluded by ggF->H/A->gamgam \\(ATLAS\\)",
     "Branching ratios of Higgs states < 1 GeV not reliable",
     "M_H1\\^2<1",
     "M_A1\\^2<1",

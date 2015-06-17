@@ -70,7 +70,7 @@ ls
 ###################
 # Zip up files to transfer back
 ###################
-tar -cvzf $jobdir/spectr$batchNum.tgz spectr*.dat paramRange.txt NMSSM_scan.pl inp_PROTO.dat
+tar -cvzf $jobdir/spectr$batchNum.tgz spectr*.dat paramRange.txt NMSSM_scan.pl inp_NE_PROTO.dat
 tar -cvzf $jobdir/omega$batchNum.tgz omega*.dat
 # tar -cvzf $jobdir/superiso$batchNum.tgz superiso*.dat
 # tar -cvzf $jobdir/nmssmcalc$batchNum.tgz nmssmcalc_*.dat

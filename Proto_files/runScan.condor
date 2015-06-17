@@ -13,7 +13,7 @@ request_memory = 500
 # use the ENV that is provided
 getenv = true
 initialdir = SEDINITIAL
-transfer_input_files = /users/ra12451/NMSSMTools_4.6.0.tgz,/users/ra12451/NMSSM-Scan/NMSSM_scan.pl,/users/ra12451/NMSSM-Scan/Proto_files/inp_PROTO.dat,/users/ra12451/NMSSM-Scan/run.patch,/users/ra12451/superiso_v3.4.tgz,/users/ra12451/nmssmcalc.tar.gz,/users/ra12451/NMSSM-Scan/Proto_files/inp_nmssmcalc_PROTO.dat
+transfer_input_files = /users/ra12451/NMSSMTools_4.6.0.tgz,/users/ra12451/NMSSM-Scan/NMSSM_scan.pl,/users/ra12451/NMSSM-Scan/Proto_files/inp_NE_PROTO.dat,/users/ra12451/NMSSM-Scan/run.patch,/users/ra12451/superiso_v3.4.tgz,/users/ra12451/nmssmcalc.tar.gz,/users/ra12451/NMSSM-Scan/Proto_files/inp_nmssmcalc_PROTO.dat
 transfer_output_files = NMSSM_scan.pl, paramRange.txt
 arguments =  /hdfs/user/ra12451/NMSSM-Scan/SEDOUTDIR $(process)
 
