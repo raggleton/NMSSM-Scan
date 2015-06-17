@@ -221,11 +221,12 @@ def make_dataframes(folders):
 
     mhmin, mhmax = 122.1, 128.1
     # subset with h1 as h_125
-    df_h1SM = subset_mass(df_pass_all, mhmin, mhmax, "mh1")
+    # df_h1SM = subset_mass(df_pass_all, mhmin, mhmax, "mh1")
+    df_h1SM = None
 
     # subset with h2 as h_125
-    df_h2SM = None
-    # df_h2SM = subset_mass(df_pass_all, mhmin, mhmax, "mh2")
+    df_h2SM = subset_mass(df_pass_all, mhmin, mhmax, "mh2")
+    # df_h2SM = None
 
     n_orig = len(df_orig.index)
     n_pass_all = len(df_pass_all.index)
@@ -236,8 +237,8 @@ def make_dataframes(folders):
     print "Running over", n_orig, "points"
     print n_pass_all, "points passing all constraints (= %s)" % percent_str(n_pass_all, n_orig)
     # print len(df_ma1Lt10.index), "of these have 2m_tau < ma1 < 10 GeV (= %s)" % percent_str(len(df_ma1Lt10.index), n_pass_all)
-    print len(df_h1SM.index), "points in the h1 = h(125) subset (= %s)" % percent_str(len(df_h1SM.index), n_pass_all)
-    # print len(df_h2SM.index), "points in the h2 = h(125) subset (= %s)" % percent_str(len(df_h2SM.index), n_pass_all)
+    # print len(df_h1SM.index), "points in the h1 = h(125) subset (= %s)" % percent_str(len(df_h1SM.index), n_pass_all)
+    print len(df_h2SM.index), "points in the h2 = h(125) subset (= %s)" % percent_str(len(df_h2SM.index), n_pass_all)
     print ""
 
     return df_orig, df_pass_all, df_ma1Lt10, df_h1SM, df_h2SM
