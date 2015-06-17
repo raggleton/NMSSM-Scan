@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from itertools import izip
 from collections import namedtuple
+import re
 
 
 # NMSSM params with various associated attributes, such as latex equivalents

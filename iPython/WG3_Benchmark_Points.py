@@ -368,10 +368,25 @@ plot_constraints(df_orig[(df_orig.ma1<3.75) & (df_orig.ma1>3.25)], r"$3.25\ <\ m
 
 # So clearly it is the $B \to X_s \mu\mu$ constraint that is causing this deficit of points interestingly
 
-# In[176]:
+# In[188]:
 
-# pd.set_option('display.max_colwidth', 500)
-# df_orig[df_orig.constraints.str.contains('X_s')].constraints
+fig = generate_fig()
+ax1 = fig.add_subplot(1,2,1)
+xvar = 'tgbeta'
+ylabel = r'$\tan\beta$'
+ylabel = r'$m_{a_1}\ \mathrm{[GeV]}$'
+yvar = 'ma1'
+plot_scatter(ax1, xvar=xvar, yvar=yvar, df=df_pass_all_h1, 
+             color='blue', xlabel=xlabel, ylabel=ylabel, 
+             label='Relaxed constraints')
+plot_scatter(ax1, xvar=xvar, yvar=yvar, df=df_pass_all_strict, 
+             color='lime', xlabel=xlabel, ylabel=ylabel, marker='D', s=40,
+             label='Strict constraints')
+plot_scatter(ax1, xvar=xvar, yvar=yvar, df=df_ref, 
+             xlabel=xlabel, ylabel=ylabel,
+             label='Benchmark point', color='red', marker="*", s=200, lw=2)
+# plt.ylim(bottom=0)
+plt.legend(fontsize=16, loc=4)
 
 
 # In[ ]:
