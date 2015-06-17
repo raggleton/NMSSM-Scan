@@ -293,9 +293,9 @@ def plot_constraints(df, title):
         if cc:
             for p in cc.split("/"):
                 p = "$\mathrm{"+p+"}$"
-                p = p.replace(r"_", r"\_")
                 p = p.replace(r"_s", r"\_{s}")
                 p = p.replace(r"_d", r"\_{d}")
+                # p = p.replace(r"_", r"\_")
                 p = p.replace(r"gamma", r"\gamma")
                 p = p.replace(r"->gg", r"->\gamma\gamma")
                 p = p.replace(r">>", r"\gg")
@@ -311,6 +311,7 @@ def plot_constraints(df, title):
                 p = p.replace(r"MGUT", r"M_{GUT}")
                 p = p.replace(r"tautau", r"\tau\tau")
                 cons.append(p)
+    # print cons
 
     # use Series
     s = pd.Series(cons)
@@ -322,8 +323,10 @@ def plot_constraints(df, title):
     last_i = next(x[0] for x in enumerate(vc_cum) if x[1] > limit)
 
     # make the graph here
-    fig, ax = plt.subplots(nrows=1, ncols=1)
-    fig.set_size_inches(6, 4)
+    # fig, ax = plt.subplots(nrows=1, ncols=1)
+    # fig.set_size_inches(6, 4)
+    fig = generate_fig([8,6])
+    ax = generate_axes(fig)
     vc[:last_i].plot(kind="barh")
     ax.set_xlabel("Fraction of failing points that fail given experimental constraint\n"
                   "(encompassing " + str(limit*100) + " % of all failing points)",
