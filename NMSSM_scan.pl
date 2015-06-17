@@ -37,9 +37,9 @@ my ${unique} = $ARGV[1];
 ###########################################
 ## EDIT ME
 my $tgbetamax=50;
-my $tgbetamin=15;
+my $tgbetamin=1.5;
 
-my $mueffmax=220;
+my $mueffmax=300;
 my $mueffmin=100;
   
 my $lambdamax=0.7;
@@ -48,11 +48,11 @@ my $lambdamin=0;
 my $kappamax=0.7;
 my $kappamin=0;
 
-my $alambdamax=+2000;
+my $alambdamax=+4000;
 my $alambdamin=-1000;
 
 my $akappamax=2.5;
-my $akappamin=-10;
+my $akappamin=-30;
 
 my $m3min=500;
 my $m3max=2000;
@@ -72,6 +72,34 @@ my $au3max=3000;
 my $ad3min=500;
 my $ad3max=3000;
 
+# For Nils-Erik's card (inp_NE_PROTO.dat)
+my $m0max=1200;
+my $m0min=800;
+
+my $m12max=1200;
+my $m12min=800;
+
+my $a0max=-800;
+my $a0min=-1200;
+
+$tgbetamax=6;
+$tgbetamin=1.5;
+
+$mueffmax=120;
+$mueffmin=100;
+
+$lambdamax=0.6;
+$lambdamin=0.4;
+
+$kappamax=0.3;
+$kappamin=0.2;
+
+$alambdamax=-200;
+$alambdamin=-250;
+
+$akappamax=-100;
+$akappamin=-120;
+
 # imposing dependant bounds on min or max parameters
 # (edit corresponding part in loop overicount)
 my $userbounds=0;
@@ -81,7 +109,7 @@ my $userbounds=0;
 ###########################################
 
 my $ninit = 1;
-my $nfinal = 10000; ## EDITME - number of points to scan over
+my $nfinal = 5000; ## EDITME - number of points to scan over
 
 my $npoints = $nfinal - $ninit + 1;
 print("Running over $npoints points\n");
@@ -142,8 +170,18 @@ my $x0au3 = $au3min;
 my $deltaad3 = ($ad3max - $ad3min);
 my $x0ad3 = $ad3min;
 
+my $deltam0 = ($m0max - $m0min);
+my $x0m0 = $m0min;
+
+my $deltam12 = ($m12max - $m12min);
+my $x0m12 = $m12min;
+
+my $deltaa0 = ($a0max - $a0min);
+my $x0a0 = $a0min;
+
 # Read prototype input file into array so quicker
-open(INPUT_PROTO, "$ScriptPath/inp_PROTO.dat") or die;
+# open(INPUT_PROTO, "$ScriptPath/inp_PROTO.dat") or die;
+open(INPUT_PROTO, "$ScriptPath/inp_NE_PROTO.dat") or die;
 chomp (my @proto = (<INPUT_PROTO>));
 close(INPUT_PROTO);
 
@@ -163,6 +201,9 @@ for(my $icount = 0; $icount < $nfinal; $icount++){
   my $md3 = rand($deltamd3) + $x0md3;
   my $au3 = rand($deltaau3) + $x0au3;
   my $ad3 = rand($deltaad3) + $x0ad3;
+  my $m0 = rand($deltam0) + $x0m0;
+  my $m12 = rand($deltam12) + $x0m12;
+  my $a0 = rand($deltaa0) + $x0a0;
   
   # in case of different and dependent range, write it here
 
@@ -199,6 +240,9 @@ for(my $icount = 0; $icount < $nfinal; $icount++){
     $newline =~ s/SED_MD3/$md3/g;
     $newline =~ s/SED_AU3/$au3/g;
     $newline =~ s/SED_AD3/$ad3/g;
+    $newline =~ s/SED_M0/$m0/g;
+    $newline =~ s/SED_A0/$a0/g;
+    $newline =~ s/SED_M12/$m12/g;
 
     $newline .= "\n";
     print INPUT $newline;
