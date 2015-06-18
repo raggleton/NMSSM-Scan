@@ -18,11 +18,11 @@
 #
 
 # Number of parallel jobs to run
-NJOBS=100
+NJOBS=200
 
 # Make new job directory
 # EDIT ME
-DESCRIPTION=$NJOBS"_NE_MICRO_SCAN_I42"
+DESCRIPTION=$NJOBS"_NE_MICRO_SCAN_I42_NEW_REDUCED"
 
 ###########################################
 # Don't touch anything below here
