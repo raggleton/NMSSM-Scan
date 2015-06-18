@@ -81,6 +81,7 @@ open(OUTPUTMA1LT11, ">$outFileMa1Lt11") or die;
 # then make sure you assign it further down.
 my @columns = ("mtau", "mh1", "mh2", "mh3", "ma1", "ma2", "mhc", "mstop1", "mstop2", "msbottom1", "msbottom2",
               "tgbeta", "mueff", "lambda", "kappa", "alambda", "akappa",
+              "m0", "m12", "a0",
               "m3", "mu3", "mq3", "au3",
               "h1u", "h1d", "h1b", "h1V", "h1G", "h1A",
               "h2u", "h2d", "h2b", "h2V", "h2G", "h2A",
@@ -202,7 +203,11 @@ foreach $file (@spectrFiles) {
     $results{"alambda"} = $1 if / +63 +([E\d\.\-\+]+) +\# ALAMBDA/;
     $results{"akappa"} = $1 if / +64 +([E\d\.\-\+]+) +\# AKAPPA/;
 
-    if ($results{"m3"} < 0.1) {
+    $results{"m0"} = $1 if / +1 +([E\d\.\-\+]+) +\# M0\(MGUT\)/;
+    $results{"m12"} = $1 if / +2 +([E\d\.\-\+]+) +\# M12\(MGUT\)/;
+    $results{"a0"} = $1 if / +5 +([E\d\.\-\+]+) +\# A0\(MGUT\)/;
+
+    if ($results{"m3"} < 0.1) {  # dafuq?
       $results{"m3"} = $1 if / +3 +([E\d\.\-\+]+) +\# M3/;
     }
     $results{"mu3"} = $1 if / +46 +([E\d\.\-\+]+) +\# RIGHT T-SQUARKS/;
