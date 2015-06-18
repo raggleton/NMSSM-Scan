@@ -73,32 +73,32 @@ my $ad3min=500;
 my $ad3max=3000;
 
 # For Nils-Erik's card (inp_NE_PROTO.dat)
-my $m0max=1200;
-my $m0min=800;
+my $m0max=2000;
+my $m0min=200;
 
-my $m12max=1200;
-my $m12min=800;
+my $m12max=1000;
+my $m12min=100;
 
-my $a0max=-800;
-my $a0min=-1200;
+my $a0max=0;
+my $a0min=-3000;
 
-$tgbetamax=6;
+$tgbetamax=50;
 $tgbetamin=1.5;
 
-$mueffmax=120;
+$mueffmax=200;
 $mueffmin=100;
 
-$lambdamax=0.6;
-$lambdamin=0.4;
+$lambdamax=0.7;
+$lambdamin=0;
 
-$kappamax=0.3;
-$kappamin=0.2;
+$kappamax=0.7;
+$kappamin=0;
 
-$alambdamax=-200;
-$alambdamin=-250;
+$alambdamax=500;
+$alambdamin=-500;
 
-$akappamax=-100;
-$akappamin=-120;
+$akappamax=500;
+$akappamin=-500;
 
 # imposing dependant bounds on min or max parameters
 # (edit corresponding part in loop overicount)
@@ -109,7 +109,7 @@ my $userbounds=0;
 ###########################################
 
 my $ninit = 1;
-my $nfinal = 5000; ## EDITME - number of points to scan over
+my $nfinal = 10000; ## EDITME - number of points to scan over
 
 my $npoints = $nfinal - $ninit + 1;
 print("Running over $npoints points\n");
