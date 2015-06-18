@@ -4,6 +4,6 @@
 
 export PATH=/software/miniconda/bin:$PATH
 
-source activate pandas
+source activate ra12451_pandas
 echo "Running with args: "$@
 python make_hdf5.py $@
