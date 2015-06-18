@@ -22,7 +22,7 @@ NJOBS=200
 
 # Make new job directory
 # EDIT ME
-DESCRIPTION=$NJOBS"_NE_MICRO_SCAN_I42_REDUCED"
+DESCRIPTION=$NJOBS"_NE_MICRO_SCAN_I42_NEW_REDUCED"
 
 ###########################################
 # Don't touch anything below here

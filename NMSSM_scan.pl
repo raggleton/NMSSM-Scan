@@ -73,32 +73,32 @@ my $ad3min=500;
 my $ad3max=3000;
 
 # For Nils-Erik's card (inp_NE_PROTO.dat)
-my $m0max=2000;
-my $m0min=200;
+my $m0max=1200;
+my $m0min=800;
 
 my $m12max=1000;
-my $m12min=100;
+my $m12min=800;
 
 my $a0max=0;
 my $a0min=-3000;
 
-$tgbetamax=50;
-$tgbetamin=1.5;
+$tgbetamax=6;
+$tgbetamin=0.5;
 
-$mueffmax=200;
-$mueffmin=100;
+$mueffmax=250;
+$mueffmin=150;
 
 $lambdamax=0.7;
-$lambdamin=0;
+$lambdamin=0.4;
 
-$kappamax=0.7;
+$kappamax=0.3;
 $kappamin=0;
 
-$alambdamax=500;
-$alambdamin=-500;
+$alambdamax=-200;
+$alambdamin=-600;
 
-$akappamax=500;
-$akappamin=-500;
+$akappamax=50;
+$akappamin=-50;
 
 # imposing dependant bounds on min or max parameters
 # (edit corresponding part in loop overicount)
