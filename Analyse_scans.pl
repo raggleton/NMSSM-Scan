@@ -94,7 +94,8 @@ my @columns = ("mtau", "mh1", "mh2", "mh3", "ma1", "ma2", "mhc", "mstop1", "msto
               # "P11", "P12", "P13", "P21", "P22", "P23",
               "bsgamma", "bsmumu", "btaunu", "delms", "delmd",
               "omega", "dmdiag1", "dmdiag2", "dmdiag3",
-              "file", "constraints", "Del_a_mu");
+              "file", "constraints", "Del_a_mu",
+              "HBresult", "HBobsratio", "HBchannel");
 
 # add in optional columns for SuperIso results
 # make sure the names don't clash!
@@ -325,6 +326,11 @@ foreach $file (@spectrFiles) {
 
     # g-2 contribution
     $results{"Del_a_mu"} = $1 if /     6 +([E\d\.\-\+]+) +\# Del_a_mu/;
+
+    # HiggsBounds result
+    $results{"HBresult"} = $1 if / +\d +\d +([01\-]) +\# HBresult/;
+    $results{"HBobsratio"} = $1 if / +\d +\d +([E\d\.\-\+]+) +\# obsratio/;
+    $results{"HBchannel"} = $1 if / +\d +\d +([E\d\.\-\+]+) +\# channel id number/;
 
   } #end while
   close(DATASPECTR);

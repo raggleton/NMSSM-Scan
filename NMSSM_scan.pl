@@ -126,7 +126,9 @@ $comments .= "# lambda: $lambdamin -> $lambdamax\n";
 $comments .= "# kappa: $kappamin -> $kappamax\n";
 $comments .= "# A_lambda: $alambdamin -> $alambdamax\n";
 $comments .= "# A_kappa: $akappamin -> $akappamax\n";
-$comments .= "# M3: $m3min -> $m3max\n";
+# $comments .= "# M1: $m1min -> $m1max\n";
+# $comments .= "# M2: $m2min -> $m2max\n";
+# $comments .= "# M3: $m3min -> $m3max\n";
 $comments .= "# MQ3: $mq3min -> $mq3max\n";
 $comments .= "# MU3: $mu3min -> $mu3max\n";
 $comments .= "# MD3: $md3min -> $md3max\n";
@@ -309,6 +311,12 @@ for(my $icount = 0; $icount < $nfinal; $icount++){
   # # remove input file
   # unlink "$inputCardNMSSMCALC";
 
+  #
+  # Run HiggsBounds to add in their block onto the end
+  #
+  my $spectr = $inputCard;
+  $spectr =~ s/inp/spectr/g;
+  system("cd HiggsBounds-?.?.? && ./HiggsBounds LandH SLHA 5 1 $spectr && cd ..");
 
 } # end loop on number of random points to scan
 

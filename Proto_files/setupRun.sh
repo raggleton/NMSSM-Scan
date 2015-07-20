@@ -19,6 +19,15 @@ cd ..
 # ls
 
 ###################
+# Setup HiggsBounds
+###################
+tar -xvzf HiggsBounds-*.tar.gz
+cd HiggsBounds-*
+./configure
+make
+cd ..
+
+###################
 # Setup NMSSMCALC
 ###################
 # mkdir nmssmcalc
