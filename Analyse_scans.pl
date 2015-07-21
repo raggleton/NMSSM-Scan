@@ -83,13 +83,16 @@ my @columns = ("mtau", "mh1", "mh2", "mh3", "ma1", "ma2", "mhc", "mstop1", "msto
               "tgbeta", "mueff", "lambda", "kappa", "alambda", "akappa",
               "m0", "m12", "a0",
               "m3", "mu3", "mq3", "au3",
-              "h1u", "h1d", "h1b", "h1V", "h1G", "h1A",
-              "h2u", "h2d", "h2b", "h2V", "h2G", "h2A",
+              # "h1u", "h1d", "h1b", "h1V", "h1G", "h1A",
+              # "h2u", "h2d", "h2b", "h2V", "h2G", "h2A",
               "Brh1gg", "Brh1tautau", "Brh1cc", "Brh1bb", "Brh1ww", "Brh1zz", "Brh1gammagamma", "Brh1zgamma", "Brh1a1a1", "Brh1a1z",
               "Brh2gg", "Brh2tautau", "Brh2bb", "Brh2ww", "Brh2zz", "Brh2gammagamma", "Brh2zgamma", "Brh2a1a1", "Brh2a1z", "Brh2h1h1",
               "Brh3gg", "Brh3tautau", "Brh3bb", "Brh3ww", "Brh3zz", "Brh3gammagamma", "Brh3zgamma", "Brh3h1h1", "Brh3h2h2", "Brh3h1h2", "Brh3a1a1", "Brh3a1z",
               "Bra1mumu", "Bra1tautau", "Bra1bb", "Bra1gg", "Bra1cc", "Bra1ss",
-              "h1ggrc2", "h2ggrc2", "h1bbrc2", "h2bbrc2", "a1tautaurc2", "a1bbrc2", "h2wwrc2",
+              "h1ggrc2", "h1bbrc2", "h1vvrc2",
+              "h2ggrc2", "h2bbrc2", "h2vvrc2",
+              "h3ggrc2", "h3bbrc2", "h3vvrc2",
+              "a1ggrc2", "a1tautaurc2", "a1bbrc2",
               # "S11", "S12", "S13", "S21", "S22", "S23", "S31", "S32", "S33",
               # "P11", "P12", "P13", "P21", "P22", "P23",
               "bsgamma", "bsmumu", "btaunu", "delms", "delmd",
@@ -216,19 +219,19 @@ foreach $file (@spectrFiles) {
     $results{"au3"} = $1 if / +11 +([E\d\.\-\+]+) +\# ATOP/;
 
     # higgs reduced couplings
-    $results{"h1u"} = $1 if / +1  1 +([E\d\.\-\+]+) +\# U\-type fermions/;
-    $results{"h1d"} = $1 if / +1  2 +([E\d\.\-\+]+) +\# D\-type fermions/;
-    $results{"h1b"} = $1 if / +1  3 +([E\d\.\-\+]+) +\# b\-quarks/;
-    $results{"h1V"} = $1 if / +1  4 +([E\d\.\-\+]+) +\# W,Z bosons/;
-    $results{"h1G"} = $1 if / +1  5 +([E\d\.\-\+]+) +\# Gluons/;
-    $results{"h1A"} = $1 if / +1  6 +([E\d\.\-\+]+) +\# Photons/;
+    # $results{"h1u"} = $1 if / +1  1 +([E\d\.\-\+]+) +\# U\-type fermions/;
+    # $results{"h1d"} = $1 if / +1  2 +([E\d\.\-\+]+) +\# D\-type fermions/;
+    # $results{"h1b"} = $1 if / +1  3 +([E\d\.\-\+]+) +\# b\-quarks/;
+    # $results{"h1V"} = $1 if / +1  4 +([E\d\.\-\+]+) +\# W,Z bosons/;
+    # $results{"h1G"} = $1 if / +1  5 +([E\d\.\-\+]+) +\# Gluons/;
+    # $results{"h1A"} = $1 if / +1  6 +([E\d\.\-\+]+) +\# Photons/;
 
-    $results{"h2u"} = $1 if / +2  1 +([E\d\.\-\+]+) +\# U\-type fermions/;
-    $results{"h2d"} = $1 if / +2  2 +([E\d\.\-\+]+) +\# D\-type fermions/;
-    $results{"h2b"} = $1 if / +2  3 +([E\d\.\-\+]+) +\# b\-quarks/;
-    $results{"h2V"} = $1 if / +2  4 +([E\d\.\-\+]+) +\# W,Z bosons/;
-    $results{"h2G"} = $1 if / +2  5 +([E\d\.\-\+]+) +\# Gluons/;
-    $results{"h2A"} = $1 if / +2  6 +([E\d\.\-\+]+) +\# Photons/;
+    # $results{"h2u"} = $1 if / +2  1 +([E\d\.\-\+]+) +\# U\-type fermions/;
+    # $results{"h2d"} = $1 if / +2  2 +([E\d\.\-\+]+) +\# D\-type fermions/;
+    # $results{"h2b"} = $1 if / +2  3 +([E\d\.\-\+]+) +\# b\-quarks/;
+    # $results{"h2V"} = $1 if / +2  4 +([E\d\.\-\+]+) +\# W,Z bosons/;
+    # $results{"h2G"} = $1 if / +2  5 +([E\d\.\-\+]+) +\# Gluons/;
+    # $results{"h2A"} = $1 if / +2  6 +([E\d\.\-\+]+) +\# Photons/;
 
     # Higgs branching ratios
     # h1
@@ -277,12 +280,20 @@ foreach $file (@spectrFiles) {
     $results{"Bra1cc"} = $1 if / +([E\d\.\-\+]+) +2 +4 +\-4 +\# BR\(A_1 \-> c cbar\)/;
     $results{"Bra1ss"} = $1 if / +([E\d\.\-\+]+) +2 +3 +\-3 +\# BR\(A_1 \-> s sbar\)/;
 
-    # Input Higgs Couplings Bosons
+    # Reduced Higgs Couplings Bosons
     $results{"h1ggrc2"} = $1 if / +([E\d\.\-\+]+) +3 +25 +21 +21 \# Higgs\(1\)-gluon-gluon reduced coupling\^2/;
-    $results{"h2ggrc2"} = $1 if / +([E\d\.\-\+]+) +3 +35 +21 +21 \# Higgs\(2\)-gluon-gluon reduced coupling\^2/;
     $results{"h1bbrc2"} = $1 if / +([E\d\.\-\+]+) +[E\d\.\-\+]+ +3 +25 +5 +5 \# Higgs\(1\)-b-b red\. coupling\^2/;
+    $results{"h1vvrc2"} = $1 if / +([E\d\.\-\+]+) +3 +25 +24 +24 \# Higgs\(1\)-W-W reduced coupling\^2/;
+
+    $results{"h2ggrc2"} = $1 if / +([E\d\.\-\+]+) +3 +35 +21 +21 \# Higgs\(2\)-gluon-gluon reduced coupling\^2/;
     $results{"h2bbrc2"} = $1 if / +([E\d\.\-\+]+) +[E\d\.\-\+]+ +3 +35 +5 +5 \# Higgs\(2\)-b-b red\. coupling\^2/;
-    $results{"h2wwrc2"} = $1 if / +([E\d\.\-\+]+) +[E\d\.\-\+]+ +3 +35 +24 +24 \# Higgs\(2\)-W-W red\. coupling\^2/;
+    $results{"h2vvrc2"} = $1 if / +([E\d\.\-\+]+) +3 +35 +24 +24 \# Higgs\(2\)-W-W reduced coupling\^2/;
+
+    $results{"h3ggrc2"} = $1 if / +([E\d\.\-\+]+) +3 +45 +21 +21 \# Higgs\(3\)-gluon-gluon reduced coupling\^2/;
+    $results{"h3bbrc2"} = $1 if / +([E\d\.\-\+]+) +[E\d\.\-\+]+ +3 +45 +5 +5 \# Higgs\(3\)-b-b red\. coupling\^2/;
+    $results{"h3vvrc2"} = $1 if / +([E\d\.\-\+]+) +3 +45 +24 +24 \# Higgs\(3\)-W-W reduced coupling\^2/;
+
+    $results{"a1ggrc2"} = $1 if / +([E\d\.\-\+]+) +3 +36 +21 +21 \# CP-odd Higgs\(1\)-gluon-gluon reduced coupling\^2/;
     $results{"a1tautaurc2"} = $1 if / +[E\d\.\-\+]+ +([E\d\.\-\+]+) +3 +36 +15 +15 \# CP-odd Higgs\(1\)-tau-tau red\. coupling\^2/;
     $results{"a1bbrc2"} = $1 if / +[E\d\.\-\+]+ +([E\d\.\-\+]+) +3 +36 +5 +5 \# CP-odd Higgs\(1\)-b-b red\. coupling\^2/;
 
