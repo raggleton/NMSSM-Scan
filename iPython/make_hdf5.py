@@ -115,11 +115,11 @@ def subset_pass_constraints(df):
     # All the constraints strings to test against. Must follow regex.
     constraints = [
         r"Muon magn\. mom\. more than 2 sigma away",
-        r"Relic density too small \(Planck\)",
-        r"Excluded by sparticle searches at the LHC",
-        r"Excluded by ggF/bb\->H/A\->tautau at the LHC",
-        r"Excluded H_125\->AA\->4mu \(CMS\)",
-        r"Excluded by ggF\->H/A\->gamgam \(ATLAS\)"
+        r"Relic density too small \(Planck\)"
+        # r"Excluded by sparticle searches at the LHC",
+        # r"Excluded by ggF/bb\->H/A\->tautau at the LHC",
+        # r"Excluded H_125\->AA\->4mu \(CMS\)",
+        # r"Excluded by ggF\->H/A\->gamgam \(ATLAS\)"
     ]
 
     # We want a bitmask, so for each entry we simply want a True or False
@@ -135,14 +135,14 @@ def subset_pass_constraints(df):
     return df[mask & (df.Del_a_mu > 0)]
 
 
-def subset_mass(df, min_var, max_var, var):
+def subset_var(df, min_var, max_var, var):
     """Make subset based on range of object value"""
     var_max = df[var] < max_var
     var_min = df[var] > min_var
     return df[var_min & var_max]
 
 
-def make_dataframes(folders):
+def make_dataframes(folders, file_stem):
     """Load files into Panda dataframes
 
     CSV files are read in from the folders listed in the arg.
@@ -155,18 +155,21 @@ def make_dataframes(folders):
     """
 
     print "Making one big dataframe..."
-    df_orig = load_df(folders, "output")
+    df_orig = load_df(folders, file_stem)
+    # df_orig = load_df(folders, "output")
     # df_orig = load_df(folders, "output_ma1Lt11")
     # df_orig = load_df(folders, "output_good")
 
     # Drop columns tp save space
     drop_cols = ['h1u', 'h1d', 'h1b', 'h1V', 'h1G', 'h1A',
                  'h2u', 'h2d', 'h2b', 'h2V', 'h2G', 'h2A',
-                 'Brh3gg', 'Brh3tautau', 'Brh3bb', 'Brh3ww',
-                 'Brh3zz', 'Brh3gammagamma', 'Brh3zgamma', 'Brh3h1h1', 'Brh3h2h2', 'Brh3h1h2',
-                 'Brh3a1a1', 'Brh3a1z', 'bsgamma', 'bsmumu', 'btaunu', 'delms', 'delmd']
+                 # 'Brh3gg', 'Brh3tautau', 'Brh3bb', 'Brh3ww',
+                 # 'Brh3zz', 'Brh3gammagamma', 'Brh3zgamma', 'Brh3h1h1', 'Brh3h2h2', 'Brh3h1h2',
+                 # 'Brh3a1a1', 'Brh3a1z',
+                 'bsgamma', 'bsmumu', 'btaunu', 'delms', 'delmd']
     for col in drop_cols:
-        df_orig.drop(col, inplace=True, axis=1)
+        if col in df_orig.columns.values:
+            df_orig.drop(col, inplace=True, axis=1)
     print "After dropping columns:", df_orig.columns.values, len(df_orig.columns.values), "columns"
 
     # Remove any duplicate entries
@@ -174,59 +177,58 @@ def make_dataframes(folders):
 
     # Load up the glu-glu cross sections for 13 TeV
     print "Adding in cross-sections..."
-    cs = pd.read_csv("parton_lumi_ratio.csv")
+    # cs = pd.read_csv("parton_lumi_ratio.csv")
+    cs = pd.read_csv("YR3_cross_sections.csv")
     masses = cs["MH [GeV]"]
     n_masses = len(masses)
-    xsec_ggf13 = cs["ggF 13TeV cross section [pb]"]
-    xsec_ggf8 = cs["ggF 8TeV Cross section [pb]"]
+    xsec_ggf13 = cs["ggF 13TeV Cross Section [pb]"]
+    xsec_vbf13 = cs["VBF 13TeV Cross Section [pb]"]
+    xsec_wh13 = cs["WH 13TeV Cross Section [pb]"]
+    xsec_zh13 = cs["ZH 13TeV Cross Section [pb]"]
+    xsec_ggf8 = cs["ggF 8TeV Cross Section [pb]"]
 
-    def find_xsec13(mass):
-        """Return 13 TeV cross-section for the Higgs masses closest to the mass arg"""
+    def find_xsec(mass, xsec):
+        """
+        Return cross-section for the Higgs masses closest to the mass argument.
+        xsec is a list of cross-sections, corresponding to masses in masses list.
+        """
         # use numpy arrays to your advantage and do it all so much faster
         # get vector of absolute difference between masses in CSV and argument mass
         # then get the index of the smallest difference
         # then get the xsec corrresponding to that index
         # this fn takes ~ 310 us, the old one took ~ 4.4ms -> 10x faster!
         m_ind = np.absolute(masses - np.ones_like(n_masses) * mass).argmin()
-        return xsec_ggf13[m_ind]
+        return xsec[m_ind]
 
-    def find_xsec8(mass):
-        """Return 8 TeV cross-section for the Higgs masses closest to the mass arg"""
-        # use numpy arrays to your advantage and do it all so much faster
-        # get vector of absolute difference between masses in CSV and argument mass
-        # then get the index of the smallest difference
-        # then get the xsec corrresponding to that index
-        # this fn takes ~ 310 us, the old one took ~ 4.4ms -> 10x faster!
-        m_ind = np.absolute(masses - np.ones_like(n_masses) * mass).argmin()
-        return xsec_ggf8[m_ind]
+    # Store SM cross section for gg fusion at 13 TeV for production of h1 and h2
+    df_orig["xsec_ggf13_h1"] = df_orig.apply(lambda row: find_xsec(row['mh1'], xsec_ggf13), axis=1)
+    df_orig["xsec_ggf13_h2"] = df_orig.apply(lambda row: find_xsec(row['mh2'], xsec_ggf13), axis=1)
 
-    # Store SM cross section for gg fusion at 13 TeV for production of m1 and m2
-    df_orig["xsec_ggf13_h1"] = df_orig.apply(lambda row: find_xsec13(row['mh1']), axis=1)
-    df_orig["xsec_ggf13_h2"] = df_orig.apply(lambda row: find_xsec13(row['mh2']), axis=1)
-    # Store SM cross section for gg fusion at 8 TeV for production of m1 and m2
-    df_orig["xsec_ggf8_h1"] = df_orig.apply(lambda row: find_xsec8(row['mh1']), axis=1)
-    df_orig["xsec_ggf8_h2"] = df_orig.apply(lambda row: find_xsec8(row['mh2']), axis=1)
+    # Store SM cross section for gg fusion at 8 TeV for production of h1 and h2
+    df_orig["xsec_ggf8_h1"] = df_orig.apply(lambda row: find_xsec(row['mh1'], xsec_ggf8), axis=1)
+    df_orig["xsec_ggf8_h2"] = df_orig.apply(lambda row: find_xsec(row['mh2'], xsec_ggf8), axis=1)
 
     store_xsec(df_orig)
     print df_orig.columns.values
 
     # Make some subsets here:
     print "Making subsets..."
-    # Points passing all experimental constraints
+
+    # Points passing all experimental constraints chosen
     df_pass_all = subset_pass_constraints(df_orig)
 
     # subset with 2m_tau < ma1 < 10
     df_ma1Lt10 = None
-    # df_ma1Lt10 = subset_mass(df_pass_all, 3.554, 10.5, "ma1")
+    # df_ma1Lt10 = subset_var(df_pass_all, 3.554, 10.5, "ma1")
 
     mhmin, mhmax = 122.1, 128.1
     # subset with h1 as h_125
-    # df_h1SM = subset_mass(df_pass_all, mhmin, mhmax, "mh1")
+    # df_h1SM = subset_var(df_pass_all, mhmin, mhmax, "mh1")
     df_h1SM = None
 
     # subset with h2 as h_125
-    df_h2SM = subset_mass(df_pass_all, mhmin, mhmax, "mh2")
-    # df_h2SM = None
+    # df_h2SM = subset_var(df_pass_all, mhmin, mhmax, "mh2")
+    df_h2SM = None
 
     n_orig = len(df_orig.index)
     n_pass_all = len(df_pass_all.index)
@@ -238,7 +240,7 @@ def make_dataframes(folders):
     print n_pass_all, "points passing all constraints (= %s)" % percent_str(n_pass_all, n_orig)
     # print len(df_ma1Lt10.index), "of these have 2m_tau < ma1 < 10 GeV (= %s)" % percent_str(len(df_ma1Lt10.index), n_pass_all)
     # print len(df_h1SM.index), "points in the h1 = h(125) subset (= %s)" % percent_str(len(df_h1SM.index), n_pass_all)
-    print len(df_h2SM.index), "points in the h2 = h(125) subset (= %s)" % percent_str(len(df_h2SM.index), n_pass_all)
+    # print len(df_h2SM.index), "points in the h2 = h(125) subset (= %s)" % percent_str(len(df_h2SM.index), n_pass_all)
     print ""
 
     return df_orig, df_pass_all, df_ma1Lt10, df_h1SM, df_h2SM
@@ -256,14 +258,19 @@ if __name__ == "__main__":
         print "You need to specify an input directory"
         sys.exit(1)
 
-    df_orig, df_pass_all, df_ma1Lt10, df_h1SM, df_h2SM = make_dataframes(args.input)
+    df_orig, df_pass_all, df_ma1Lt10, df_h1SM, df_h2SM = make_dataframes(args.input, file_stem='output')
 
     print "Saving as HDF5..."
     store = pd.HDFStore(args.output, complevel=9, comlib='bzip2')
 
-    store.put('full12loop_all', df_orig, format='table', data_columns=True)
-    store.put('full12loop_good_posMuMagMom_planckUpperOnly', df_pass_all, format='table', data_columns=True)
-    # store.put('full12loop_good_posMuMagMom_planckUpperOnly_maLt10', df_ma1Lt10, format='table', data_columns=True)
-    # store.put('full12loop_good_posMuMagMom_planckUpperOnly_h1SM', df_h1SM, format='table', data_columns=True)
-    # store.put('full12loop_good_posMuMagMom_planckUpperOnly_h2SM', df_h2SM, format='table', data_columns=True)
+    if isinstance(df_orig, pd.DataFrame):
+        store.put('full12loop_all', df_orig, format='table', data_columns=True)
+    if isinstance(df_pass_all, pd.DataFrame):
+        store.put('full12loop_good_posMuMagMom_planckUpperOnly', df_pass_all, format='table', data_columns=True)
+    if isinstance(df_ma1Lt10, pd.DataFrame):
+        store.put('full12loop_good_posMuMagMom_planckUpperOnly_maLt10', df_ma1Lt10, format='table', data_columns=True)
+    if isinstance(df_h1SM, pd.DataFrame):
+        store.put('full12loop_good_posMuMagMom_planckUpperOnly_h1SM', df_h1SM, format='table', data_columns=True)
+    if isinstance(df_h2SM, pd.DataFrame):
+        store.put('full12loop_good_posMuMagMom_planckUpperOnly_h2SM', df_h2SM, format='table', data_columns=True)
 

@@ -2,8 +2,8 @@
 # This script is for the condor worker node
 # to run make_hdf5.py
 
-export PATH=/software/miniconda/bin:$PATH
+export PATH=/software/miniconda/envs/pandas/bin:/software/miniconda/bin:$PATH
 
-source activate ra12451_pandas
+source activate pandas
 echo "Running with args: "$@
 python make_hdf5.py $@

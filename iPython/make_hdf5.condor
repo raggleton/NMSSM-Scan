@@ -13,8 +13,7 @@ request_memory = 500
 # use the ENV that is provided
 getenv = true
 initialdir = /users/ra12451/NMSSM-Scan/iPython
-transfer_input_files = make_hdf5.py, parton_lumi_ratio.csv
-
-arguments = points_I42_scan_NE.h5 /hdfs/user/ra12451/NMSSM-Scan/jobs_100_NE_MICRO_SCAN_I42_17_Jun_15_1559/
+transfer_input_files = make_hdf5.py, parton_lumi_ratio.csv, YR3_cross_sections.csv
+arguments = points_NE_I42_HB.h5 /hdfs/user/ra12451/NMSSM-Scan/jobs_50_NE_MICRO_SCAN_I42_REDUCED_HB_20_Jul_15_1711
 
 queue 1
