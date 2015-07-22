@@ -76,29 +76,29 @@ my $ad3max=3000;
 my $m0max=1200;
 my $m0min=800;
 
-my $m12max=1000;
+my $m12max=1200;
 my $m12min=800;
 
-my $a0max=0;
-my $a0min=-3000;
+my $a0max=-1000;
+my $a0min=-3500;
 
-$tgbetamax=6;
-$tgbetamin=0.5;
+$tgbetamax=12;
+$tgbetamin=1;
 
-$mueffmax=250;
-$mueffmin=150;
+$mueffmax=200;
+$mueffmin=50;
 
-$lambdamax=0.7;
-$lambdamin=0.4;
+$lambdamax=0.2;
+$lambdamin=0;
 
-$kappamax=0.3;
-$kappamin=0;
+$kappamax=0.5;
+$kappamin=0.1;
 
-$alambdamax=-200;
-$alambdamin=-600;
+$alambdamax=-50;
+$alambdamin=-1000;
 
-$akappamax=50;
-$akappamin=-50;
+$akappamax=90;
+$akappamin=-100;
 
 # imposing dependant bounds on min or max parameters
 # (edit corresponding part in loop overicount)
@@ -109,7 +109,7 @@ my $userbounds=0;
 ###########################################
 
 my $ninit = 1;
-my $nfinal = 10000; ## EDITME - number of points to scan over
+my $nfinal = 20000; ## EDITME - number of points to scan over
 
 my $npoints = $nfinal - $ninit + 1;
 print("Running over $npoints points\n");
