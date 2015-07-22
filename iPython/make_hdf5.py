@@ -62,7 +62,7 @@ def load_df(folders, filestem):
     return df
 
 
-def store_xsec(df):
+def store_channel_xsec(df):
     """
     Calculate total cross-section & scaled cross-sections
     for gg->h1->a1a1, gg->h2->a1a1, gg->h2->h1h1,
@@ -72,38 +72,46 @@ def store_xsec(df):
     process_scaled = [] # Store them for later
     process = []
 
-    # (no constraint on if ggh is hSM)
-    X = ["h1", "h2"]
+    # low mass channels, gg - X -> 2Y -> 4F/2F+2F'
+    # prod = {'ggf': 'ggrc2', 'vbf': 'vvrc2', 'zh':'vvrc2', 'wh':'vvrc2'}
+    prod = {'ggf': 'ggrc2'}
+    X = ["h1", "h2", 'h3']
     Y = ["a1", "h1"]
     F = ["tautau", "bb"]
+    for production, coupling in prod.iteritems():
+        for x, y in product(X,Y):
+            if x == y:
+                continue
+            for f1, f2 in product(F,F):
+                ff = ""
+                factor = 1
+                if f1 == f2 == "tautau":
+                    ff = "4tau"
+                elif f1 == f2 == "bb":
+                    ff = "4b"
+                else:
+                    factor = 2
+                    ff = "2b2tau"
+                name = "xsec_scaled_"+production+"_"+x+"_"+"2"+y+"_"+ff
+                if not name in process_scaled:
+                    # store scaled total XS * BR
+                    process_scaled.append(name)
+                    df[name] = df[x+coupling] * df["Br"+x+y+y] * df["Br"+y+f1] * df["Br"+y+f2] * factor
+                    # store actual XS * BR
+                    # we store it twice for backwards-compatibility otherwise old script break
+                    name = name.replace("_scaled", "")
+                    process.append(name)
+                    df[name] = df["xsec_"+production+"13_"+x] * df[x+coupling] * df["Br"+x+y+y] * df["Br"+y+f1] * df["Br"+y+f2] * factor
+                    # name_new = name.replace("xsec", "xsec13")
+                    # df[name_new] = df[name]
+                    # name = name_new.replace("13", "8")
+                    # df[name] = df["xsec_ggf8_"+x] * df[x+"ggrc2"] * df["Br"+x+y+y] * df["Br"+y+f1] * df["Br"+y+f2] * factor
 
-    for x,y in product(X,Y):
-        if x == y:
-            continue
-        for f1, f2 in product(F,F):
-            ff = ""
-            factor = 1
-            if f1 == f2 == "tautau":
-                ff = "4tau"
-            elif f1 == f2 == "bb":
-                ff = "4b"
-            else:
-                factor = 2
-                ff = "2b2tau"
-            name = "xsec_scaled_"+x+"_"+"2"+y+"_"+ff
-            if not name in process_scaled:
-                # store scaled total XS * BR
-                process_scaled.append(name)
-                df[name] = df[x+"ggrc2"] * df["Br"+x+y+y] * df["Br"+y+f1] * df["Br"+y+f2] * factor
-                # store actual XS * BR
-                # we store it twice for backwards-compatibility otherwise old script break
-                name = name.replace("_scaled", "")
-                process.append(name)
-                df[name] = df["xsec_ggf13_"+x] * df[x+"ggrc2"] * df["Br"+x+y+y] * df["Br"+y+f1] * df["Br"+y+f2] * factor
-                name_new = name.replace("xsec", "xsec13")
-                df[name_new] = df[name]
-                name = name_new.replace("13", "8")
-                df[name] = df["xsec_ggf8_"+x] * df[x+"ggrc2"] * df["Br"+x+y+y] * df["Br"+y+f1] * df["Br"+y+f2] * factor
+    # More for middle mass channels, ZA1, etc
+    prod = {'ggf': 'ggrc2', 'vbf': 'vvrc2', 'zh':'vvrc2', 'wh':'vvrc2'}
+    br_z_ll = (3.363 + 3.366)/100.  # for Z->ee/mumu, taken frmo PDG
+
+
 
 
 def subset_pass_constraints(df):
@@ -203,12 +211,26 @@ def make_dataframes(folders, file_stem):
     # Store SM cross section for gg fusion at 13 TeV for production of h1 and h2
     df_orig["xsec_ggf13_h1"] = df_orig.apply(lambda row: find_xsec(row['mh1'], xsec_ggf13), axis=1)
     df_orig["xsec_ggf13_h2"] = df_orig.apply(lambda row: find_xsec(row['mh2'], xsec_ggf13), axis=1)
+    df_orig["xsec_ggf13_h3"] = df_orig.apply(lambda row: find_xsec(row['mh3'], xsec_ggf13), axis=1)
+
+    df_orig["xsec_vbf13_h1"] = df_orig.apply(lambda row: find_xsec(row['mh1'], xsec_vbf13), axis=1)
+    df_orig["xsec_vbf13_h2"] = df_orig.apply(lambda row: find_xsec(row['mh2'], xsec_vbf13), axis=1)
+    df_orig["xsec_vbf13_h3"] = df_orig.apply(lambda row: find_xsec(row['mh3'], xsec_vbf13), axis=1)
+
+    df_orig["xsec_zh13_h1"] = df_orig.apply(lambda row: find_xsec(row['mh1'], xsec_zh13), axis=1)
+    df_orig["xsec_zh13_h2"] = df_orig.apply(lambda row: find_xsec(row['mh2'], xsec_zh13), axis=1)
+    df_orig["xsec_zh13_h3"] = df_orig.apply(lambda row: find_xsec(row['mh3'], xsec_zh13), axis=1)
+
+    df_orig["xsec_wh13_h1"] = df_orig.apply(lambda row: find_xsec(row['mh1'], xsec_wh13), axis=1)
+    df_orig["xsec_wh13_h2"] = df_orig.apply(lambda row: find_xsec(row['mh2'], xsec_wh13), axis=1)
+    df_orig["xsec_wh13_h3"] = df_orig.apply(lambda row: find_xsec(row['mh3'], xsec_wh13), axis=1)
 
     # Store SM cross section for gg fusion at 8 TeV for production of h1 and h2
     df_orig["xsec_ggf8_h1"] = df_orig.apply(lambda row: find_xsec(row['mh1'], xsec_ggf8), axis=1)
     df_orig["xsec_ggf8_h2"] = df_orig.apply(lambda row: find_xsec(row['mh2'], xsec_ggf8), axis=1)
 
-    store_xsec(df_orig)
+    # Now add in individual channel xsec
+    # store_channel_xsec(df_orig)
     print df_orig.columns.values
 
     # Make some subsets here:
