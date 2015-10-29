@@ -9,7 +9,7 @@ batchNum=$2
 ###################
 # Setup NMSSMTools
 ###################
-tar -xvzf NMSSMTools_*.tgz
+tar -xvzf /hdfs/user/ra12451/NMSSM-Scan/zips/NMSSMTools_*.tgz
 cd NMSSMTools_*
 # patch bug in moving output files due to relpaths eurgh
 patch run < ../run.patch
@@ -21,7 +21,7 @@ cd ..
 ###################
 # Setup HiggsBounds
 ###################
-tar -xvzf HiggsBounds-*.tar.gz
+tar -xvzf /hdfs/user/ra12451/NMSSM-Scan/zips/HiggsBounds-*.tar.gz
 cd HiggsBounds-*
 ./configure
 make
