@@ -1,7 +1,7 @@
 README_Daniele
 .DS_Store
 jobs_*
-inp_*.dat
+*.dat
 *.log
 *.out
 *.err
@@ -20,3 +20,4 @@ data
 *.csv
 *.html
 .idea
+ScanVenv
