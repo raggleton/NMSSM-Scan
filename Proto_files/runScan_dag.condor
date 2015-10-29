@@ -1,0 +1,17 @@
+Executable = Proto_files/setupRun.sh
+Universe = vanilla
+Output = $(logDir)/scan.$(cluster).$(process).out
+Error = $(logDir)/scan.$(cluster).$(process).err
+Log = $(logDir)/scan.$(cluster).$(process).log
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT_OR_EVICT
+
+request_cpus = 1
+request_memory = 500
+
+# use the ENV that is provided
+getenv = true
+transfer_input_files = run.patch,HB.patch
+arguments =  $(oDir) $(process) $(nPoints)
+
+queue

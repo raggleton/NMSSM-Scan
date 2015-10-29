@@ -1,0 +1,4 @@
+44c44
+<  if(inputmethod.eq.'datfile')call HiggsBounds_info
+---
+>  ! if(inputmethod.eq.'datfile')call HiggsBounds_info
