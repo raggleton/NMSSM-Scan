@@ -28,12 +28,12 @@ DESCRIPTION=$NJOBS"_NE_MICRO_SCAN_I42_NEW_REDUCED"
 # Don't touch anything below here
 DATE=$(date +"%d_%b_%y_%H%M")
 JOBDIR="jobs_${DESCRIPTION}_${DATE}"
-
+ODIR=/hdfs/user/ra12451/NMSSM-Scan/$JOBDIR
 if [ ! -d "$JOBDIR" ]; then
     echo "Putting job files in $JOBDIR"
-    echo "Putting output in /hdfs/user/ra12451/NMSSM-Scan/$JOBDIR"
+    echo "Putting output in $ODIR"
     mkdir $JOBDIR
-    mkdir /hdfs/user/ra12451/NMSSM-Scan/$JOBDIR
+    mkdir $ODIR
 else
     echo "Cannot create job folder, it already exists - give it a minute"
     exit 1
