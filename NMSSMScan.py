@@ -17,6 +17,7 @@ from glob import glob
 from subprocess import call
 import json
 import re
+from time import strftime
 
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
@@ -60,7 +61,7 @@ def NMSSMScan(in_args=sys.argv[1:]):
     if not args.oDir:
         # generate output directory if one not specified
         args.oDir = generate_odir_soolin()
-    check_create_dir(args.oDir)
+    check_create_dir(args.oDir, args.v)
 
     # read template card
     with open(args.card) as template_file:
@@ -145,7 +146,8 @@ def check_create_dir(directory, info=False):
 
 
 def generate_odir_soolin():
-    return '/hdfs/user/%s/NMSSM-Scan/' % (os.environ['LOGNAME'])
+    """Generate an output directory on hdfs on soolin"""
+    return '/hdfs/user/%s/NMSSM-Scan/jobs_%s' % (os.environ['LOGNAME'], strftime("%d_%b_%y_%H%M"))
 
 
 def generate_new_card_path(oDir, card, ind):
