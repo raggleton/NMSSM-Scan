@@ -96,10 +96,12 @@ def NMSSMScan(in_args=sys.argv[1:]):
 
         # write a new card
         new_card_path = generate_new_card_path(args.oDir, args.card, ind)
+        log.debug('New card: %s' % new_card_path)
         with open(new_card_path, 'w') as new_card:
             for line in new_card_text:
                 new_card.write(line)
 
+        base_dir = os.getcwd()
         # run NMSSMTools with the new card
         if not args.dry:
             # TODO: fix as this is so prone to error
@@ -107,7 +109,7 @@ def NMSSMScan(in_args=sys.argv[1:]):
             ntools_cmds = ['./run', new_card_path]
             log.debug(ntools_cmds)
             call(ntools_cmds)
-            os.chdir('..')
+            os.chdir(base_dir)
 
         # run HiggsBounds
         if not args.dry:
@@ -117,7 +119,7 @@ def NMSSMScan(in_args=sys.argv[1:]):
             hb_cmds = ['./HiggsBounds', 'LandH', 'SLHA', '5', '1', spectr_name]
             log.debug(hb_cmds)
             call(hb_cmds)
-            os.chdir('..')
+            os.chdir(base_dir)
 
     # print some stats
     print '*' * 40
@@ -153,6 +155,8 @@ def generate_odir_soolin():
 def generate_new_card_path(oDir, card, ind):
     """Generate a new filepath for the output card.
 
+    Use absolute path, as important for NMSSMTools.
+
     oDir: str
         Output directory for card.
     card: str
@@ -161,7 +165,7 @@ def generate_new_card_path(oDir, card, ind):
         Index to be added to end of filename.
     """
     stem = os.path.splitext(os.path.basename(card))[0]
-    return os.path.join(oDir, '%s_%d.dat' % (stem, ind))
+    return os.path.abspath(os.path.join(oDir, '%s_%d.dat' % (stem, ind)))
 
 
 if __name__ == "__main__":
