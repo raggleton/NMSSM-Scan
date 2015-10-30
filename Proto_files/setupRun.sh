@@ -7,9 +7,8 @@ jobdir=$1
 batchNum=$2
 numPoints=$3
 
-###################
 # Setup NMSSMTools
-###################
+# -----------------------------------------------------------------------------
 tar -xzf /hdfs/user/ra12451/NMSSM-Scan/zips/NMSSMTools_*.tgz
 cd NMSSMTools_*
 # patch bug in moving output files due to relpaths eurgh
@@ -19,9 +18,8 @@ make
 cd ..
 # ls
 
-###################
 # Setup HiggsBounds
-###################
+# -----------------------------------------------------------------------------
 tar -xzf /hdfs/user/ra12451/NMSSM-Scan/zips/HiggsBounds-*.tar.gz
 cd HiggsBounds-*
 # patch to remove spurious printout
@@ -30,9 +28,8 @@ patch HiggsBounds.F90 < ../HB.patch
 make
 cd ..
 
-###################
 # Setup NMSSMCALC
-###################
+# -----------------------------------------------------------------------------
 # mkdir nmssmcalc
 # tar -xvzf nmssmcalc.tar.gz -C nmssmcalc
 # cd nmssmcalc
@@ -40,9 +37,8 @@ cd ..
 # cd ..
 # ls
 
-###################
 # Setup SusHi - BROKEN
-###################
+# -----------------------------------------------------------------------------
 # Need to tell it where LHAPDF is - check this is right!
 # make sure that the gcc lhapdf was compiled against matches the version that
 # gfortran was made with, otherwise you're gonna have a bad time
@@ -54,15 +50,13 @@ cd ..
 # make
 # cd ..
 
-###################
 # Run NMSSMTools over parameter points
-###################
+# -----------------------------------------------------------------------------
 # First arg is job dir - where the input.dat and spectr.dat files get made
 perl NMSSM_scan.pl $PWD $2
 
-###################
 # Setup SuperIso
-###################
+# -----------------------------------------------------------------------------
 # tar -xvzf superiso_v*.tgz
 # cd superiso*
 # make slha
