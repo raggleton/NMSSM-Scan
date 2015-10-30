@@ -10,7 +10,7 @@ numPoints=$3
 ###################
 # Setup NMSSMTools
 ###################
-tar -xvzf /hdfs/user/ra12451/NMSSM-Scan/zips/NMSSMTools_*.tgz
+tar -xzf /hdfs/user/ra12451/NMSSM-Scan/zips/NMSSMTools_*.tgz
 cd NMSSMTools_*
 # patch bug in moving output files due to relpaths eurgh
 patch run < ../NT.patch
@@ -22,8 +22,10 @@ cd ..
 ###################
 # Setup HiggsBounds
 ###################
-tar -xvzf /hdfs/user/ra12451/NMSSM-Scan/zips/HiggsBounds-*.tar.gz
+tar -xzf /hdfs/user/ra12451/NMSSM-Scan/zips/HiggsBounds-*.tar.gz
 cd HiggsBounds-*
+# patch to remove spurious printout
+patch HiggsBounds.F90 < ../HB.patch
 ./configure
 make
 cd ..
