@@ -53,8 +53,12 @@ cd ..
 # Run NMSSMTools over parameter points
 # -----------------------------------------------------------------------------
 # First arg is job dir - where the input.dat and spectr.dat files get made
-perl NMSSM_scan.pl $PWD $2
-
+# perl NMSSM_scan.pl $PWD $2
+cp "${jobdir}/inp_PROTO.dat" "inp_${batchNum}.dat"
+cp "${jobdir}/paramRange.json" paramRange.json
+cp "${jobdir}/NMSSMScan.py" NMSSMScan.py
+python NMSSMScan.py --card "inp_${batchNum}.dat" -n $3 --param paramRange.json --oDir .
+ls
 # Setup SuperIso
 # -----------------------------------------------------------------------------
 # tar -xvzf superiso_v*.tgz
