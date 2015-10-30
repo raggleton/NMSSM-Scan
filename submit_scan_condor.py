@@ -93,10 +93,11 @@ def write_dag_file(dag_filename, num_jobs, num_points, out_dir, log_dir,
     log_dir: str
         Directory for log files.
     job_description: str
-        Shorthand descirption of jobs, used for job naming.
+        Shorthand description of jobs, used for job naming.
     condor_file: Optional[str]
         Condor job description file to use for each job
     """
+    print 'Writing DAG file to', dag_filename
     # TODO: maybe pass in job vars as dict if they don't depend on job ID number?
     with open(dag_filename, "w") as dag:
         dag.write('# DAG for jobs %s\n' % job_description)
@@ -109,6 +110,8 @@ def write_dag_file(dag_filename, num_jobs, num_points, out_dir, log_dir,
             dag.write('VARS %s %s\n' % (job_name, vars_str))
         dag.write('NODE_STATUS_FILE %s 30' % dag_filename.replace(".dag", ".status"))
 
+    print 'Check status with:'
+    print 'DAGstatus.py', dag_filename.replace(".dag", ".status")
 
 if __name__ == "__main__":
     submit_scans(NUM_JOBS, NUM_POINTS, JOB_DESC, CARD, PARAM_RANGE)
