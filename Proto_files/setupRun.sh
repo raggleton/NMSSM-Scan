@@ -2,9 +2,10 @@
 host=`hostname`
 echo "Running on $host"
 echo "With parameters: $@"
-# parameters are: [job dir to put output] [batch number]
+# parameters are: [job dir to put output] [batch number] [number of points]
 jobdir=$1
 batchNum=$2
+numPoints=$3
 
 ###################
 # Setup NMSSMTools
