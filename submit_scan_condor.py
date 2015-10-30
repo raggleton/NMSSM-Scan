@@ -101,7 +101,7 @@ def write_dag_file(dag_filename, num_jobs, num_points, out_dir, log_dir,
     with open(dag_filename, "w") as dag:
         dag.write('# DAG for jobs %s\n' % job_description)
         dag.write('# Output to %s\n' % (out_dir))
-        for job_id in xrange(1, num_jobs):
+        for job_id in xrange(num_jobs):
             job_name = '%d_%s' % (job_id, job_description)
             dag.write('JOB %s Proto_files/runScan_dag.condor\n' % job_name)
             dag_vars = {'logDir': log_dir, 'oDir': out_dir, 'nPoints': str(num_points)}
