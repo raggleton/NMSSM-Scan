@@ -13,7 +13,7 @@ numPoints=$3
 tar -xvzf /hdfs/user/ra12451/NMSSM-Scan/zips/NMSSMTools_*.tgz
 cd NMSSMTools_*
 # patch bug in moving output files due to relpaths eurgh
-patch run < ../run.patch
+patch run < ../NT.patch
 make init
 make
 cd ..
