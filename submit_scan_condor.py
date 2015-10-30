@@ -104,7 +104,7 @@ def write_dag_file(dag_filename, num_jobs, num_points, out_dir, log_dir,
         for job_id in xrange(num_jobs):
             job_name = '%d_%s' % (job_id, job_description)
             dag.write('JOB %s Proto_files/runScan_dag.condor\n' % job_name)
-            dag_vars = {'logDir': log_dir, 'oDir': out_dir, 'nPoints': str(num_points)}
+            dag_vars = {'logDir': log_dir, 'oDir': out_dir, 'nPoints': str(num_points), 'jobId': str(job_id)}
             vars_str = ' '.join(['%s="%s"' % (k, v) for k, v in dag_vars.items()])
             dag.write('VARS %s %s\n' % (job_name, vars_str))
         dag.write('NODE_STATUS_FILE %s 30' % dag_filename.replace(".dag", ".status"))

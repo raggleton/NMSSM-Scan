@@ -14,7 +14,7 @@ account_group_user = $ENV(LOGNAME)
 
 # use the ENV that is provided
 getenv = true
-transfer_input_files = run.patch,HB.patch
-arguments =  $(oDir) $(process) $(nPoints)
+transfer_input_files = NT.patch,HB.patch
+arguments =  $(oDir) $(jobID) $(nPoints)
 
 queue
