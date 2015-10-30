@@ -75,24 +75,26 @@ ls
 # cd ..
 # ls
 
-ls
-
-###################
 # Zip up files to transfer back
-###################
-tar -cvzf $jobdir/spectr$batchNum.tgz spectr*.dat paramRange.txt NMSSM_scan.pl inp_NE_PROTO.dat
-tar -cvzf $jobdir/omega$batchNum.tgz omega*.dat
+# -----------------------------------------------------------------------------
+tar -cvzf "spectr${batchNum}.tgz" spectr*.dat
+cp "spectr${batchNum}.tgz" "$jobdir"
+tar -cvzf "omega${batchNum}.tgz" omega*.dat
+cp "omega${batchNum}.tgz" "$jobdir"
 # tar -cvzf $jobdir/superiso$batchNum.tgz superiso*.dat
 # tar -cvzf $jobdir/nmssmcalc$batchNum.tgz nmssmcalc_*.dat
 
-###################
+ls
+
 # Tidy up
-###################
-rm spectr*.dat
-rm omega*.dat
-# rm superiso*.dat
-rm NMSSMTools_*.tgz
-rm -r NMSSMTools_*
-# rm nmssmcalc.tar.gz
-# rm -r nmssmcalc
-# rm -r superiso*
+# -----------------------------------------------------------------------------
+rm *.dat
+rm *.patch
+rm *.py
+rm *.json
+rm *.tgz
+rm *.tar.gz
+rm -rf NMSSMTools*
+rm -rf HiggsBounds*
+rm -rf nmssmcalc*
+rm -rf superiso*
