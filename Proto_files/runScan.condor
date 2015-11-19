@@ -15,7 +15,7 @@ account_group_user = $ENV(LOGNAME)
 # use the ENV that is provided
 getenv = true
 initialdir = SEDINITIAL
-transfer_input_files = /users/ra12451/NMSSM-Scan/NMSSM_scan.pl,/users/ra12451/NMSSM-Scan/Proto_files/inp_PROTO.dat,/users/ra12451/NMSSM-Scan/run.patch
+transfer_input_files = /users/ra12451/NMSSM-Scan/NMSSM_scan.pl,/users/ra12451/NMSSM-Scan/Proto_files/inp_PROTO.dat,/users/ra12451/NMSSM-Scan/patches/NT.patch,/users/ra12451/NMSSM-Scan/patches/HB.patch
 transfer_output_files = NMSSM_scan.pl, paramRange.txt
 arguments =  /hdfs/user/ra12451/NMSSM-Scan/SEDOUTDIR $(process)
 
