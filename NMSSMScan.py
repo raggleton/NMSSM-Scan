@@ -60,7 +60,7 @@ def NMSSMScan(in_args=sys.argv[1:]):
         log.error('-n|--number must have an argument >= 1')
     if not args.oDir:
         # generate output directory if one not specified
-        args.oDir = generate_odir_soolin()
+        args.oDir = generate_odir()
     check_create_dir(args.oDir, args.v)
 
     # read template card
@@ -147,11 +147,14 @@ def check_create_dir(directory, info=False):
             print "Making dir %s" % directory
 
 
+def generate_odir():
+    """Generate an output directory on hdfs on soolin"""
+    return os.path.join(os.getcwd(), 'jobs_%s' % (strftime("%d_%b_%y_%H%M")))
+
 def generate_odir_soolin():
     """Generate an output directory on hdfs on soolin"""
     return '/hdfs/user/%s/NMSSM-Scan/jobs_%s' % (os.environ['LOGNAME'],
                                                  strftime("%d_%b_%y_%H%M"))
-
 
 def generate_new_card_path(oDir, card, ind):
     """Generate a new filepath for the output card.
