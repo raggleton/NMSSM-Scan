@@ -149,7 +149,8 @@ def check_create_dir(directory, info=False):
 
 def generate_odir_soolin():
     """Generate an output directory on hdfs on soolin"""
-    return '/hdfs/user/%s/NMSSM-Scan/jobs_%s' % (os.environ['LOGNAME'], strftime("%d_%b_%y_%H%M"))
+    return '/hdfs/user/%s/NMSSM-Scan/jobs_%s' % (os.environ['LOGNAME'],
+                                                 strftime("%d_%b_%y_%H%M"))
 
 
 def generate_new_card_path(oDir, card, ind):
