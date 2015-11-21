@@ -21,6 +21,7 @@ nmssmtools_fields = [
           regex=re.compile(r' +63 +([E\d\.\-\+]+) +\# ALAMBDA')),
     Field(block='EXTPAR', name="akappa", type=float,
           regex=re.compile(r' +64 +([E\d\.\-\+]+) +\# AKAPPA')),
+
     Field(block='EXTPAR', name="m0", type=float,
           regex=re.compile(r' +1 +([E\d\.\-\+]+) +\# M0\(MGUT\)')),
     Field(block='EXTPAR', name="m12", type=float,
@@ -35,6 +36,10 @@ nmssmtools_fields = [
           regex=re.compile(r' +43 +([E\d\.\-\+]+) +\# LEFT 3RD GEN. SQUARKS')),
     Field(block='EXTPAR', name="au3", type=float,
           regex=re.compile(r' +11 +([E\d\.\-\+]+) +\# ATOP')),
+    Field(block='EXTPAR', name="md3", type=float,
+          regex=re.compile(r' +47 +([E\d\.\-\+]+) +\# RIGHT D-SQUARKS')),
+    Field(block='EXTPAR', name="ad3", type=float,
+          regex=re.compile(r' +12 +([E\d\.\-\+]+) +\# ABOTTOM')),
 
     # masses
     Field(block='MASS', name="mh1", type=float,
