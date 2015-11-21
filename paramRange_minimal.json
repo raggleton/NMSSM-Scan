@@ -1,0 +1,51 @@
+{
+    "_comment:" : ["Minimal param range scan using Daniele's as basis."],
+    "LAMBDA": {
+        "min": 0,
+        "max": 0.15
+    },
+    "KAPPA": {
+        "min": 0,
+        "max": 0.25
+    },
+    "TANB": {
+        "min": 18,
+        "max": 20.5
+    },
+    "MUEFF": {
+        "min": 85,
+        "max": 135
+    },
+    "ALAMBDA": {
+        "min": 1000,
+        "max": 3500
+    },
+    "AKAPPA": {
+        "min": -4,
+        "max": 2
+    },
+    "M3": {
+        "min": 1000,
+        "max": 1000
+    },
+    "MQ3": {
+        "min": 1000,
+        "max": 1000
+    },
+    "MU3": {
+        "min": 1000,
+        "max": 1000
+    },
+    "MD3": {
+        "min": 1000,
+        "max": 1000
+    },
+    "AU3": {
+        "min": 2500,
+        "max": 2500
+    },
+    "AD3": {
+        "min": 2500,
+        "max": 2500
+    }
+}
