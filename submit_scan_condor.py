@@ -79,7 +79,7 @@ def submit_scans(num_jobs, num_points, job_description, card, param_range):
 
 
 def write_dag_file(dag_filename, num_jobs, num_points, out_dir, log_dir,
-                   job_description, condor_file='Proto_files/runScan_dag.condor'):
+                   job_description, condor_file='HTCondor/runScan_dag.condor'):
     """Write a DAG file.
 
     dag_filename: str
@@ -104,7 +104,7 @@ def write_dag_file(dag_filename, num_jobs, num_points, out_dir, log_dir,
         dag.write('# Output to %s\n' % (out_dir))
         for job_id in xrange(num_jobs):
             job_name = '%d_%s' % (job_id, job_description)
-            dag.write('JOB %s Proto_files/runScan_dag.condor\n' % job_name)
+            dag.write('JOB %s %s\n' % (job_name, condor_file))
             dag_vars = {'logDir': log_dir, 'oDir': out_dir, 'nPoints': str(num_points), 'jobId': str(job_id)}
             vars_str = ' '.join(['%s="%s"' % (k, v) for k, v in dag_vars.items()])
             dag.write('VARS %s %s\n' % (job_name, vars_str))

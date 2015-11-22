@@ -1,4 +1,4 @@
-Executable = Proto_files/setupRun.sh
+Executable = HTCondor/analyse_condor.sh
 Universe = vanilla
 Output = $(logDir)/scan.$(cluster).$(process).out
 Error = $(logDir)/scan.$(cluster).$(process).err
