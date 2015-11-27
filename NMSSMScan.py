@@ -18,6 +18,7 @@ from subprocess import call
 import json
 import re
 from time import strftime
+import common_utils as cu
 
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
@@ -54,14 +55,14 @@ def NMSSMScan(in_args=sys.argv[1:]):
     log.debug('program args: %s' % args)
 
     # do some checks
-    check_file_exists(args.card)
-    check_file_exists(args.param)
+    cu.check_file_exists(args.card)
+    cu.check_file_exists(args.param)
     if args.number < 1:
         log.error('-n|--number must have an argument >= 1')
     if not args.oDir:
         # generate output directory if one not specified
         args.oDir = generate_odir()
-    check_create_dir(args.oDir, args.v)
+    cu.check_create_dir(args.oDir, args.v)
 
     # read template card
     with open(args.card) as template_file:
@@ -125,26 +126,6 @@ def NMSSMScan(in_args=sys.argv[1:]):
     print '*' * 40
     print '* Num iterations:', args.number
     print '*' * 40
-
-
-def check_file_exists(filename):
-    """Check to see if file exists, if not raise IOError."""
-    if not os.path.isfile(filename):
-        raise IOError('File %s does not exist' % filename)
-
-
-def check_create_dir(directory, info=False):
-    """Check to see if directory exists, if not make it.
-
-    Can optionally display message to user.
-    """
-    if not os.path.isdir(directory):
-        if os.path.isfile(directory):
-            raise RuntimeError("Cannot create directory %s, already "
-                               "exists as a file object" % directory)
-        os.makedirs(directory)
-        if info:
-            print "Making dir %s" % directory
 
 
 def generate_odir():
