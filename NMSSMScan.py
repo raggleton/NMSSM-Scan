@@ -6,6 +6,8 @@ between parameters.
 
 This allows for running on a batch system, where each worker node can scan
 randomly over a given range, improving efficiency.
+
+IMPORTANT: must set NMSSMTOOLS_DIR and HIGGSBOUNDS_DIR before running
 """
 
 import os
@@ -23,6 +25,9 @@ import common_utils as cu
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 log = logging.getLogger(__name__)
+
+NMSSMTOOLS_DIR = '/users/%s/NMSSMTools_4.8.2' % os.environ['LOGNAME']
+HIGGSBOUNDS_DIR = '/users/%s/HiggsBounds-4.2.1'% os.environ['LOGNAME']
 
 
 def NMSSMScan(in_args=sys.argv[1:]):
