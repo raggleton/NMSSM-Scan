@@ -16,7 +16,7 @@ import os
 from subprocess import call
 import shutil
 from time import strftime
-import NMSSMScan as ns
+import common_utils as cu
 
 # Number of parallel jobs to submit
 NUM_JOBS = 10
@@ -49,16 +49,16 @@ def submit_scans(num_jobs, num_points, job_description, card, param_range):
     job_dir = 'jobs_%d_%s_%s' % (num_jobs, job_description, date_str)
 
     # For output from jobs (e.g. spectrum files)
-    oDir_hdfs = '/hdfs/user/%s/NMSSM-Scan/%s' % (os.environ['LOGNAME'], job_dir)
-    ns.check_create_dir(oDir_hdfs)
+    oDir_hdfs = os.path.join(out_dir, job_dir)
+    cu.check_create_dir(oDir_hdfs)
 
     # For local files (e.g. DAG & status)
-    oDir_local = job_dir
-    ns.check_create_dir(oDir_local)
+    oDir_local = os.path.join('jobs', job_dir)
+    cu.check_create_dir(oDir_local)
 
     # For log files
     oDir_local_log = '%s/logs' % (oDir_local)
-    ns.check_create_dir(oDir_local_log)
+    cu.check_create_dir(oDir_local_log)
 
     # Make DAG script
     dag_file = os.path.join(oDir_local, 'scan.dag')
@@ -68,6 +68,7 @@ def submit_scans(num_jobs, num_points, job_description, card, param_range):
     cp_dict = {
         PARAM_RANGE: os.path.join(oDir_hdfs, "paramRange.json"),
         "NMSSMScan.py": os.path.join(oDir_hdfs, "NMSSMScan.py"),
+        "common_utils.py": os.path.join(oDir_hdfs, "common_utils.py"),
         CARD: os.path.join(oDir_hdfs, "inp_PROTO.dat")
     }
     for src, dest in cp_dict.iteritems():
@@ -79,7 +80,7 @@ def submit_scans(num_jobs, num_points, job_description, card, param_range):
 
 
 def write_dag_file(dag_filename, num_jobs, num_points, out_dir, log_dir,
-                   job_description, condor_file='Proto_files/runScan_dag.condor'):
+                   job_description, condor_file='HTCondor/runScan_dag.condor'):
     """Write a DAG file.
 
     dag_filename: str
@@ -104,7 +105,7 @@ def write_dag_file(dag_filename, num_jobs, num_points, out_dir, log_dir,
         dag.write('# Output to %s\n' % (out_dir))
         for job_id in xrange(num_jobs):
             job_name = '%d_%s' % (job_id, job_description)
-            dag.write('JOB %s Proto_files/runScan_dag.condor\n' % job_name)
+            dag.write('JOB %s %s\n' % (job_name, condor_file))
             dag_vars = {'logDir': log_dir, 'oDir': out_dir, 'nPoints': str(num_points), 'jobId': str(job_id)}
             vars_str = ' '.join(['%s="%s"' % (k, v) for k, v in dag_vars.items()])
             dag.write('VARS %s %s\n' % (job_name, vars_str))

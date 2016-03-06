@@ -57,6 +57,7 @@ cd ..
 cp "${jobdir}/inp_PROTO.dat" "inp_${batchNum}.dat"
 cp "${jobdir}/paramRange.json" paramRange.json
 cp "${jobdir}/NMSSMScan.py" NMSSMScan.py
+cp "${jobdir}/common_utils.py" common_utils.py
 python NMSSMScan.py --card "inp_${batchNum}.dat" -n $3 --param paramRange.json --oDir .
 ls
 # Setup SuperIso
