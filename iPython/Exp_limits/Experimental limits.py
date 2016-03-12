@@ -107,13 +107,15 @@ df_atlas_higg_2014_02.head()
 
 # ## CMS HIG-14-041 (2mu2b)
 
-# In[13]:
+# In[707]:
 
 df_hig_14_041 = pd.read_csv("4tau experimental limits - HIG-14-041 bbmumu xsec limit.csv")
 make_all_cols_floats(df_hig_14_041)
+df_hig_14_041.columns
+df_hig_14_041['xsec*BR(h->aa->bbmumu) [pb]'] = df_hig_14_041[' xsec*BR(h->aa->bbmumu) [fb] '] / 1000.
 
 
-# In[14]:
+# In[708]:
 
 df_hig_14_041.head()
 
@@ -370,20 +372,21 @@ df_atlas_higg_2014_02.head()
 
 # ## CMS HIG-14-041 (2mu2b)
 
-# In[34]:
+# In[713]:
 
 df_hig_14_041.columns
 
 
-# In[576]:
+# In[714]:
 
 df_hig_14_041.rename(columns={'m_a (scraped)': 'm_a',
-                              ' xsec*BR(h->aa->bbmumu) [fb] ': 'xsec_br_2b2mu'},
+                              'xsec*BR(h->aa->bbmumu) [pb]': 'xsec_br_2b2mu'},
                     inplace=True)
 df_hig_14_041['br_2b2mu'] = convert_xsec_to_br(df_hig_14_041.xsec_br_2b2mu.values)
+df_hig_14_041.drop([' xsec*BR(h->aa->bbmumu) [fb] '], 1, inplace=True)
 
 
-# In[577]:
+# In[715]:
 
 df_hig_14_041.head()
 
@@ -1439,7 +1442,7 @@ tb = 0.5
 br_a_tautau(m, model, tb) / br_a_bb(m, model, tb)
 
 
-# In[617]:
+# In[716]:
 
 def convert_2b2mu_to_4tau(df, model_type, tan_beta, xsec=True):
     pre = 'xsec_' if xsec else ''
@@ -1464,24 +1467,24 @@ convert_2b2mu_to_4tau(df_hig_14_041, 4, 5, True)
 convert_2b2mu_to_4tau(df_hig_14_041, 4, 5, False)
 
 
-# In[618]:
+# In[717]:
 
 calc_other_final_states(df_hig_14_041, '_type1_tb1')
 for model, tb in product([2, 3, 4], ['0p5', '5']):
     calc_other_final_states(df_hig_14_041, '_type%d_tb%s' % (model, tb))
 
 
-# In[619]:
+# In[718]:
 
 df_hig_14_041.columns
 
 
-# In[620]:
+# In[719]:
 
 df_hig_14_041.head()
 
 
-# In[659]:
+# In[720]:
 
 def plot_exclusion_regions_new(dfs_dict, y_var, model_type, tan_beta, 
                                y_label, x_range=None, y_range=None, 
@@ -1508,51 +1511,51 @@ def plot_exclusion_regions_new(dfs_dict, y_var, model_type, tan_beta,
 
 # ## 4tau
 
-# In[680]:
+# In[731]:
 
 plot_exclusion_regions_new(dfs_dict, 'xsec_br_4tau', 1, 1, 
                            y_label=r'$\sigma\ \times\ BR\ (h\ \to\ 2a\ \to\ 4\tau)\ \mathrm{[pb]}$',
-                           y_range=[0.1,5E4],
+                           y_range=[0.005,5E4],
                            title='Observed exclusion limits '+r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
-                           text='Type I/II', text_coords=[0.65, 0.1])
+                           text='Type I/II', text_coords=[0.15, 0.1])
 draw_xsec_sm()
 
 
-# In[675]:
+# In[756]:
 
 plot_exclusion_regions_new(dfs_dict, 'xsec_br_4tau', model_type=3, tan_beta=0.5, 
                            y_label=r'$\sigma\ \times\ BR\ (h\ \to\ 2a\ \to\ 4\tau)\ \mathrm{[pb]}$',
-                           y_range=[0.1,5E4],
+                           y_range=[0.000005,5E1],
                            title='Observed exclusion limits '+r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
-                           text='Type III, '+r'$\tan\beta = 0.5$', text_coords=[0.5, 0.1])
+                           text='Type III, '+r'$\tan\beta = 0.5$', text_coords=[0.62, 0.1])
 draw_xsec_sm()
 
 
-# In[686]:
+# In[750]:
 
 plot_exclusion_regions_new(dfs_dict, 'xsec_br_4tau', model_type=3, tan_beta=5, 
                            y_label=r'$\sigma\ \times\ BR\ (h\ \to\ 2a\ \to\ 4\tau)\ \mathrm{[pb]}$',
-                           y_range=[0.1,5E5],
+                           y_range=[0.1,5E4],
                            title='Observed exclusion limits '+r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
                            text='Type III, '+r'$\tan\beta = 5$', text_coords=[0.5, 0.1])
 draw_xsec_sm()
 
 
-# In[677]:
+# In[751]:
 
 plot_exclusion_regions_new(dfs_dict, 'xsec_br_4tau', model_type=4, tan_beta=0.5, 
                            y_label=r'$\sigma\ \times\ BR\ (h\ \to\ 2a\ \to\ 4\tau)\ \mathrm{[pb]}$',
-                           y_range=[0.1,5E4],
+                           y_range=[0.05,5E4],
                            title='Observed exclusion limits '+r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
                            text='Type IV, '+r'$\tan\beta = 0.5$', text_coords=[0.5, 0.1])
 draw_xsec_sm()
 
 
-# In[679]:
+# In[757]:
 
 plot_exclusion_regions_new(dfs_dict, 'xsec_br_4tau', model_type=4, tan_beta=5, 
                            y_label=r'$\sigma\ \times\ BR\ (h\ \to\ 2a\ \to\ 4\tau)\ \mathrm{[pb]}$',
-                           y_range=[0.01,5E3],
+                           y_range=[5E-6,1E2],
                            title='Observed exclusion limits '+r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
                            text='Type IV, '+r'$\tan\beta = 5$', text_coords=[0.5, 0.1])
 draw_xsec_sm()
@@ -1560,29 +1563,34 @@ draw_xsec_sm()
 
 # ## 4mu
 
-# In[683]:
-
-plot_exclusion_regions_new(dfs_dict, 'br_4mu', 1, 1, 
-                           y_label=r'$\sigma\ \times\ BR\ (h\ \to\ 2a\ \to\ 4\mu)\ \mathrm{[pb]}$',
-                           y_range=[1E-6,5E-3],
-                           title='Observed exclusion limits '+r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
-                           text='Type I/II', text_coords=[0.65, 0.1])
-draw_xsec_sm()
-
-
-# In[685]:
+# In[749]:
 
 plot_exclusion_regions_new(dfs_dict, 'xsec_br_4mu', 1, 1, 
-                           y_label=r'$\frac{\sigma}{\sigma_{SM}} \times\ BR\ (h\ \to\ 2a\ \to\ 4\mu)$',
-                           y_range=[1E-6,5E-3],
+                           y_label=r'$\sigma\ \times\ BR\ (h\ \to\ 2a\ \to\ 4\mu)\ \mathrm{[pb]}$',
+                           y_range=[5E-9,1E-3],
                            title='Observed exclusion limits '+r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
                            text='Type I/II', text_coords=[0.65, 0.1])
 draw_xsec_sm()
 
 
-# In[695]:
+# In[745]:
+
+plot_exclusion_regions_new(dfs_dict, 'br_4mu', 1, 1, 
+                           y_label=r'$\frac{\sigma}{\sigma_{SM}} \times\ BR\ (h\ \to\ 2a\ \to\ 4\mu)$',
+                           y_range=[1E-8,5E-3],
+                           title='Observed exclusion limits '+r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
+                           text='Type I/II', text_coords=[0.15, 0.1])
+draw_xsec_sm()
+
+
+# In[742]:
 
 df_hig_14_041.head(10)
+
+
+# In[743]:
+
+df_hig_14_041.br_4mu_type1_tb1[:10]
 
 
 # In[696]:
@@ -1590,9 +1598,14 @@ df_hig_14_041.head(10)
 br_a_mumu(30, 1, 1)/br_a_bb(30, 1, 1)
 
 
-# In[690]:
+# In[697]:
 
-convert_BR_final_states(M_MU, m_b_msbar(30), 30)
+3*convert_BR_final_states(M_MU, m_b_msbar(30), 30)
+
+
+# In[699]:
+
+3*convert_BR_final_states(M_MU, 4.2, 30)
 
 
 # # Saving experimental results to file 
