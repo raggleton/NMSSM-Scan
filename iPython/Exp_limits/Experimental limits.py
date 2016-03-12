@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[536]:
+# In[607]:
 
 import pandas as pd
 import numpy as np
@@ -10,11 +10,12 @@ import matplotlib as mpl
 import matplotlib.patches as patches
 from scipy.special import zetac
 from numba import jit
+from itertools import izip, product
 
 get_ipython().magic(u'matplotlib inline')
 
 
-# In[537]:
+# In[608]:
 
 pd.set_option('precision',7)
 mpl.rcParams['figure.figsize'] = (9.0, 5.0)  # default size of plots
@@ -36,7 +37,7 @@ mpl.rcParams['legend.numpoints'] = 1
 mpl.rcParams.update({'font.size': 24, 'font.family': 'STIXGeneral', 'mathtext.fontset': 'stix'})
 
 
-# In[538]:
+# In[609]:
 
 get_ipython().magic(u"config InlineBackend.figure_format='svg'")
 # %config InlineBackend.figure_format='retina'
@@ -148,7 +149,7 @@ def int_to_roman(i):
     return roman_dict.get(i, 'Z')
 
 
-# In[253]:
+# In[559]:
 
 # Some physical constants
 
@@ -161,6 +162,12 @@ sqrt2 = np.sqrt(2.)
 PI = np.pi
 
 # Quark masses in GeV. Both pole and MSBar
+M_U_MSBAR = 2.3E-3
+
+M_D_MSBAR = 4.8E-3
+
+M_S_MSBAR = 95.0E-3
+
 M_C_POLE = 1.67
 M_C_MSBAR_AT_POLE = 1.275
 
@@ -177,8 +184,9 @@ M_MU = 0.106
 M_E = 0.5109989461E-3
 
 
-# In[225]:
+# In[560]:
 
+# these are for duck typing, since quark masses have to be called via functions
 def m_tau(*args, **kwargs):
     return M_TAU
 
@@ -189,7 +197,7 @@ def m_e(*args, **kwargs):
     return M_E
 
 
-# In[388]:
+# In[561]:
 
 @jit
 def velocity(m_f, m_a):
@@ -201,10 +209,8 @@ def velocity(m_f, m_a):
     if 2. * m_f > m_a:
         if isinstance(m_a, float) or isinstance(m_a, int):
             return 0.
-#         else:
-#             return np
-    else:    
-        return np.sqrt(1 - (2 * m_f / m_a)**2)
+    # TODO: handle np arrays
+    return np.sqrt(1 - (2 * m_f / m_a)**2)
 
 
 # In[17]:
@@ -219,31 +225,34 @@ def convert_BR_final_states(m_new, m_old, m_a):
     return m_new**2 * velocity(m_new, m_a) / (m_old**2 * velocity(m_old, m_a))
 
 
-# In[18]:
+# In[595]:
 
 @jit
-def convert_4tau_to_2tau_2mu(df, xsec=True):
+def convert_4tau_to_2tau_2mu(df, xsec=True, append=None):
     """Convert from 4 tau final state to 2tau 2mu final state.
 
     xsec: bool. If True, uses xsec column, otherwise uses BR column.
+    append : str, optional. End of column name to get values from (e.g. _typ1_tb0p5)
     """
     pre = 'xsec_' if xsec else ''
-    return 2. * df['%sbr_4tau' % pre].values * convert_BR_final_states(M_MU, M_TAU, df['m_a'].values)
+    if not append:
+        append = ''
+    return 2. * df['%sbr_4tau%s' % (pre, append)].values * convert_BR_final_states(M_MU, M_TAU, df['m_a'].values)
 
 
-# In[19]:
+# In[601]:
 
 @jit
-def convert_4tau_to_4mu(df, xsec=True):
+def convert_4tau_to_4mu(df, xsec=True, append=None):
     """Convert from 4 tau final state to 4mu final state.
 
     xsec: bool. If True, uses xsec column, otherwise uses BR column.
     """
     pre = 'xsec_' if xsec else ''
-    return df['%sbr_4tau' % pre].values * convert_BR_final_states(M_MU, M_TAU, df['m_a'].values)**2
+    return df['%sbr_4tau%s' % (pre, append)].values * convert_BR_final_states(M_MU, M_TAU, df['m_a'].values)**2
 
 
-# In[20]:
+# In[602]:
 
 @jit
 def convert_xsec_to_br(xsec):
@@ -251,25 +260,28 @@ def convert_xsec_to_br(xsec):
     return xsec / 19.27
 
 
-# In[21]:
+# In[615]:
 
 @jit
-def calc_other_final_states(df):
+def calc_other_final_states(df, append=None):
     """Do all necessary mappings from 4tau final state to other final states."""
-
+    if not append:
+        append = ''
     # Do xsec * BR
-    if 'xsec_br_4tau' in df.columns:
-        df['xsec_br_2tau2mu'] = convert_4tau_to_2tau_2mu(df, xsec=True)
-        df['xsec_br_4mu'] = convert_4tau_to_4mu(df, xsec=True)
+    fname = 'xsec_br_4tau%s' % (append)
+    if fname in df.columns:
+        df['xsec_br_2tau2mu%s' % append] = convert_4tau_to_2tau_2mu(df, xsec=True, append=append)
+        df['xsec_br_4mu%s' % append] = convert_4tau_to_4mu(df, xsec=True, append=append)
     else:
-        print 'Cannot calculate other final state xsec - no xsec_br_4tau field'
+        print 'Cannot calculate other final state xsec - no %s field' % fname
 
     # Do BR
-    if 'br_4tau' in df.columns:
-        df['br_2tau2mu'] = convert_4tau_to_2tau_2mu(df, xsec=False)
-        df['br_4mu'] = convert_4tau_to_4mu(df, xsec=False)
+    fname = 'br_4tau%s' % (append)
+    if fname in df.columns:
+        df['br_2tau2mu%s' % append] = convert_4tau_to_2tau_2mu(df, xsec=False, append=append)
+        df['br_4mu%s' % append] = convert_4tau_to_4mu(df, xsec=False, append=append)
     else:
-        print 'Cannot calculate other final state BR - no br_4tau field'
+        print 'Cannot calculate other final state BR - no %s field' % fname
 
 
 # ## CMS HIG-14-019
@@ -363,14 +375,15 @@ df_atlas_higg_2014_02.head()
 df_hig_14_041.columns
 
 
-# In[35]:
+# In[576]:
 
 df_hig_14_041.rename(columns={'m_a (scraped)': 'm_a',
                               ' xsec*BR(h->aa->bbmumu) [fb] ': 'xsec_br_2b2mu'},
                     inplace=True)
+df_hig_14_041['br_2b2mu'] = convert_xsec_to_br(df_hig_14_041.xsec_br_2b2mu.values)
 
 
-# In[36]:
+# In[577]:
 
 df_hig_14_041.head()
 
@@ -389,7 +402,7 @@ dfs_dict = [
 ]
 
 
-# In[38]:
+# In[646]:
 
 def plot_exclusion_regions(dfs_dict, y_var, y_label, x_range=None, y_range=None, 
                            title=None, shade=True, text=None, text_coords=[0.6, 0.1]):
@@ -1032,7 +1045,7 @@ def width_a_quark_common(m_a, m_q, model_type, tan_beta):
     return 3. * g_aqq_down(model_type, tan_beta)**2 * m_q**2 * velocity(m_q, m_a) * rad_corr(m_q, m_a)
 
 
-# In[105]:
+# In[553]:
 
 def ll_to_qq(m_a, m_l, m_q, model_type, tan_beta):
     """Ratio of BR(a->qq) / BR(a->ll), down type q
@@ -1046,15 +1059,15 @@ def qq_to_ll(m_a, m_q, m_l, model_type, tan_beta):
 
     Needs a mass, lepton mass, q mass, model type (1, 2, 3, 4) and tan_beta.
     """
-    return width_a_lepton_common(m_a, m_l, model_type, tan_beta) / width_aqq_common(m_a, m_q, model_type, tan_beta)
+    return width_a_lepton_common(m_a, m_l, model_type, tan_beta) / width_a_quark_common(m_a, m_q, model_type, tan_beta)
 
 
-# In[69]:
+# In[554]:
 
 ll_to_qq(20., M_TAU, m_b_msbar(20.), model_type=2, tan_beta=10)
 
 
-# In[70]:
+# In[555]:
 
 print ll_to_qq(10., M_TAU, M_B_MSBAR_AT_POLE, model_type=3, tan_beta=10)
 print ll_to_qq(10., M_TAU, M_B_MSBAR_AT_POLE, model_type=4, tan_beta=10)
@@ -1410,6 +1423,176 @@ model = 4
 make_br_plot(model, 0.5)
 plt.subplot(1, 2, 2)
 make_br_plot(model, 5)
+
+
+# # Including bb
+
+# In[588]:
+
+br_a_tautau(27.5, 1, 1) / br_a_bb(27.5, 1, 1) 
+
+
+# In[670]:
+
+model = 3
+tb = 0.5
+br_a_tautau(m, model, tb) / br_a_bb(m, model, tb)
+
+
+# In[617]:
+
+def convert_2b2mu_to_4tau(df, model_type, tan_beta, xsec=True):
+    pre = 'xsec_' if xsec else ''
+    tb = str(tan_beta).replace('.', 'p')
+    df['%sbr_4tau_type%d_tb%s' % (pre, model_type, tb)] = np.array(
+        [b * 0.5 * (br_a_tautau(m, model_type, tan_beta) / br_a_bb(m, model_type, tan_beta)) * convert_BR_final_states(M_TAU, M_MU, m) 
+         for m, b in izip(df['m_a'].values, df['%sbr_2b2mu' % pre].values)])
+
+convert_2b2mu_to_4tau(df_hig_14_041, 1, 1, True)
+convert_2b2mu_to_4tau(df_hig_14_041, 1, 1, False)
+convert_2b2mu_to_4tau(df_hig_14_041, 2, 0.5, True)
+convert_2b2mu_to_4tau(df_hig_14_041, 2, 0.5, False)
+convert_2b2mu_to_4tau(df_hig_14_041, 2, 5, True)
+convert_2b2mu_to_4tau(df_hig_14_041, 2, 5, False)
+convert_2b2mu_to_4tau(df_hig_14_041, 3, 0.5, True)
+convert_2b2mu_to_4tau(df_hig_14_041, 3, 0.5, False)
+convert_2b2mu_to_4tau(df_hig_14_041, 3, 5, True)
+convert_2b2mu_to_4tau(df_hig_14_041, 3, 5, False)
+convert_2b2mu_to_4tau(df_hig_14_041, 4, 0.5, True)
+convert_2b2mu_to_4tau(df_hig_14_041, 4, 0.5, False)
+convert_2b2mu_to_4tau(df_hig_14_041, 4, 5, True)
+convert_2b2mu_to_4tau(df_hig_14_041, 4, 5, False)
+
+
+# In[618]:
+
+calc_other_final_states(df_hig_14_041, '_type1_tb1')
+for model, tb in product([2, 3, 4], ['0p5', '5']):
+    calc_other_final_states(df_hig_14_041, '_type%d_tb%s' % (model, tb))
+
+
+# In[619]:
+
+df_hig_14_041.columns
+
+
+# In[620]:
+
+df_hig_14_041.head()
+
+
+# In[659]:
+
+def plot_exclusion_regions_new(dfs_dict, y_var, model_type, tan_beta, 
+                               y_label, x_range=None, y_range=None, 
+                               title=None, shade=True, text=None, text_coords=[0.6, 0.1]):
+    fname = y_var + '_type%d_tb%s' % (model_type, str(tan_beta).replace('.', 'p'))
+    df = df_hig_14_041
+    col = 'fuchsia'
+    plt.plot(df.m_a.values, df[fname].values, 
+             label='CMS HIG-14-041 '+r'$(h\ \to\ 2a\ \to\ 2b2\mu)$',
+             color=col, linewidth=2)
+    if y_range:
+        plt.ylim(*y_range)
+    if shade:
+        y_top = plt.ylim()[1]
+        upper_edge = np.ones_like(df[fname]) * y_top
+        plt.fill_between(df['m_a'], df[fname], 
+                         y2=upper_edge,
+                         color=col,
+                         alpha=0.2)
+    plot_exclusion_regions(dfs_dict, y_var, y_label, x_range=x_range, y_range=y_range, 
+                           title=title, shade=shade, text=text, text_coords=text_coords)
+    
+
+
+# ## 4tau
+
+# In[680]:
+
+plot_exclusion_regions_new(dfs_dict, 'xsec_br_4tau', 1, 1, 
+                           y_label=r'$\sigma\ \times\ BR\ (h\ \to\ 2a\ \to\ 4\tau)\ \mathrm{[pb]}$',
+                           y_range=[0.1,5E4],
+                           title='Observed exclusion limits '+r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
+                           text='Type I/II', text_coords=[0.65, 0.1])
+draw_xsec_sm()
+
+
+# In[675]:
+
+plot_exclusion_regions_new(dfs_dict, 'xsec_br_4tau', model_type=3, tan_beta=0.5, 
+                           y_label=r'$\sigma\ \times\ BR\ (h\ \to\ 2a\ \to\ 4\tau)\ \mathrm{[pb]}$',
+                           y_range=[0.1,5E4],
+                           title='Observed exclusion limits '+r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
+                           text='Type III, '+r'$\tan\beta = 0.5$', text_coords=[0.5, 0.1])
+draw_xsec_sm()
+
+
+# In[686]:
+
+plot_exclusion_regions_new(dfs_dict, 'xsec_br_4tau', model_type=3, tan_beta=5, 
+                           y_label=r'$\sigma\ \times\ BR\ (h\ \to\ 2a\ \to\ 4\tau)\ \mathrm{[pb]}$',
+                           y_range=[0.1,5E5],
+                           title='Observed exclusion limits '+r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
+                           text='Type III, '+r'$\tan\beta = 5$', text_coords=[0.5, 0.1])
+draw_xsec_sm()
+
+
+# In[677]:
+
+plot_exclusion_regions_new(dfs_dict, 'xsec_br_4tau', model_type=4, tan_beta=0.5, 
+                           y_label=r'$\sigma\ \times\ BR\ (h\ \to\ 2a\ \to\ 4\tau)\ \mathrm{[pb]}$',
+                           y_range=[0.1,5E4],
+                           title='Observed exclusion limits '+r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
+                           text='Type IV, '+r'$\tan\beta = 0.5$', text_coords=[0.5, 0.1])
+draw_xsec_sm()
+
+
+# In[679]:
+
+plot_exclusion_regions_new(dfs_dict, 'xsec_br_4tau', model_type=4, tan_beta=5, 
+                           y_label=r'$\sigma\ \times\ BR\ (h\ \to\ 2a\ \to\ 4\tau)\ \mathrm{[pb]}$',
+                           y_range=[0.01,5E3],
+                           title='Observed exclusion limits '+r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
+                           text='Type IV, '+r'$\tan\beta = 5$', text_coords=[0.5, 0.1])
+draw_xsec_sm()
+
+
+# ## 4mu
+
+# In[683]:
+
+plot_exclusion_regions_new(dfs_dict, 'br_4mu', 1, 1, 
+                           y_label=r'$\sigma\ \times\ BR\ (h\ \to\ 2a\ \to\ 4\mu)\ \mathrm{[pb]}$',
+                           y_range=[1E-6,5E-3],
+                           title='Observed exclusion limits '+r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
+                           text='Type I/II', text_coords=[0.65, 0.1])
+draw_xsec_sm()
+
+
+# In[685]:
+
+plot_exclusion_regions_new(dfs_dict, 'xsec_br_4mu', 1, 1, 
+                           y_label=r'$\frac{\sigma}{\sigma_{SM}} \times\ BR\ (h\ \to\ 2a\ \to\ 4\mu)$',
+                           y_range=[1E-6,5E-3],
+                           title='Observed exclusion limits '+r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
+                           text='Type I/II', text_coords=[0.65, 0.1])
+draw_xsec_sm()
+
+
+# In[695]:
+
+df_hig_14_041.head(10)
+
+
+# In[696]:
+
+br_a_mumu(30, 1, 1)/br_a_bb(30, 1, 1)
+
+
+# In[690]:
+
+convert_BR_final_states(M_MU, m_b_msbar(30), 30)
 
 
 # # Saving experimental results to file 
