@@ -199,20 +199,43 @@ def m_e(*args, **kwargs):
     return M_E
 
 
-# In[561]:
+# In[839]:
 
-@jit
 def velocity(m_f, m_a):
     """beta factor ("phase volume") in width calculation
 
     m_f: mass of fermion
-    m_a: mass of a boson
+    m_a: mass of a boson. int, float, or numpy array
+    
+    if 2m_f > m_a, returns 0
     """
-    if 2. * m_f > m_a:
-        if isinstance(m_a, float) or isinstance(m_a, int):
+    if isinstance(m_a, float) or isinstance(m_a, int):
+        if 2. * m_f > m_a:
             return 0.
-    # TODO: handle np arrays
-    return np.sqrt(1 - (2 * m_f / m_a)**2)
+    beta = np.sqrt(1 - (2 * m_f / m_a)**2)
+    if isinstance(m_a, np.ndarray):
+        beta[np.isnan(beta)] = 0.
+    return beta
+
+
+# In[814]:
+
+m_as = np.linspace(2, 50, 100)
+
+
+# In[825]:
+
+beta_tau = velocity(M_TAU, m_as)
+beta_mu = velocity(M_MU, m_as)
+beta_b = velocity(m_b_msbar(m), m_as)
+plt.plot(m_as, beta_tau, label=r'$\tau$')
+plt.plot(m_as, beta_mu, label=r'$\mu$')
+plt.plot(m_as, beta_b, label=r'$b$')
+plt.legend()
+plt.ylim(top=1.1)
+plt.ylabel(r'$\beta$')
+plt.xlabel(r'$m_a\ \mathrm{[GeV]}$')
+plt.minorticks_on()
 
 
 # In[17]:
@@ -1442,14 +1465,18 @@ tb = 0.5
 br_a_tautau(m, model, tb) / br_a_bb(m, model, tb)
 
 
-# In[716]:
+# In[842]:
 
 def convert_2b2mu_to_4tau(df, model_type, tan_beta, xsec=True):
     pre = 'xsec_' if xsec else ''
     tb = str(tan_beta).replace('.', 'p')
-    df['%sbr_4tau_type%d_tb%s' % (pre, model_type, tb)] = np.array(
-        [b * 0.5 * (br_a_tautau(m, model_type, tan_beta) / br_a_bb(m, model_type, tan_beta)) * convert_BR_final_states(M_TAU, M_MU, m) 
-         for m, b in izip(df['m_a'].values, df['%sbr_2b2mu' % pre].values)])
+    if 'xsec_br_4tau_type%d_tb%s' % (model_type, tb) in df.columns and not xsec:
+        df['br_4tau_type%d_tb%s' % (model_type, tb)] = convert_xsec_to_br(df['xsec_br_4tau_type%d_tb%s' % (model_type, tb)])
+    else:
+        df['%sbr_4tau_type%d_tb%s' % (pre, model_type, tb)] = np.array(
+            [(b * 0.5 * br_a_tautau(m, model_type, tan_beta) * convert_BR_final_states(M_TAU, M_MU, m)) 
+             / br_a_bb(m, model_type, tan_beta) 
+             for m, b in izip(df['m_a'].values, df['%sbr_2b2mu' % pre].values)])
 
 convert_2b2mu_to_4tau(df_hig_14_041, 1, 1, True)
 convert_2b2mu_to_4tau(df_hig_14_041, 1, 1, False)
@@ -1467,19 +1494,19 @@ convert_2b2mu_to_4tau(df_hig_14_041, 4, 5, True)
 convert_2b2mu_to_4tau(df_hig_14_041, 4, 5, False)
 
 
-# In[717]:
+# In[843]:
 
 calc_other_final_states(df_hig_14_041, '_type1_tb1')
 for model, tb in product([2, 3, 4], ['0p5', '5']):
     calc_other_final_states(df_hig_14_041, '_type%d_tb%s' % (model, tb))
 
 
-# In[718]:
+# In[844]:
 
 df_hig_14_041.columns
 
 
-# In[719]:
+# In[848]:
 
 df_hig_14_041.head()
 
@@ -1511,7 +1538,7 @@ def plot_exclusion_regions_new(dfs_dict, y_var, model_type, tan_beta,
 
 # ## 4tau
 
-# In[731]:
+# In[849]:
 
 plot_exclusion_regions_new(dfs_dict, 'xsec_br_4tau', 1, 1, 
                            y_label=r'$\sigma\ \times\ BR\ (h\ \to\ 2a\ \to\ 4\tau)\ \mathrm{[pb]}$',
@@ -1612,7 +1639,7 @@ br_a_mumu(30, 1, 1)/br_a_bb(30, 1, 1)
 
 # We save the new Dataframes to file, so other people can use them. Both as CSV, and HDF5.
 
-# In[79]:
+# In[758]:
 
 # Save dataframes to CSV
 df_hig_14_019.to_csv('CMS_HIG_14_019_full.csv')
@@ -1622,7 +1649,7 @@ df_hig_15_011.to_csv('CMS_HIG_15_011_full.csv')
 df_atlas_higg_2014_02.to_csv('ATLAS_HIGG_2014_02_full.csv')
 
 
-# In[80]:
+# In[759]:
 
 # Save dataframes to HDF5
 with pd.HDFStore('exp_limits.h5') as store:
@@ -1631,4 +1658,9 @@ with pd.HDFStore('exp_limits.h5') as store:
     store['CMS_HIG_14_041'] = df_hig_14_041
     store['CMS_HIG_15_011'] = df_hig_15_011
     store['ATLAS_HIGG_2014_02'] = df_atlas_higg_2014_02
+
+
+# In[ ]:
+
+
 
