@@ -418,17 +418,17 @@ df_hig_14_041.head()
 
 # In Type1/2 models, the bottom and tau/mu both have the same relative coupling strength to a. Therefore we can convert easily, without any $\tan(\beta)$ dependence.
 
-# In[37]:
+# In[887]:
 
 dfs_dict = [
-    {'df': df_hig_14_019, 'label': 'CMS HIG-14-019 '+r'$(h\ \to\ 2a\ \to\ 4\tau)$', 'color': 'blue'},
-    {'df': df_hig_14_022, 'label': 'CMS HIG-14-022 '+r'$(h\ \to\ 2a\ \to\ 4\tau)$', 'color': 'green'},
-    {'df': df_hig_15_011, 'label': 'CMS HIG-15-011 '+r'$(h \to\ 2a\ \to\ 2\tau2\mu)$', 'color': 'orange'},
-    {'df': df_atlas_higg_2014_02, 'label': 'ATLAS HIGG-2014-02 '+r'$(h\ \to\ 2a\ \to\ 2\tau2\mu)$', 'color': 'red'},
+    {'df': df_hig_14_019, 'label': 'CMS HIG-14-019 '+r'$(4\tau)$', 'color': 'blue'},
+    {'df': df_hig_14_022, 'label': 'CMS HIG-14-022 '+r'$(4\tau)$', 'color': 'green'},
+    {'df': df_hig_15_011, 'label': 'CMS HIG-15-011 '+r'$(2\tau2\mu)$', 'color': 'orange'},
+    {'df': df_atlas_higg_2014_02, 'label': 'ATLAS HIGG-2014-02 '+r'$(2\tau2\mu)$', 'color': 'red'},
 ]
 
 
-# In[646]:
+# In[888]:
 
 def plot_exclusion_regions(dfs_dict, y_var, y_label, x_range=None, y_range=None, 
                            title=None, shade=True, text=None, text_coords=[0.6, 0.1]):
@@ -522,7 +522,7 @@ def draw_hline_1():
 
 # ## 4tau
 
-# In[40]:
+# In[889]:
 
 plot_exclusion_regions(dfs_dict, 
                        y_var='xsec_br_4tau', 
@@ -533,7 +533,7 @@ plot_exclusion_regions(dfs_dict,
 draw_xsec_sm()
 
 
-# In[41]:
+# In[890]:
 
 plot_exclusion_regions(dfs_dict, 
                        y_var='br_4tau', 
@@ -546,7 +546,7 @@ draw_hline_1()
 
 # ## 2tau 2mu
 
-# In[42]:
+# In[891]:
 
 plot_exclusion_regions(dfs_dict, 
                        y_var='xsec_br_2tau2mu', 
@@ -557,7 +557,7 @@ plot_exclusion_regions(dfs_dict,
 draw_xsec_sm()
 
 
-# In[43]:
+# In[892]:
 
 plot_exclusion_regions(dfs_dict, 
                        y_var='br_2tau2mu', 
@@ -569,7 +569,7 @@ plot_exclusion_regions(dfs_dict,
 
 # ## 4 mu
 
-# In[44]:
+# In[893]:
 
 plot_exclusion_regions(dfs_dict, 
                        y_var='xsec_br_4mu', 
@@ -579,7 +579,7 @@ plot_exclusion_regions(dfs_dict,
                        text='Type I/II', text_coords=[0.65, 0.1])
 
 
-# In[45]:
+# In[894]:
 
 plot_exclusion_regions(dfs_dict, 
                        y_var='br_4mu', 
@@ -1063,11 +1063,12 @@ def width_a_lepton_common(m_a, m_l, model_type, tan_beta):
     return g_all(model_type, tan_beta)**2 * m_l**2 * velocity(m_l, m_a)
 
 
-# In[104]:
+# In[866]:
 
 def width_a_quark_common(m_a, m_q, model_type, tan_beta):
     if 2*m_q > m_a:
         return 0
+#     print rad_corr(m_q, m_a)
     return 3. * g_aqq_down(model_type, tan_beta)**2 * m_q**2 * velocity(m_q, m_a) * rad_corr(m_q, m_a)
 
 
@@ -1176,19 +1177,19 @@ def width_a_to_ll(m_a, m_l, model_type, tan_beta):
 
 # In[116]:
 
-def width_a_to_qq_down(m_a, m_quark_fn, model_type, tan_beta):
-    """Calculate BR(a->qq) where q is down-type.
+# def width_a_to_qq_down(m_a, m_quark_fn, model_type, tan_beta):
+#     """Calculate BR(a->qq) where q is down-type.
     
-    m_quark_fn : function for calculating running quark mass. 
-        Will be evaulated at scale m_a
-    model_type : {1, 2, 3, 4}
-    """
-    coupling = g_aqq_down(model_type, tan_beta)
-    m_quark = m_quark_fn(m_a)
-    return (3. * G_F * coupling**2 * m_a * m_quark**2 * velocity(m_quark, m_a) * rad_corr(m_quark, m_a)) / (4 * sqrt2 * PI)
+#     m_quark_fn : function for calculating running quark mass. 
+#         Will be evaulated at scale m_a
+#     model_type : {1, 2, 3, 4}
+#     """
+#     coupling = g_aqq_down(model_type, tan_beta)
+#     m_quark = m_quark_fn(m_a)
+#     return (3. * G_F * coupling**2 * m_a * m_quark**2 * velocity(m_quark, m_a) * rad_corr(m_quark, m_a)) / (4 * sqrt2 * PI)
 
 
-# In[386]:
+# In[867]:
 
 def width_a_to_qq(m_a, m_quark_fn, quark_type, model_type, tan_beta):
     """Calculate BR(a->qq). Not valid for top quark pairs!
@@ -1202,15 +1203,16 @@ def width_a_to_qq(m_a, m_quark_fn, quark_type, model_type, tan_beta):
     """
     coupling = 1./tan_beta if quark_type == 'up' else g_aqq_down(model_type, tan_beta)
     m_quark = m_quark_fn(m_a)
+    print rad_corr(m_quark, m_a)
     return (3. * G_F * coupling**2 * m_a * m_quark**2 * velocity(m_quark, m_a) * rad_corr(m_quark, m_a)) / (4 * sqrt2 * PI)
 
 
-# In[387]:
+# In[868]:
 
 width_a_to_qq(4, m_b_msbar, 'down', 1, 1)
 
 
-# In[189]:
+# In[855]:
 
 @jit
 def universal_scaling_fn(x):
@@ -1221,7 +1223,7 @@ def universal_scaling_fn(x):
         return -0.25 * (np.log((1. + sqrt_thing) / (1. - sqrt_thing)) - np.pi*1j)**2
 
 
-# In[196]:
+# In[856]:
 
 xxx = np.logspace(-1, 1, 500)
 aaa = [universal_scaling_fn(x) for x in xxx]
@@ -1232,14 +1234,14 @@ plt.xlabel(r'$x$')
 plt.ylabel('Universal scaling function')
 
 
-# In[513]:
+# In[857]:
 
 @jit
 def amplitude_spin_half(x):
     return 2. * universal_scaling_fn(x) / x
 
 
-# In[216]:
+# In[858]:
 
 plt.plot(xxx, [np.real(amplitude_spin_half(x)) for x in xxx])
 plt.plot(xxx, [np.imag(amplitude_spin_half(x)) for x in xxx])
@@ -1307,7 +1309,7 @@ def width_a_to_gluglu(m_a, model_type, tan_beta):
     return (G_F * a_s**2 * m_a**3 * np.real(np.sum(contrib * np.conj(contrib)))) / (36. * sqrt2 * PI**3)
 
 
-# In[337]:
+# In[862]:
 
 def total_width(m_a, model_type, tan_beta):
     return sum([
@@ -1320,7 +1322,7 @@ def total_width(m_a, model_type, tan_beta):
       ])
 
 
-# In[ ]:
+# In[863]:
 
 mmm = np.logspace(np.log10(4), np.log10(50), 200)
 widths_typ1 = np.array([total_width(m, 1, 1) for m in mmm])
@@ -1359,19 +1361,19 @@ def br_a_tautau(m_a, model_type, tan_beta):
     return width_a_to_ll(m_a, M_TAU, model_type, tan_beta) / total_width(m_a, model_type, tan_beta)
 
 
-# In[362]:
+# In[859]:
 
 def br_a_bb(m_a, model_type, tan_beta):
     return width_a_to_qq(m_a, m_b_msbar, 'down', model_type, tan_beta) / total_width(m_a, model_type, tan_beta)
 
 
-# In[363]:
+# In[860]:
 
 def br_a_cc(m_a, model_type, tan_beta):
     return width_a_to_qq(m_a, m_c_msbar, 'up', model_type, tan_beta) / total_width(m_a, model_type, tan_beta)
 
 
-# In[369]:
+# In[861]:
 
 def br_a_gluglu(m_a, model_type, tan_beta):
     return width_a_to_gluglu(m_a, model_type, tan_beta) / total_width(m_a, model_type, tan_beta)
@@ -1511,7 +1513,7 @@ df_hig_14_041.columns
 df_hig_14_041.head()
 
 
-# In[720]:
+# In[884]:
 
 def plot_exclusion_regions_new(dfs_dict, y_var, model_type, tan_beta, 
                                y_label, x_range=None, y_range=None, 
@@ -1520,7 +1522,7 @@ def plot_exclusion_regions_new(dfs_dict, y_var, model_type, tan_beta,
     df = df_hig_14_041
     col = 'fuchsia'
     plt.plot(df.m_a.values, df[fname].values, 
-             label='CMS HIG-14-041 '+r'$(h\ \to\ 2a\ \to\ 2b2\mu)$',
+             label='CMS HIG-14-041 '+r'$(2b2\mu)$',
              color=col, linewidth=2)
     if y_range:
         plt.ylim(*y_range)
@@ -1538,17 +1540,27 @@ def plot_exclusion_regions_new(dfs_dict, y_var, model_type, tan_beta,
 
 # ## 4tau
 
-# In[849]:
+# In[895]:
 
 plot_exclusion_regions_new(dfs_dict, 'xsec_br_4tau', 1, 1, 
                            y_label=r'$\sigma\ \times\ BR\ (h\ \to\ 2a\ \to\ 4\tau)\ \mathrm{[pb]}$',
                            y_range=[0.005,5E4],
                            title='Observed exclusion limits '+r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
-                           text='Type I/II', text_coords=[0.15, 0.1])
+                           text='Type I/II', text_coords=[0.1, 0.1])
 draw_xsec_sm()
 
 
-# In[756]:
+# In[896]:
+
+plot_exclusion_regions_new(dfs_dict, 'br_4tau', 1, 1, 
+                           y_label=r'$\frac{\sigma}{\sigma_{SM}} \times\ BR\ (h\ \to\ 2a\ \to\ 4\tau)$',
+                           y_range=[1E-3,1E3],
+                           title='Observed exclusion limits '+r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
+                           text='Type I/II', text_coords=[0.1, 0.1])
+draw_hline_1()
+
+
+# In[897]:
 
 plot_exclusion_regions_new(dfs_dict, 'xsec_br_4tau', model_type=3, tan_beta=0.5, 
                            y_label=r'$\sigma\ \times\ BR\ (h\ \to\ 2a\ \to\ 4\tau)\ \mathrm{[pb]}$',
@@ -1558,7 +1570,7 @@ plot_exclusion_regions_new(dfs_dict, 'xsec_br_4tau', model_type=3, tan_beta=0.5,
 draw_xsec_sm()
 
 
-# In[750]:
+# In[898]:
 
 plot_exclusion_regions_new(dfs_dict, 'xsec_br_4tau', model_type=3, tan_beta=5, 
                            y_label=r'$\sigma\ \times\ BR\ (h\ \to\ 2a\ \to\ 4\tau)\ \mathrm{[pb]}$',
@@ -1568,7 +1580,7 @@ plot_exclusion_regions_new(dfs_dict, 'xsec_br_4tau', model_type=3, tan_beta=5,
 draw_xsec_sm()
 
 
-# In[751]:
+# In[899]:
 
 plot_exclusion_regions_new(dfs_dict, 'xsec_br_4tau', model_type=4, tan_beta=0.5, 
                            y_label=r'$\sigma\ \times\ BR\ (h\ \to\ 2a\ \to\ 4\tau)\ \mathrm{[pb]}$',
@@ -1578,13 +1590,65 @@ plot_exclusion_regions_new(dfs_dict, 'xsec_br_4tau', model_type=4, tan_beta=0.5,
 draw_xsec_sm()
 
 
-# In[757]:
+# In[900]:
 
 plot_exclusion_regions_new(dfs_dict, 'xsec_br_4tau', model_type=4, tan_beta=5, 
                            y_label=r'$\sigma\ \times\ BR\ (h\ \to\ 2a\ \to\ 4\tau)\ \mathrm{[pb]}$',
                            y_range=[5E-6,1E2],
                            title='Observed exclusion limits '+r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
                            text='Type IV, '+r'$\tan\beta = 5$', text_coords=[0.5, 0.1])
+draw_xsec_sm()
+
+
+# ## 2mu2tau
+
+# In[905]:
+
+plot_exclusion_regions_new(dfs_dict, 'xsec_br_2tau2mu', 1, 1, 
+                           y_label=r'$\sigma\ \times\ BR\ (h\ \to\ 2a\ \to\ 2\tau2\mu)\ \mathrm{[pb]}$',
+                           y_range=[1E-6,1E0],
+                           title='Observed exclusion limits '+r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
+                           text='Type I/II', text_coords=[0.65, 0.1])
+draw_xsec_sm()
+
+
+# In[910]:
+
+plot_exclusion_regions_new(dfs_dict, 'xsec_br_2tau2mu', model_type=3, tan_beta=0.5, 
+                           y_label=r'$\sigma\ \times\ BR\ (h\ \to\ 2a\ \to\ 2\tau2\mu)\ \mathrm{[pb]}$',
+                           y_range=[5E-8,5E-1],
+                           title='Observed exclusion limits '+r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
+                           text='Type III, '+r'$\tan\beta = 0.5$', text_coords=[0.62, 0.1])
+draw_xsec_sm()
+
+
+# In[914]:
+
+plot_exclusion_regions_new(dfs_dict, 'xsec_br_2tau2mu', model_type=3, tan_beta=5, 
+                           y_label=r'$\sigma\ \times\ BR\ (h\ \to\ 2a\ \to\ 2\tau2\mu)\ \mathrm{[pb]}$',
+                           y_range=[1E-4,5],
+                           title='Observed exclusion limits '+r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
+                           text='Type III, '+r'$\tan\beta = 5$', text_coords=[0.62, 0.1])
+draw_xsec_sm()
+
+
+# In[919]:
+
+plot_exclusion_regions_new(dfs_dict, 'xsec_br_2tau2mu', model_type=4, tan_beta=0.5, 
+                           y_label=r'$\sigma\ \times\ BR\ (h\ \to\ 2a\ \to\ 2\tau2\mu)\ \mathrm{[pb]}$',
+                           y_range=[1E-4,1],
+                           title='Observed exclusion limits '+r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
+                           text='Type IV, '+r'$\tan\beta = 0.5$', text_coords=[0.62, 0.1])
+draw_xsec_sm()
+
+
+# In[917]:
+
+plot_exclusion_regions_new(dfs_dict, 'xsec_br_2tau2mu', model_type=4, tan_beta=5, 
+                           y_label=r'$\sigma\ \times\ BR\ (h\ \to\ 2a\ \to\ 2\tau2\mu)\ \mathrm{[pb]}$',
+                           y_range=[1E-8,1],
+                           title='Observed exclusion limits '+r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
+                           text='Type IV, '+r'$\tan\beta = 5$', text_coords=[0.62, 0.1])
 draw_xsec_sm()
 
 
@@ -1610,6 +1674,46 @@ plot_exclusion_regions_new(dfs_dict, 'br_4mu', 1, 1,
 draw_xsec_sm()
 
 
+# In[929]:
+
+plot_exclusion_regions_new(dfs_dict, 'xsec_br_4mu', model_type=3, tan_beta=0.5, 
+                           y_label=r'$\sigma\ \times\ BR\ (h\ \to\ 2a\ \to\ 4\mu)\ \mathrm{[pb]}$',
+                           y_range=[1E-11,1E-2],
+                           title='Observed exclusion limits '+r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
+                           text='Type III, '+r'$\tan\beta = 0.5$', text_coords=[0.62, 0.1])
+draw_xsec_sm()
+
+
+# In[932]:
+
+plot_exclusion_regions_new(dfs_dict, 'xsec_br_4mu', model_type=3, tan_beta=5, 
+                           y_label=r'$\sigma\ \times\ BR\ (h\ \to\ 2a\ \to\ 4\mu)\ \mathrm{[pb]}$',
+                           y_range=[1E-7,1E-2],
+                           title='Observed exclusion limits '+r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
+                           text='Type III, '+r'$\tan\beta = 5$', text_coords=[0.62, 0.1])
+draw_xsec_sm()
+
+
+# In[926]:
+
+plot_exclusion_regions_new(dfs_dict, 'xsec_br_4mu', model_type=4, tan_beta=0.5, 
+                           y_label=r'$\sigma\ \times\ BR\ (h\ \to\ 2a\ \to\ 4\mu)\ \mathrm{[pb]}$',
+                           y_range=[1E-7,1E-3],
+                           title='Observed exclusion limits '+r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
+                           text='Type IV, '+r'$\tan\beta = 0.5$', text_coords=[0.62, 0.1])
+draw_xsec_sm()
+
+
+# In[923]:
+
+plot_exclusion_regions_new(dfs_dict, 'xsec_br_4mu', model_type=4, tan_beta=5, 
+                           y_label=r'$\sigma\ \times\ BR\ (h\ \to\ 2a\ \to\ 4\mu)\ \mathrm{[pb]}$',
+                           y_range=[5E-13,1E-3],
+                           title='Observed exclusion limits '+r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
+                           text='Type IV, '+r'$\tan\beta = 5$', text_coords=[0.62, 0.1])
+draw_xsec_sm()
+
+
 # In[742]:
 
 df_hig_14_041.head(10)
@@ -1620,19 +1724,24 @@ df_hig_14_041.head(10)
 df_hig_14_041.br_4mu_type1_tb1[:10]
 
 
-# In[696]:
+# In[869]:
 
 br_a_mumu(30, 1, 1)/br_a_bb(30, 1, 1)
 
 
-# In[697]:
+# In[871]:
 
-3*convert_BR_final_states(M_MU, m_b_msbar(30), 30)
+width_a_to_ll(30, M_MU, 1, 1) / width_a_to_qq(30, m_b_msbar, 'down', 1, 1)
 
 
-# In[699]:
+# In[872]:
 
-3*convert_BR_final_states(M_MU, 4.2, 30)
+convert_BR_final_states(M_MU, m_b_msbar(30), 30)/3.
+
+
+# In[873]:
+
+3*convert_BR_final_states(M_MU, 4.2, 30)/3.
 
 
 # # Saving experimental results to file 
