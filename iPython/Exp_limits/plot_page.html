@@ -83,6 +83,16 @@
       </div>
     </nav>
 
+    <button type="button" class="btn btn-default" id="test">Say hello</button>
+    <p id="demo"></p>
+
+    <script>
+    document.getElementById("test").addEventListener("click", sayHello);
+    function sayHello() {
+      document.getElementById("demo").innerHTML = "Hello World!";
+    }
+    </script>
+
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
