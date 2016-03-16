@@ -84,6 +84,8 @@
     <script>
     document.getElementById("test").addEventListener("click", centralPlot);
     document.getElementById("showAllBtn").addEventListener("click", showAllPlots);
+    document.getElementById("xsecButton").addEventListener("click", function() { showCentralPlot("xsec_"); });
+    document.getElementById("brButton").addEventListener("click", function() { showCentralPlot("br_"); });
 
 
     function setupGridColumns() {
@@ -210,7 +212,8 @@
     }
 
     // This inserts a central large plot in the frame.
-    function centralPlot() {
+    // prefix : 'xsec_' or 'br_'
+    function showCentralPlot(prefix) {
       var placeholder = document.getElementById("placeholder");
       removeChildren(placeholder);
 
