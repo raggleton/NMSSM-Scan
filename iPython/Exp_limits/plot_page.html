@@ -191,13 +191,15 @@
         model = "type4";
       }
       tb = tanBeta.replace(".", "p");
-      ext = ".svg";
       plotdir = "plots/";
-      if (model === "type1") {
-        return plotdir + prefix + chan + "_" + model + ext;
-      } else {
-        return plotdir + prefix + chan + "_" + model + "_" + tb + ext;
+      name = plotdir + prefix + chan + "_" + model;
+      if (model != "type1") {
+        name += "_tb";
+        name += tb;
       }
+      ext = ".svg";
+      name += ext;
+      return name;
     }
 
     // Enable/disable the tan beta selector depending on model
