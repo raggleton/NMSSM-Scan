@@ -88,7 +88,7 @@
 
     <script>
     document.getElementById("showAllBtn").addEventListener("click", showAllPlots);
-    document.getElementById("xsecButton").addEventListener("click", function() { showCentralPlot("xsec_"); });
+    document.getElementById("xsecButton").addEventListener("click", function() { showCentralPlot("xsec_br_"); });
     document.getElementById("brButton").addEventListener("click", function() { showCentralPlot("br_"); });
 
     // Show all plots in a big grid
@@ -98,8 +98,12 @@
       var modelOptions = document.getElementById("selModelType").options;
       var tbOptions = document.getElementById("selTanBeta").options;
 
+      var header = document.createElement("div")
+      header.innerHTML = "<h3>Cross-section * BR</h3>";
+      document.getElementById("placeholder").appendChild(header);
+
+      prefixes = ["xsec_br_", "br_"];
       counter = 0;
-      prefixes = ["xsec_", "br_"];
       for (p = 0; p < prefixes.length; p++) {
         for (i = 0; i < chanOptions.length; i++) {
           for (j = 0; j < modelOptions.length; j++) {
@@ -126,6 +130,10 @@
         }
         // Add a horizontal line to divide xsec from BR plots.
         document.getElementById("placeholder").appendChild(document.createElement("hr"));
+        // Add a seciton header
+        var header = document.createElement("div")
+        header.innerHTML = "<h3>BR</h3>";
+        document.getElementById("placeholder").appendChild(header);
         counter = 0;
       }
     }
@@ -161,7 +169,7 @@
     }
 
     // Generate suitable plot name from selectors
-    // prefix : 'xsec_' or 'br_'
+    // prefix : 'xsec_br_' or 'br_'
     function generatePlotNameFromSelectors(prefix) {
       return generatePlotName(prefix,
         document.getElementById("selChannel").value,
@@ -169,9 +177,8 @@
         document.getElementById("selTanBeta").value);
     }
 
-
     // Generate suitable plot name from strings.
-    // prefix : 'xsec_' or 'br_'
+    // prefix : 'xsec_br_' or 'br_'
     // channel : channel name (e.g. "4 tau")
     // modelType : one of "Type I/II", "Type III", "Type IV"
     // tanBeta : a float or int
@@ -208,7 +215,7 @@
     }
 
     // This inserts a central large plot in the frame.
-    // prefix : 'xsec_' or 'br_'
+    // prefix : 'xsec_br_' or 'br_'
     function showCentralPlot(prefix) {
       var placeholder = document.getElementById("placeholder");
       removeChildren(placeholder);
