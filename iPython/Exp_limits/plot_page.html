@@ -111,33 +111,40 @@
       var tbOptions = document.getElementById("selTanBeta").options;
 
       counter = 0;
-      for (i = 0; i < chanOptions.length; i++) {
-        for (j = 0; j < modelOptions.length; j++) {
-          // Don't loop through tan beta for Type I/II models
-          if (j != 0) {
-            for (k = 0; k < tbOptions.length; k++) {
-              plotname = generatePlotName(chanOptions[i].text,
+      prefixes = ["xsec_", "br_"];
+      for (p = 0; p < prefixes.length; p++) {
+        for (i = 0; i < chanOptions.length; i++) {
+          for (j = 0; j < modelOptions.length; j++) {
+            // Don't loop through tan beta for Type I/II models
+            if (j != 0) {
+              for (k = 0; k < tbOptions.length; k++) {
+                plotname = generatePlotName(prefixes[p],
+                                            chanOptions[i].text,
+                                            modelOptions[j].text,
+                                            tbOptions[k].text);
+                addGridPlot(counter, plotname);
+                counter += 1;
+
+              }
+            } else {
+              plotname = generatePlotName(prefixes[p],
+                                          chanOptions[i].text,
                                           modelOptions[j].text,
-                                          tbOptions[k].text);
+                                          tbOptions[0].text);
               addGridPlot(counter, plotname);
               counter += 1;
-
             }
-          } else {
-            plotname = generatePlotName(chanOptions[i].text,
-                                        modelOptions[j].text,
-                                        tbOptions[0].text);
-            addGridPlot(counter, plotname);
-            counter += 1;
           }
         }
+        // Add a horizontal line to divide xsec from BR plots.
+        document.getElementById("placeholder").appendChild(document.createElement("hr"));
+        counter = 0;
       }
-
     }
 
     function addGridPlot(counter, plotFilename) {
       var placeholder = document.getElementById("placeholder");
-      nCols = 3;
+      nCols = 2;
       if (counter % nCols  === 0) {
         var row = document.createElement("div");
         row.className = "row";
@@ -163,8 +170,8 @@
     }
 
 
-    function generatePlotNameFromSelectors() {
-      return generatePlotName(
+    function generatePlotNameFromSelectors(prefix) {
+      return generatePlotName(prefix,
         document.getElementById("selChannel").value,
         document.getElementById("selModelType").value,
         document.getElementById("selTanBeta").value);
@@ -172,7 +179,7 @@
 
 
     // Generate suitable plot name from selectors
-    function generatePlotName(channel, modelType, tanBeta) {
+    function generatePlotName(prefix, channel, modelType, tanBeta) {
       chan = channel.replace(/ /g, "");
       if (modelType === "Type I/II") {
         model = "type1";
@@ -185,9 +192,9 @@
       ext = ".svg";
       plotdir = "plots/";
       if (model === "type1") {
-        return plotdir + chan + "_" + model + ext;
+        return plotdir + prefix + chan + "_" + model + ext;
       } else {
-        return plotdir + chan + "_" + model + "_" + tb + ext;
+        return plotdir + prefix + chan + "_" + model + "_" + tb + ext;
       }
     }
 
@@ -217,7 +224,7 @@
 
       var link = document.createElement("a");
       link.className = "img-thumbnail";
-      plotFilename = generatePlotNameFromSelectors();
+      plotFilename = generatePlotNameFromSelectors(prefix);
       link.href = plotFilename;
       col.appendChild(link);
 
