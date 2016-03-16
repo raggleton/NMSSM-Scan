@@ -77,35 +77,15 @@
       </div> <!-- End of container-fluid -->
     </nav>
 
-    <button type="button" class="btn btn-default" id="test">MAGIC</button>
-
+    <!-- Placeholder for main plot(s) -->
     <div id="placeholder" class="container-fluid center-block"></div>
 
     <script>
-    document.getElementById("test").addEventListener("click", centralPlot);
     document.getElementById("showAllBtn").addEventListener("click", showAllPlots);
     document.getElementById("xsecButton").addEventListener("click", function() { showCentralPlot("xsec_"); });
     document.getElementById("brButton").addEventListener("click", function() { showCentralPlot("br_"); });
 
-
-    function setupGridColumns() {
-      var placeholder = document.getElementById("placeholder");
-
-      removeChildren(placeholder);
-
-      var thumbRow = document.createElement("div");
-      thumbRow.className = "row";
-      placeholder.appendChild(thumbRow);
-
-      for (i=0; i<3; i++) {
-        var col = document.createElement("div");
-        col.className = "col-sm-4";
-        col.innerHTML = ".col-sm-4";
-        thumbRow.appendChild(col);
-      }
-    }
-
-
+    // Show all plots in a big grid
     function showAllPlots() {
       removeChildren(document.getElementById("placeholder"));
       var chanOptions = document.getElementById("selChannel").options;
@@ -144,6 +124,9 @@
       }
     }
 
+    // Add a plot to the big grid. Arranges into nCols columns.
+    // counter : int, denotes plot index
+    // plotFilename: name of image
     function addGridPlot(counter, plotFilename) {
       var placeholder = document.getElementById("placeholder");
       nCols = 2;
@@ -171,7 +154,8 @@
 
     }
 
-
+    // Generate suitable plot name from selectors
+    // prefix : 'xsec_' or 'br_'
     function generatePlotNameFromSelectors(prefix) {
       return generatePlotName(prefix,
         document.getElementById("selChannel").value,
@@ -180,7 +164,11 @@
     }
 
 
-    // Generate suitable plot name from selectors
+    // Generate suitable plot name from strings.
+    // prefix : 'xsec_' or 'br_'
+    // channel : channel name (e.g. "4 tau")
+    // modelType : one of "Type I/II", "Type III", "Type IV"
+    // tanBeta : a float or int
     function generatePlotName(prefix, channel, modelType, tanBeta) {
       chan = channel.replace(/ /g, "");
       if (modelType === "Type I/II") {
