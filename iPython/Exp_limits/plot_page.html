@@ -37,26 +37,26 @@
           <ul class="nav navbar-nav">
             <form class="navbar-form navbar-left" role="selector">
 
-              <button type="button" class="btn btn-default">Show Everything!</button>
+              <button type="button" class="btn btn-default" id="showAllBtn">Show Everything!</button>
 
               <div class="form-group">
               <b>&nbsp; Or select a scenario: &nbsp;</b>
                 <!-- Channel selector -->
-                <select class="form-control" id="selChannel" label="Channel">
+                <select class="form-control" id="selChannel">
                   <option>4 tau</option>
                   <option>2 tau 2 mu</option>
                   <option>4 mu</option>
                 </select>
 
                 <!-- Model type selector -->
-                <select class="form-control" id="selModelType" label="Model Type">
+                <select class="form-control" id="selModelType" onchange="setApplicableTanBeta()">
                   <option>Type I/II</option>
                   <option>Type III</option>
                   <option>Type IV</option>
                 </select>
 
                 <!-- tan beta selector -->
-                <select class="form-control" id="selTanBeta" label="tan beta">
+                <select class="form-control" id="selTanBeta" disabled>
                   <option>0.5</option>
                   <option>5</option>
                 </select>
@@ -67,31 +67,177 @@
             <form class="navbar-form navbar-right" role="selector">
               <b>Show on y-axis:</b>
               <div class="btn-group" data-toggle="buttons">
-<!--                 <label class="btn btn-primary active">
-                  <input type="radio" name="options" id="drawXSec" autocomplete="off" checked> Cross-section
-                </label>
-                <label class="btn btn-primary">
-                  <input type="radio" name="options" id="drawBR" autocomplete="off"> Branching ratio
-                </label>
- -->
-                <button type="button" class="btn btn-default">Cross-section</button>
-                <button type="button" class="btn btn-default">Branching ratio</button>
-
+                <button type="button" class="btn btn-default" id="xsecButton">Cross-section</button>
+                <button type="button" class="btn btn-default" id="brButton">Branching ratio</button>
               </div>
+            </form> <!-- End of navbar-right -->
           </ul>
-        </div>
-      </div>
+
+        </div> <!-- End of navbar-collapse -->
+      </div> <!-- End of container-fluid -->
     </nav>
 
-    <button type="button" class="btn btn-default" id="test">Say hello</button>
-    <p id="demo"></p>
+    <button type="button" class="btn btn-default" id="test">MAGIC</button>
+
+    <div id="placeholder" class="container-fluid center-block"></div>
 
     <script>
-    document.getElementById("test").addEventListener("click", sayHello);
-    function sayHello() {
-      document.getElementById("demo").innerHTML = "Hello World!";
+    document.getElementById("test").addEventListener("click", centralPlot);
+    document.getElementById("showAllBtn").addEventListener("click", showAllPlots);
+
+
+    function setupGridColumns() {
+      var placeholder = document.getElementById("placeholder");
+
+      removeChildren(placeholder);
+
+      var thumbRow = document.createElement("div");
+      thumbRow.className = "row";
+      placeholder.appendChild(thumbRow);
+
+      for (i=0; i<3; i++) {
+        var col = document.createElement("div");
+        col.className = "col-sm-4";
+        col.innerHTML = ".col-sm-4";
+        thumbRow.appendChild(col);
+      }
     }
+
+
+    function showAllPlots() {
+      removeChildren(document.getElementById("placeholder"));
+      var chanOptions = document.getElementById("selChannel").options;
+      var modelOptions = document.getElementById("selModelType").options;
+      var tbOptions = document.getElementById("selTanBeta").options;
+
+      counter = 0;
+      for (i = 0; i < chanOptions.length; i++) {
+        for (j = 0; j < modelOptions.length; j++) {
+          // Don't loop through tan beta for Type I/II models
+          if (j != 0) {
+            for (k = 0; k < tbOptions.length; k++) {
+              plotname = generatePlotName(chanOptions[i].text,
+                                          modelOptions[j].text,
+                                          tbOptions[k].text);
+              addGridPlot(counter, plotname);
+              counter += 1;
+
+            }
+          } else {
+            plotname = generatePlotName(chanOptions[i].text,
+                                        modelOptions[j].text,
+                                        tbOptions[0].text);
+            addGridPlot(counter, plotname);
+            counter += 1;
+          }
+        }
+      }
+
+    }
+
+    function addGridPlot(counter, plotFilename) {
+      var placeholder = document.getElementById("placeholder");
+      nCols = 3;
+      if (counter % nCols  === 0) {
+        var row = document.createElement("div");
+        row.className = "row";
+        placeholder.appendChild(row);
+      }
+      var currentRow = placeholder.lastChild;
+
+      var col = document.createElement("div");
+      col.className = "col-sm-" + (12/nCols);
+      currentRow.appendChild(col);
+
+      var link = document.createElement("a");
+      link.className = "img-thumbnail";
+      link.href = plotFilename;
+      col.appendChild(link);
+
+      var img = document.createElement("img");
+      img.src = plotFilename;
+      img.className = "img-responsive";
+      img.alt = plotFilename;
+      link.appendChild(img);
+
+    }
+
+
+    function generatePlotNameFromSelectors() {
+      return generatePlotName(
+        document.getElementById("selChannel").value,
+        document.getElementById("selModelType").value,
+        document.getElementById("selTanBeta").value);
+    }
+
+
+    // Generate suitable plot name from selectors
+    function generatePlotName(channel, modelType, tanBeta) {
+      chan = channel.replace(/ /g, "");
+      if (modelType === "Type I/II") {
+        model = "type1";
+      } else if (modelType === "Type III") {
+        model = "type3";
+      } else if (modelType === "Type IV") {
+        model = "type4";
+      }
+      tb = tanBeta.replace(".", "p");
+      ext = ".svg";
+      plotdir = "plots/";
+      if (model === "type1") {
+        return plotdir + chan + "_" + model + ext;
+      } else {
+        return plotdir + chan + "_" + model + "_" + tb + ext;
+      }
+    }
+
+    // Enable/disable the tan beta selector depending on model
+    function setApplicableTanBeta() {
+      selModelType = document.getElementById("selModelType");
+      selTanBeta = document.getElementById("selTanBeta");
+      if (selModelType.value === "Type I/II") {
+        selTanBeta.setAttribute("disabled", "disabled");
+      } else {
+        selTanBeta.removeAttribute("disabled");
+      }
+    }
+
+    // This inserts a central large plot in the frame.
+    function centralPlot() {
+      var placeholder = document.getElementById("placeholder");
+      removeChildren(placeholder);
+
+      var row = document.createElement("div");
+      row.className = "row";
+      placeholder.appendChild(row);
+
+      var col = document.createElement("div");
+      col.className = "col-sm-offset-2 col-sm-8";
+      row.appendChild(col);
+
+      var link = document.createElement("a");
+      link.className = "img-thumbnail";
+      plotFilename = generatePlotNameFromSelectors();
+      link.href = plotFilename;
+      col.appendChild(link);
+
+      var img = document.createElement("img");
+      img.src = plotFilename;
+      img.className = "img-responsive";
+      img.alt = plotFilename;
+      link.appendChild(img);
+    }
+
+    // Remove all children from a node.
+    // Useful for cleaning up placeholder.
+    function removeChildren(element) {
+      while (element.lastChild) {
+        element.removeChild(element.lastChild);
+      }
+    }
+
     </script>
+
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
