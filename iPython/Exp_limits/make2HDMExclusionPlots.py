@@ -8,6 +8,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+import commonPlot as plotr
 
 
 pd.set_option('precision',7)
@@ -30,109 +31,14 @@ mpl.rcParams['legend.numpoints'] = 1
 mpl.rcParams.update({'font.size': 24, 'font.family': 'STIXGeneral', 'mathtext.fontset': 'stix'})
 
 
-def plot_scan_exclusions(scan_dicts, experimental_dicts, y_var, y_label, x_range=None, y_range=None,
-                         title=None, shade=True, text=None, text_coords=[0.6, 0.1]):
-    """Make a plot of exclusion regions on top of scan points.
-
-    Parameters
-    ----------
-    scan_dicts : list[dict]
-        List of dictionaries, one for each scan dataframe to be plotted.
-
-    experimental_dicts : list[dict]
-        List of dictionaries, one for each experimental dataframe to be plotted.
-        Must contain fields for dataframe (df), label, color.
-
-    y_var : str
-        Variable to plot on y axis. Must correspond to column name in dataframe.
-
-    y_label : str
-        Label for y axis
-
-    x_range : list/tuple, Optional
-        Limits for x axis range
-
-    y_range : list/tuple, Optional
-        Limits for y axis range
-
-    title : str, Optional
-        Title for plot
-
-    shade : bool, Optional
-        If True, shades exclusion region in semi-transparent color.
-
-    text : str, Optional
-        Text to put on plot.
-    """
-    for entry in scan_dicts:
-        df = entry['df']
-        plt.plot(df['m_a'].values, df[y_var].values, 'o',
-                 label=entry['label'],
-                 color=entry['color'], alpha=0.7)
-
-    for entry in experimental_dicts:
-        df = entry['df']
-        plt.plot(df['m_a'].values, df[y_var].values,
-                 label=entry['label'],
-                 color=entry['color'], linewidth=2)
-
-    if x_range:
-        plt.xlim(*x_range)
-    if y_range:
-        plt.ylim(*y_range)
-
-    plt.yscale('log')
-
-    if shade:
-        y_top = plt.ylim()[1]
-        for entry in experimental_dicts:
-            df = entry['df']
-            upper_edge = np.ones_like(df[y_var]) * y_top
-            plt.fill_between(df['m_a'], df[y_var],
-                             y2=upper_edge,
-                             color=entry['color'],
-                             alpha=0.2)
-
-    plt.minorticks_on()
-    plt.xlabel(r'$m_A\ \mathrm{[GeV]}$', fontsize=20, labelpad=1)
-    plt.ylabel(y_label, fontsize=20)
-    plt.legend(loc=0, fontsize=14)
-#     plt.xscale('log')
-
-    if title:
-        plt.suptitle(title)
-
-    if text:
-        plt.text(*text_coords, s=text, transform=plt.gca().transAxes)
-
-    # line for mh/2
-    mh = 125.
-    plt.vlines(mh/2, *plt.ylim(), linestyle='dotted', color='dimgrey', linewidth=2)
-    plt.annotate(r'$m_h/2$', xy=(mh/2, plt.ylim()[0]),
-                 xytext=(5, 20), xycoords='data',
-                 textcoords='offset points',
-                 fontsize=16, color='dimgrey')
-
-
-def draw_xsec_sm():
-    """Draw a horizontal line at xsec_SM"""
-    xlim = plt.xlim()
-    plt.hlines(19.27, *xlim, linestyle='dashed')
-    plt.annotate(r'$\sigma_{SM}$', xy=(xlim[0], 19.27),
-                 xytext=(5, 5), xycoords='data',
-                 textcoords='offset points', fontsize=16)
-
-
 def make_all_2HDM_plots():
     # h = h(125)
     df_2hdm_type2_h125 = pd.read_csv("Daniele_Plots/sigma_4tau_mh125_type2.dat",
                                      sep="\t", names=["m_a", "xsec_br_4tau"])
-    print len(df_2hdm_type2_h125.index)
 
     # H = h(125)
     df_2hdm_type2_H125 = pd.read_csv("Daniele_Plots/sigma_4tau_mH125_type2-2.dat",
                                      sep="\t", names=["m_a", "xsec_br_4tau"])
-    print len(df_2hdm_type2_H125.index)
 
     # Scan contributions to put on plot
     scan_dicts = [
@@ -164,16 +70,20 @@ def make_all_2HDM_plots():
     ]
 
     # Make plots
-    plot_scan_exclusions(scan_dicts, experimental_dicts,
-                         y_var='xsec_br_4tau',
-                         y_label=r'$\sigma\ \times\ BR\ (h_i\ \to\ 2A\ \to\ 4\tau)\ \mathrm{[pb]}$',
-                         x_range=[2, 12],
-                         y_range=[0.05, 5E2],
-                         title='Observed exclusion limits ' + r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
-                         text='2HDM\nType II', text_coords=[0.82, 0.1])
-    draw_xsec_sm()
-    plt.savefig("Daniele_Plots/xsec_br_4tau_type2.svg")
-    plt.savefig("Daniele_Plots/xsec_br_4tau_type2.pdf")
+    title = 'Observed exclusion limits ' + r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$'
+    common_text = '2HDM\nType II'
+    str_mA = r'$m_A\ \mathrm{[GeV]}$'
+    str_xsec_4tau = r'$\sigma\ \times\ BR\ (h_i\ \to\ 2A\ \to\ 4\tau)\ \mathrm{[pb]}$'
+
+    plotr.save_scan_exclusions_xsec("Daniele_Plots/xsec_br_4tau_type2", ["pdf", "svg"],
+                                    scan_dicts, experimental_dicts,
+                                    y_var='xsec_br_4tau',
+                                    x_label=str_mA,
+                                    y_label=str_xsec_4tau,
+                                    x_range=[2, 12],
+                                    y_range=[0.05, 5E2],
+                                    title=title,
+                                    text=common_text, text_coords=[0.82, 0.1])
 
 
 if __name__ == "__main__":
