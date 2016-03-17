@@ -125,12 +125,12 @@ def draw_xsec_sm():
 
 def make_all_2HDM_plots():
     # h = h(125)
-    df_2hdm_type2_h125 = pd.read_csv("Daniele_Points/sigma_4tau_mh125_type2.dat",
+    df_2hdm_type2_h125 = pd.read_csv("Daniele_Plots/sigma_4tau_mh125_type2.dat",
                                      sep="\t", names=["m_a", "xsec_br_4tau"])
     print len(df_2hdm_type2_h125.index)
 
     # H = h(125)
-    df_2hdm_type2_H125 = pd.read_csv("Daniele_Points/sigma_4tau_mH125_type2-2.dat",
+    df_2hdm_type2_H125 = pd.read_csv("Daniele_Plots/sigma_4tau_mH125_type2-2.dat",
                                      sep="\t", names=["m_a", "xsec_br_4tau"])
     print len(df_2hdm_type2_H125.index)
 
@@ -172,8 +172,8 @@ def make_all_2HDM_plots():
                          title='Observed exclusion limits ' + r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$',
                          text='2HDM\nType II', text_coords=[0.82, 0.1])
     draw_xsec_sm()
-    plt.savefig("Daniele_Points/xsec_br_4tau_type2.svg")
-    plt.savefig("Daniele_Points/xsec_br_4tau_type2.pdf")
+    plt.savefig("Daniele_Plots/xsec_br_4tau_type2.svg")
+    plt.savefig("Daniele_Plots/xsec_br_4tau_type2.pdf")
 
 
 if __name__ == "__main__":
