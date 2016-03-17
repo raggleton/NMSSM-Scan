@@ -4,31 +4,9 @@
 Make exclusion plots using Daniele's 2HDM Type 2 scan points.
 """
 
+
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib as mpl
 import commonPlot as plotr
-
-
-pd.set_option('precision',7)
-mpl.rcParams['figure.figsize'] = (9.0, 5.0)  # default size of plots
-mpl.rcParams['font.size'] = 16
-mpl.rcParams['axes.labelsize'] = 16
-
-mpl.rcParams['xtick.labelsize'] = 14
-mpl.rcParams['ytick.labelsize'] = 14
-mpl.rcParams['xtick.major.size'] = 12
-mpl.rcParams['ytick.major.size'] = 12
-mpl.rcParams['xtick.minor.size'] = 6
-mpl.rcParams['ytick.minor.size'] = 6
-
-mpl.rcParams['legend.fontsize'] = 16
-mpl.rcParams['legend.framealpha'] = 0.8
-mpl.rcParams['legend.scatterpoints'] = 1
-mpl.rcParams['legend.numpoints'] = 1
-
-mpl.rcParams.update({'font.size': 24, 'font.family': 'STIXGeneral', 'mathtext.fontset': 'stix'})
 
 
 def make_all_2HDM_plots():

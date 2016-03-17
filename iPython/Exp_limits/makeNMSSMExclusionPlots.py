@@ -4,32 +4,9 @@
 Make exclusion plots using NMSSM scan points.
 """
 
+
 import pandas as pd
-# import numpy as np
-# import matplotlib.pyplot as plt
-# import matplotlib as mpl
-# import matplotlib.patches as patches
-# from itertools import izip, product
 import commonPlot as plotr
-
-# pd.set_option('precision',7)
-# mpl.rcParams['figure.figsize'] = (9.0, 5.0)  # default size of plots
-# mpl.rcParams['font.size'] = 16
-# mpl.rcParams['axes.labelsize'] = 16
-
-# mpl.rcParams['xtick.labelsize'] = 14
-# mpl.rcParams['ytick.labelsize'] = 14
-# mpl.rcParams['xtick.major.size'] = 10
-# mpl.rcParams['ytick.major.size'] = 10
-# mpl.rcParams['xtick.minor.size'] = 5
-# mpl.rcParams['ytick.minor.size'] = 5
-
-# mpl.rcParams['legend.fontsize'] = 16
-# mpl.rcParams['legend.framealpha'] = 0.75
-# mpl.rcParams['legend.scatterpoints'] = 1
-# mpl.rcParams['legend.numpoints'] = 1
-
-# mpl.rcParams.update({'font.size': 24, 'font.family': 'STIXGeneral', 'mathtext.fontset': 'stix'})
 
 
 def make_all_NMSSM_plots():
@@ -53,6 +30,8 @@ def make_all_NMSSM_plots():
     with pd.HDFStore('exp_limits.h5') as store:
         df_hig_14_019 = store['CMS_HIG_14_019']
         df_hig_14_022 = store['CMS_HIG_14_022']
+        # df_hig_14_041 = store['CMS_HIG_14_041']
+        # df_hig_15_011 = store['CMS_HIG_15_011']
         df_atlas_higg_2014_02 = store['ATLAS_HIGG_2014_02']
 
     # Experimental contributions to put on plot
