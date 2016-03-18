@@ -11,7 +11,7 @@ import commonPlot as plotr
 
 def load_dataframe(filename):
     """Read Daniele's dat file into pandas dataframe"""
-    return pd.read_csv("", sep="\t", names=["m_a", "xsec_br_4tau"])
+    return pd.read_csv(filename, sep="\t", names=["m_a", "xsec_br_4tau"])
 
 
 def make_all_2HDM_plots():
