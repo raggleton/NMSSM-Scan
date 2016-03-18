@@ -9,14 +9,17 @@ import pandas as pd
 import commonPlot as plotr
 
 
+def load_dataframe(filename):
+    """Read Daniele's dat file into pandas dataframe"""
+    return pd.read_csv("", sep="\t", names=["m_a", "xsec_br_4tau"])
+
+
 def make_all_2HDM_plots():
     # h = h(125)
-    df_2hdm_type2_h125 = pd.read_csv("Daniele_2HDMType2_Plots/sigma_4tau_mh125_type2.dat",
-                                     sep="\t", names=["m_a", "xsec_br_4tau"])
+    df_2hdm_type2_h125 = load_dataframe("Daniele_2HDMType2_Plots/sigma_4tau_mh125_type2.dat")
 
     # H = h(125)
-    df_2hdm_type2_H125 = pd.read_csv("Daniele_2HDMType2_Plots/sigma_4tau_mH125_type2-2.dat",
-                                     sep="\t", names=["m_a", "xsec_br_4tau"])
+    df_2hdm_type2_H125 = load_dataframe("Daniele_2HDMType2_Plots/sigma_4tau_mH125_type2-2.dat")
 
     # Scan contributions to put on plot
     scan_dicts = [
