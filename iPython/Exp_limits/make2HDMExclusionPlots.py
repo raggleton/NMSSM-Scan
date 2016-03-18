@@ -11,11 +11,11 @@ import commonPlot as plotr
 
 def make_all_2HDM_plots():
     # h = h(125)
-    df_2hdm_type2_h125 = pd.read_csv("Daniele_Plots/sigma_4tau_mh125_type2.dat",
+    df_2hdm_type2_h125 = pd.read_csv("Daniele_2HDMType2_Plots/sigma_4tau_mh125_type2.dat",
                                      sep="\t", names=["m_a", "xsec_br_4tau"])
 
     # H = h(125)
-    df_2hdm_type2_H125 = pd.read_csv("Daniele_Plots/sigma_4tau_mH125_type2-2.dat",
+    df_2hdm_type2_H125 = pd.read_csv("Daniele_2HDMType2_Plots/sigma_4tau_mH125_type2-2.dat",
                                      sep="\t", names=["m_a", "xsec_br_4tau"])
 
     # Scan contributions to put on plot
@@ -53,12 +53,12 @@ def make_all_2HDM_plots():
     str_mA = r'$m_A\ \mathrm{[GeV]}$'
     str_xsec_4tau = r'$\sigma\ \times\ BR\ (h_i\ \to\ 2A\ \to\ 4\tau)\ \mathrm{[pb]}$'
 
-    plotr.save_scan_exclusions_xsec("Daniele_Plots/xsec_br_4tau_type2", ["pdf", "svg"],
+    plotr.save_scan_exclusions_xsec("Daniele_2HDMType2_Plots/xsec_br_4tau_type2", ["pdf", "svg"],
                                     scan_dicts, experimental_dicts,
                                     y_var='xsec_br_4tau',
                                     x_label=str_mA,
                                     y_label=str_xsec_4tau,
-                                    x_range=[2, 12],
+                                    x_range=[2, 14],
                                     y_range=[0.05, 5E2],
                                     title=title,
                                     text=common_text, text_coords=[0.82, 0.1])
