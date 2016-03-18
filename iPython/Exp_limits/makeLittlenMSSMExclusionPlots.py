@@ -84,8 +84,8 @@ def make_all_nMSSM_plots():
                                     y_var='xsec_br_4tau',
                                     x_label=str_ma,
                                     y_label=str_xsec_4tau,
-                                    x_range=[2, 14],
-                                    y_range=[0.01, 5E2],
+                                    x_range=[2, 18],
+                                    y_range=[0.005, 1E3],
                                     title=title,
                                     text=common_text, text_coords=[0.75, 0.1])
 
