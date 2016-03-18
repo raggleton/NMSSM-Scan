@@ -23,12 +23,8 @@ def make_all_2HDM_plots():
 
     # Scan contributions to put on plot
     scan_dicts = [
-        {'df': df_2hdm_type2_h125,
-         'label': r"$h_{125}$",
-         'color': 'dodgerblue'},
-        {'df': df_2hdm_type2_H125,
-         'label': r"$H_{125}$",
-         'color': 'indigo'},
+        {'df': df_2hdm_type2_h125, 'label': r"$h_{125}$", 'color': 'dodgerblue'},
+        {'df': df_2hdm_type2_H125, 'label': r"$H_{125}$", 'color': 'indigo'},
     ]
 
     # Get experimental limits
@@ -39,15 +35,9 @@ def make_all_2HDM_plots():
 
     # Experimental contributions to put on plot
     experimental_dicts = [
-        {'df': df_hig_14_019,
-         'label': 'CMS HIG-14-019 ' + r'$(4\tau)$',
-         'color': 'blue'},
-        {'df': df_hig_14_022,
-         'label': 'CMS HIG-14-022 ' + r'$(4\tau)$',
-         'color': 'green'},
-        {'df': df_atlas_higg_2014_02,
-         'label': 'ATLAS HIGG-2014-02 ' + r'$(2\tau2\mu)$',
-         'color': 'red'},
+        {'df': df_hig_14_019, 'label': 'CMS HIG-14-019 ' + r'$(4\tau)$', 'color': 'blue'},
+        {'df': df_hig_14_022, 'label': 'CMS HIG-14-022 ' + r'$(4\tau)$', 'color': 'green'},
+        {'df': df_atlas_higg_2014_02, 'label': 'ATLAS HIGG-2014-02 ' + r'$(2\tau2\mu)$', 'color': 'red'},
     ]
 
     # Make plots
