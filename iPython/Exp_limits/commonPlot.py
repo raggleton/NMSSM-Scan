@@ -25,6 +25,9 @@ mpl.rcParams['legend.numpoints'] = 1
 mpl.rcParams.update({'font.size': 24, 'font.family': 'STIXGeneral', 'mathtext.fontset': 'stix'})
 
 
+XSEC_SM = 19.27  # SM Higgs CrossSection in pb
+
+
 def save_plt(filename, ext):
     """Save current figure to file.
 
@@ -46,14 +49,16 @@ def save_plt(filename, ext):
 def save_scan_exclusions_xsec(filename, ext, *args, **kwargs):
     """Plot & save scan + exclusions for total xsec * BR"""
     plot_scan_exclusions(*args, **kwargs)
-    draw_xsec_sm()
+    if plt.ylim()[1] > XSEC_SM:
+        draw_xsec_sm()
     save_plt(filename, ext)
 
 
 def save_scan_exclusions_br(filename, ext, *args, **kwargs):
     """Plot & save scan + exclusions for BR"""
     plot_scan_exclusions(*args, **kwargs)
-    draw_hline_1()
+    if plt.ylin()[1] > 1.:
+        draw_hline_1()
     save_plt(filename, ext)
 
 
@@ -146,8 +151,8 @@ def plot_scan_exclusions(scan_dicts, experimental_dicts, y_var, x_label, y_label
 def draw_xsec_sm():
     """Draw a horizontal line at xsec_SM"""
     xlim = plt.xlim()
-    plt.hlines(19.27, *xlim, linestyle='dashed')
-    plt.annotate(r'$\sigma_{SM}$', xy=(xlim[0], 19.27),
+    plt.hlines(XSEC_SM, *xlim, linestyle='dashed')
+    plt.annotate(r'$\sigma_{SM}$', xy=(xlim[0], XSEC_SM),
                  xytext=(5, 5), xycoords='data',
                  textcoords='offset points', fontsize=16)
 
@@ -155,4 +160,3 @@ def draw_xsec_sm():
 def draw_hline_1():
     """Draw a horizontal line at y = 1"""
     plt.hlines(1, *plt.xlim(), linestyle='dashed')
-
