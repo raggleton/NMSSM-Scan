@@ -17,9 +17,11 @@ def load_dataframe(filename):
 def make_all_2HDM_plots():
     # h = h(125)
     df_2hdm_type2_h125 = load_dataframe("Daniele_2HDMType2_Plots/sigma_4tau_mh125_type2.dat")
+    df_2hdm_type2_h125_all_ma = load_dataframe("Daniele_2HDMType2_Plots/sigma_4tau_mh125_type2_all_ma.dat")
 
     # H = h(125)
     df_2hdm_type2_H125 = load_dataframe("Daniele_2HDMType2_Plots/sigma_4tau_mH125_type2-2.dat")
+
 
     # Scan contributions to put on plot
     scan_dicts = [
@@ -27,16 +29,31 @@ def make_all_2HDM_plots():
         {'df': df_2hdm_type2_H125, 'label': r"$H_{125}$", 'color': 'indigo'},
     ]
 
+    scan_dicts_all_ma = [
+        {'df': df_2hdm_type2_h125_all_ma, 'label': r"$h_{125}$", 'color': 'dodgerblue'},
+    ]
+
     # Get experimental limits
     with pd.HDFStore('exp_limits.h5') as store:
         df_hig_14_019 = store['CMS_HIG_14_019']
         df_hig_14_022 = store['CMS_HIG_14_022']
         df_atlas_higg_2014_02 = store['ATLAS_HIGG_2014_02']
+        df_hig_14_041 = store['CMS_HIG_14_041']
+        df_hig_15_011 = store['CMS_HIG_15_011']
 
     # Experimental contributions to put on plot
+    # < 10 GeV specific
     experimental_dicts = [
         {'df': df_hig_14_019, 'label': 'CMS HIG-14-019 ' + r'$(4\tau)$', 'color': 'blue'},
         {'df': df_hig_14_022, 'label': 'CMS HIG-14-022 ' + r'$(4\tau)$', 'color': 'green'},
+        {'df': df_atlas_higg_2014_02, 'label': 'ATLAS HIGG-2014-02 ' + r'$(2\tau2\mu)$', 'color': 'red'},
+    ]
+
+    experimental_dicts_all = [
+        {'df': df_hig_14_019, 'label': 'CMS HIG-14-019 ' + r'$(4\tau)$', 'color': 'blue'},
+        {'df': df_hig_14_022, 'label': 'CMS HIG-14-022 ' + r'$(4\tau)$', 'color': 'green'},
+        {'df': df_hig_14_041, 'label': 'CMS HIG-14-041 ' + r'$(2b2\mu)$', 'color': 'fuchsia', 'yvar': 'xsec_br_4tau_type1_tb1'},
+        {'df': df_hig_15_011, 'label': 'CMS HIG-15-011 ' + r'$(2\tau2\mu)$', 'color': 'orange'},
         {'df': df_atlas_higg_2014_02, 'label': 'ATLAS HIGG-2014-02 ' + r'$(2\tau2\mu)$', 'color': 'red'},
     ]
 
@@ -56,6 +73,15 @@ def make_all_2HDM_plots():
                                     title=title,
                                     text=common_text, text_coords=[0.82, 0.1])
 
+    plotr.save_scan_exclusions_xsec("Daniele_2HDMType2_Plots/xsec_br_4tau_type2_all_ma", ["pdf", "svg"],
+                                    scan_dicts_all_ma, experimental_dicts_all,
+                                    y_var='xsec_br_4tau',
+                                    x_label=str_mA,
+                                    y_label=str_xsec_4tau,
+                                    x_range=[2, 50],
+                                    y_range=[0.001, 5E3],
+                                    title=title,
+                                    text=common_text, text_coords=[0.82, 0.1])
 
 if __name__ == "__main__":
     make_all_2HDM_plots()
