@@ -18,7 +18,7 @@ mpl.rcParams['xtick.minor.size'] = 5
 mpl.rcParams['ytick.minor.size'] = 5
 
 mpl.rcParams['legend.fontsize'] = 16
-mpl.rcParams['legend.framealpha'] = 0.75
+mpl.rcParams['legend.framealpha'] = 0.95
 mpl.rcParams['legend.scatterpoints'] = 1
 mpl.rcParams['legend.numpoints'] = 1
 
