@@ -105,7 +105,8 @@ def plot_scan_exclusions(scan_dicts, experimental_dicts, y_var, x_label, y_label
 
     for entry in experimental_dicts:
         df = entry['df']
-        plt.plot(df['m_a'].values, df[y_var].values,
+        colname = entry.get('yvar', y_var)
+        plt.plot(df['m_a'].values, df[colname].values,
                  label=entry['label'],
                  color=entry['color'], linewidth=2)
 
@@ -120,8 +121,9 @@ def plot_scan_exclusions(scan_dicts, experimental_dicts, y_var, x_label, y_label
         y_top = plt.ylim()[1]
         for entry in experimental_dicts:
             df = entry['df']
-            upper_edge = np.ones_like(df[y_var]) * y_top
-            plt.fill_between(df['m_a'], df[y_var],
+            colname = entry.get('yvar', y_var)
+            upper_edge = np.ones_like(df[colname]) * y_top
+            plt.fill_between(df['m_a'], df[colname],
                              y2=upper_edge,
                              color=entry['color'],
                              alpha=0.2)
