@@ -64,7 +64,7 @@ def save_scan_exclusions_br(filename, ext, *args, **kwargs):
 
 def plot_scan_exclusions(scan_dicts, experimental_dicts, y_var, x_label, y_label,
                          x_range=None, y_range=None, title=None, shade=True,
-                         text=None, text_coords=[0.6, 0.1]):
+                         text=None, text_coords=[0.6, 0.1], leg_loc=0):
     """Make a plot of exclusion regions on top of scan points.
 
     Parameters
@@ -96,6 +96,10 @@ def plot_scan_exclusions(scan_dicts, experimental_dicts, y_var, x_label, y_label
 
     text : str, Optional
         Text to put on plot.
+
+    leg_loc : int or string or pair of floats
+        See http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.legend
+        Default is 'best'
     """
     for entry in scan_dicts:
         df = entry['df']
@@ -132,7 +136,7 @@ def plot_scan_exclusions(scan_dicts, experimental_dicts, y_var, x_label, y_label
     # plt.xlabel(r'$m_a\ \mathrm{[GeV]}$', fontsize=20, labelpad=1)
     plt.xlabel(x_label, fontsize=20, labelpad=1)
     plt.ylabel(y_label, fontsize=20)
-    plt.legend(loc=0, fontsize=14)
+    plt.legend(loc=leg_loc, fontsize=14)
 #     plt.xscale('log')
 
     if title:
