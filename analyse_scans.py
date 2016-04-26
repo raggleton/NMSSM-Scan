@@ -104,6 +104,8 @@ def analyse_scans(in_args=sys.argv[1:]):
     # ignore any points with ma1 > mass_cut
     mass_cut = 60
 
+    done_cols = False
+
     with open(outfile, 'w') as f, \
          open(outfile_good, 'w') as f_good, \
          open(outfile_ma1Lt11, 'w') as f_ma1Lt11:
@@ -144,11 +146,13 @@ def analyse_scans(in_args=sys.argv[1:]):
                 log.debug(nmssmcalc_dict)
 
             # First time, write out column headers
-            if i == 0:
+            if not done_cols:
                 # This defines the output column order & writes headers
                 columns = sorted(results_dict.keys())
+                log.debug('Columns: %s', columns)
                 for o in f, f_good, f_ma1Lt11:
                     o.write(','.join(columns) + '\n')
+                done_cols = True
 
             # Now write to file if we want this result
             if 0 < results_dict['ma1'] < mass_cut:
