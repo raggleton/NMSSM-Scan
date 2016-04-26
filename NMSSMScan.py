@@ -138,14 +138,14 @@ def NMSSMScan(in_args=sys.argv[1:]):
         if args.HB:
             os.chdir(args.HB)
             spectr_name = new_card_path.replace('inp', 'spectr')
-            hb_cmds = ['./HiggsBounds', 'LandH', 'SLHA', '5', '1', spectr_name]
+            hb_cmds = ['./HiggsBounds', 'LandH', 'SLHA', '5', '1', os.path.relpath(spectr_name)]
             log.debug(hb_cmds)
             call(hb_cmds)
             os.chdir(base_dir)
 
         if args.HS:
             os.chdir(args.HS)
-            hs_cmds = ['./HiggsSignals', 'latestresults', 'peak', '2', 'SLHA', '5', '1', spectr_name]
+            hs_cmds = ['./HiggsSignals', 'latestresults', 'peak', '2', 'SLHA', '5', '1', os.path.relpath(spectr_name)]
             log.debug(hs_cmds)
             call(hs_cmds)
             os.chdir(base_dir)
