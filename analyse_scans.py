@@ -125,9 +125,9 @@ def analyse_scans(in_args=sys.argv[1:]):
             if isinstance(nmssmtools_constraints, type(None)):
                 continue
             results_dict = get_slha_dict(spectr, NMSSMToolsFields.nmssmtools_fields)
-            # use / as joiner as CSV file
-            results_dict['constraints'] = '/'.join(nmssmtools_constraints)
-            log.debug(results_dict)
+            # need joiner as CSV file
+            results_dict['constraints'] = '|'.join(nmssmtools_constraints)
+            # log.debug(results_dict)
 
             if args.superiso:
                 # Get matching SuperIso output file and parse
