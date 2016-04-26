@@ -113,7 +113,7 @@ def analyse_scans(in_args=sys.argv[1:]):
         columns = []  # to hold column order - important as dict not sorted
 
         # Loop through each spectrum file
-        for i, spectr in enumerate(glob.iglob(os.path.join(args.input, 'spectr_*'))):
+        for i, spectr in enumerate(glob.iglob(os.path.join(args.input, 'spectr_*.dat'))):
             if i == args.n:
                 break
 
