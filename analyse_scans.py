@@ -178,8 +178,8 @@ def analyse_scans(in_args=sys.argv[1:]):
     log.info('# N. with 0 < ma1 < %g: %d' % (mass_cut, n_all))
     log.info('# N. with 0 < ma1 < %g + passing exp. constraints: %d' % (mass_cut, n_good))
     log.info('# N. with 0 < ma1 < 11: %d' % n_ma1Lt11)
-    log.info('# Fraction useful: %.3f' % (float(n_all) / num_spectr_files))
-    log.info('# Fraction good: %.3f' % (float(n_good) / num_spectr_files))
+    log.info('# Fraction useful: %.3f' % (float(n_all) / float(num_spectr_files)))
+    log.info('# Fraction good: %.3f' % (float(n_good) / float(num_spectr_files)))
     log.info('#' * 60)
 
 
