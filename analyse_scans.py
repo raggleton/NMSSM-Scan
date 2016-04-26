@@ -25,7 +25,7 @@ logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 log = logging.getLogger(__name__)
 
 # fileextension for output files - may need to be used in further processing
-oFormat = 'csv'
+OFMT = 'csv'
 
 
 class AnalysisParser(argparse.ArgumentParser):
@@ -91,9 +91,9 @@ def analyse_scans(in_args=sys.argv[1:]):
 
     # Create output filenames
     # ------------------------------------------------------------------------
-    outfile = os.path.join(args.oDir, 'output%s.%s' % (args.ID, oFormat))
-    outfile_good = os.path.join(args.oDir, 'output_good%s.%s' % (args.ID, oFormat))
-    outfile_ma1Lt11 = os.path.join(args.oDir, 'output_ma1Lt11%s.%s' % (args.ID, oFormat))
+    outfile = os.path.join(args.oDir, 'output%s.%s' % (args.ID, OFMT))
+    outfile_good = os.path.join(args.oDir, 'output_good%s.%s' % (args.ID, OFMT))
+    outfile_ma1Lt11 = os.path.join(args.oDir, 'output_ma1Lt11%s.%s' % (args.ID, OFMT))
     log.info('Writing CSV to %s' % ', '.join([outfile, outfile_good, outfile_ma1Lt11]))
 
     # Analyse SLHA files
