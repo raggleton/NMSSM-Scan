@@ -94,7 +94,7 @@ fi
 
 # Run NMSSMTools over parameter points
 # -----------------------------------------------------------------------------
-python NMSSMScan.py -v --card inp_*.dat -n $3 --param paramRange*.json --oDir . --NT NMSSMTools_${NTVER} $HBOPT $HSOPT $SUSHIOPT
+python NMSSMScan.py --card inp_*.dat -n $3 --param paramRange*.json --oDir . --NT NMSSMTools_${NTVER} $HBOPT $HSOPT $SUSHIOPT
 ls
 
 # Setup SuperIso
