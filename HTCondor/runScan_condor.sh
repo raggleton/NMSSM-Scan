@@ -26,6 +26,7 @@ tar xzf /hdfs/user/ra12451/NMSSM-Scan/zips/NMSSMTools_${NTVER}.tar.gz
 cd NMSSMTools_${NTVER}
 # patch bug in moving output files due to relpaths eurgh
 # patch run < ../NT.patch
+make clean
 make init
 make
 cd ..
