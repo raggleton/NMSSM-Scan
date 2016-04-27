@@ -54,7 +54,9 @@ if [[ $doHiggsSignals == 1 ]]; then
     HSOPT="--HS $PWD/HiggsSignals-${HSVER}"
     cd HiggsSignals-${HSVER}
     make clean
-    # TODO: modify configure script for correct HB?
+    # patch to remove spurious printout
+    patch datatables.f90 < ../HS_datatables.patch;
+    patch HiggsSignals_subroutines.F90 < ../HS_subroutines.patch;
     ./configure
     make
     cd ..

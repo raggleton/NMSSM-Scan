@@ -1,0 +1,10 @@
+81,82c81,82
+<   print *, "Reading in the following datafiles from analysis-set "//				&
+<   			trim(adjustl(Exptdir))//":"
+---
+> !  print *, "Reading in the following datafiles from analysis-set "//				&
+> !  			trim(adjustl(Exptdir))//":"
+89c89
+<    write(*,'(I4,2X,A)') n, datafile(n)
+---
+> !   write(*,'(I4,2X,A)') n, datafile(n)
