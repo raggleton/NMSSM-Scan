@@ -15,6 +15,11 @@ import os
 import sys
 from time import strftime
 import htcondenser as ht
+import logging
+
+
+logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
+log = logging.getLogger(__name__)
 
 
 # Number of parallel jobs to submit

@@ -13,6 +13,11 @@ import os
 import sys
 from glob import glob
 import htcondenser as ht
+import logging
+
+
+logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
+log = logging.getLogger(__name__)
 
 
 ODIR = '/hdfs/user/%s/NMSSM-Scan/' % os.environ['LOGNAME']
