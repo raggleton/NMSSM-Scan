@@ -99,6 +99,10 @@ def NMSSMScan(in_args=sys.argv[1:]):
 
     # loop over number of points requested, making an input card for each
     for ind in xrange(args.number):
+
+        if ind % 200 == 0:
+            log.info('Processing %dth point', ind)
+
         # generate a random point within the range
         for v in param_dict.itervalues():
             v['value'] = random.uniform(v['min'], v['max'])
