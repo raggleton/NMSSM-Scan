@@ -41,7 +41,7 @@ if [[ $doHiggsBounds == 1 ]]; then
     cd HiggsBounds-${HBVER}
     make clean
     # patch to remove spurious printout
-    patch HiggsBounds.F90 < ../HB.patch
+    # patch HiggsBounds.F90 < ../HB.patch
     ./configure
     make
     cd ..
@@ -51,7 +51,7 @@ fi
 # -----------------------------------------------------------------------------
 HSOPT=""
 if [[ $doHiggsSignals == 1 ]]; then
-    tar xvf /hdfs/user/ra12451/NMSSM-Scan/zips/HiggsSignals-${HSVER}.tar.gz
+    tar xzf /hdfs/user/ra12451/NMSSM-Scan/zips/HiggsSignals-${HSVER}.tar.gz
     HSOPT="--HS $PWD/HiggsSignals-${HSVER}"
     cd HiggsSignals-${HSVER}
     make clean
