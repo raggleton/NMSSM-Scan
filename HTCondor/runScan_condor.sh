@@ -1,5 +1,5 @@
-#!/bin/bash
-
+#!/bin/bash -e
+which gfortran
 # For running on HTCondor
 # TODO: use getopts
 echo "Running with parameters: $@"
