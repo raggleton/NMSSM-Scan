@@ -58,8 +58,9 @@ def submit_all_analyses(job_dirs, storage_dir, hdfs_dir):
                                  status_file=os.path.join(storage_dir, jdir, 'analysis.status'))
 
         # add a job to analyse each spectr*.tgz
-        num_tar = len(glob(os.path.join(hdfs_dir, jdir, 'spectr*tgz')))
-        for ind in range(num_tar):
+        spectr_tars = glob(os.path.join(hdfs_dir, jdir, 'spectr*tgz'))
+        for tar in spectr_tars:
+            ind = int(os.path.basename(tar).split('.')[0].replace("spectr", ''))
             job = ht.Job(name='%d_%s_analysis' % (ind, jdir.strip('/')),
                          args=[jdir, str(ind)],
                          hdfs_mirror_dir=os.path.join(hdfs_dir, jdir))
