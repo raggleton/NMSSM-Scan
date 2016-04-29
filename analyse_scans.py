@@ -158,7 +158,8 @@ def analyse_scans(in_args=sys.argv[1:]):
             if 0 < results_dict['ma1'] < mass_cut:
                 # everything goes into the general output file - must keep
                 # same order as header columns
-                results_str = ','.join([str(results_dict[x]) for x in columns])
+                results_str = ','.join([str(results_dict.get(x, '')) for x in columns])
+                log.debug('All: %s', results_str)
                 f.write(results_str + '\n')
                 n_all += 1
 
@@ -216,6 +217,11 @@ def get_slha_dict(filename, fields):
             scan_dict[f.block].append(new_field)
 
     results = defaultdict(str)
+    # ensures all dicts have the same keys
+    for f in fields:
+        results[f.name] = ''
+    print results.keys()
+
     results['file'] = filename
 
     # Now go through the file, line by line. If we encounter a BLOCK line,
