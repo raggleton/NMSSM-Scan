@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Plot browser</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+    <!-- FOR LOCAL TESTING: -->
+    <!-- Bootstrap core css-->
+    <!-- <link href="/Users/robina/bootstrap/bootstrap-3.3.6/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+    <!-- Bootstrap theme -->
+    <!-- <link href="/Users/robina/bootstrap/bootstrap-3.3.6/dist/css/bootstrap-theme.min.css" rel="stylesheet"> -->
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <div class="navbar-brand" href="#">Plot Browser</div>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <form class="navbar-form navbar-left" role="selector">
+
+              <button type="button" class="btn btn-default" id="showAllBtn">Show Everything!</button>
+
+              <div class="form-group">
+              <b>&nbsp; Or select a scenario: &nbsp;</b>
+                <!-- Channel selector -->
+                <select class="form-control" id="selChannel">
+                  <option>4 tau</option>
+                  <option>2 tau 2 mu</option>
+                  <option>4 mu</option>
+                </select>
+
+                <!-- Model type selector -->
+                <select class="form-control" id="selModelType" onchange="setApplicableTanBeta()">
+                  <option>Type I/II</option>
+                  <option>Type III</option>
+                  <option>Type IV</option>
+                </select>
+
+                <!-- tan beta selector -->
+                <select class="form-control" id="selTanBeta" disabled>
+                  <option>0.5</option>
+                  <option>5</option>
+                </select>
+              </div>
+            </form>
+
+            <!-- Plotting options -->
+            <form class="navbar-form navbar-right" role="selector">
+              <b>Show on y-axis:</b>
+              <div class="btn-group" data-toggle="buttons">
+                <button type="button" class="btn btn-default" id="xsecButton">Cross-section</button>
+                <button type="button" class="btn btn-default" id="brButton">Branching ratio</button>
+              </div>
+            </form> <!-- End of navbar-right -->
+          </ul>
+
+        </div> <!-- End of navbar-collapse -->
+      </div> <!-- End of container-fluid -->
+    </nav>
+
+    <!-- Placeholder for main plot(s) -->
+    <div id="placeholder" class="container-fluid center-block"></div>
+
+    <script>
+    document.getElementById("showAllBtn").addEventListener("click", showAllPlots);
+    document.getElementById("xsecButton").addEventListener("click", function() { showCentralPlot("xsec_br_"); });
+    document.getElementById("brButton").addEventListener("click", function() { showCentralPlot("br_"); });
+
+    // Show all plots in a big grid
+    function showAllPlots() {
+      removeChildren(document.getElementById("placeholder"));
+      var chanOptions = document.getElementById("selChannel").options;
+      var modelOptions = document.getElementById("selModelType").options;
+      var tbOptions = document.getElementById("selTanBeta").options;
+
+      var header = document.createElement("div")
+      header.innerHTML = "<h3>Cross-section * BR</h3>";
+      document.getElementById("placeholder").appendChild(header);
+
+      prefixes = ["xsec_br_", "br_"];
+      counter = 0;
+      for (p = 0; p < prefixes.length; p++) {
+        for (i = 0; i < chanOptions.length; i++) {
+          for (j = 0; j < modelOptions.length; j++) {
+            // Don't loop through tan beta for Type I/II models
+            if (j != 0) {
+              for (k = 0; k < tbOptions.length; k++) {
+                plotname = generatePlotName(prefixes[p],
+                                            chanOptions[i].text,
+                                            modelOptions[j].text,
+                                            tbOptions[k].text);
+                addGridPlot(counter, plotname);
+                counter += 1;
+
+              }
+            } else {
+              plotname = generatePlotName(prefixes[p],
+                                          chanOptions[i].text,
+                                          modelOptions[j].text,
+                                          tbOptions[0].text);
+              addGridPlot(counter, plotname);
+              counter += 1;
+            }
+          }
+        }
+        // Add a horizontal line to divide xsec from BR plots.
+        document.getElementById("placeholder").appendChild(document.createElement("hr"));
+        // Add a seciton header
+        var header = document.createElement("div")
+        header.innerHTML = "<h3>BR</h3>";
+        document.getElementById("placeholder").appendChild(header);
+        counter = 0;
+      }
+    }
+
+    // Add a plot to the big grid. Arranges into nCols columns.
+    // counter : int, denotes plot index
+    // plotFilename: name of image
+    function addGridPlot(counter, plotFilename) {
+      var placeholder = document.getElementById("placeholder");
+      nCols = 2;
+      if (counter % nCols  === 0) {
+        var row = document.createElement("div");
+        row.className = "row";
+        placeholder.appendChild(row);
+      }
+      var currentRow = placeholder.lastChild;
+
+      var col = document.createElement("div");
+      col.className = "col-sm-" + (12/nCols);
+      currentRow.appendChild(col);
+
+      var link = document.createElement("a");
+      link.className = "img-thumbnail";
+      link.href = plotFilename;
+      col.appendChild(link);
+
+      var img = document.createElement("img");
+      img.src = plotFilename;
+      img.className = "img-responsive";
+      img.alt = plotFilename;
+      link.appendChild(img);
+
+    }
+
+    // Generate suitable plot name from selectors
+    // prefix : 'xsec_br_' or 'br_'
+    function generatePlotNameFromSelectors(prefix) {
+      return generatePlotName(prefix,
+        document.getElementById("selChannel").value,
+        document.getElementById("selModelType").value,
+        document.getElementById("selTanBeta").value);
+    }
+
+    // Generate suitable plot name from strings.
+    // prefix : 'xsec_br_' or 'br_'
+    // channel : channel name (e.g. "4 tau")
+    // modelType : one of "Type I/II", "Type III", "Type IV"
+    // tanBeta : a float or int
+    function generatePlotName(prefix, channel, modelType, tanBeta) {
+      chan = channel.replace(/ /g, "");
+      if (modelType === "Type I/II") {
+        model = "type1";
+      } else if (modelType === "Type III") {
+        model = "type3";
+      } else if (modelType === "Type IV") {
+        model = "type4";
+      }
+      tb = tanBeta.replace(".", "p");
+      plotdir = "plots/";
+      name = plotdir + prefix + chan + "_" + model;
+      if (model != "type1") {
+        name += "_tb";
+        name += tb;
+      }
+      ext = ".svg";
+      name += ext;
+      return name;
+    }
+
+    // Enable/disable the tan beta selector depending on model
+    function setApplicableTanBeta() {
+      selModelType = document.getElementById("selModelType");
+      selTanBeta = document.getElementById("selTanBeta");
+      if (selModelType.value === "Type I/II") {
+        selTanBeta.setAttribute("disabled", "disabled");
+      } else {
+        selTanBeta.removeAttribute("disabled");
+      }
+    }
+
+    // This inserts a central large plot in the frame.
+    // prefix : 'xsec_br_' or 'br_'
+    function showCentralPlot(prefix) {
+      var placeholder = document.getElementById("placeholder");
+      removeChildren(placeholder);
+
+      var row = document.createElement("div");
+      row.className = "row";
+      placeholder.appendChild(row);
+
+      var col = document.createElement("div");
+      col.className = "col-sm-offset-2 col-sm-8";
+      row.appendChild(col);
+
+      var link = document.createElement("a");
+      link.className = "img-thumbnail";
+      plotFilename = generatePlotNameFromSelectors(prefix);
+      link.href = plotFilename;
+      col.appendChild(link);
+
+      var img = document.createElement("img");
+      img.src = plotFilename;
+      img.className = "img-responsive";
+      img.alt = plotFilename;
+      link.appendChild(img);
+    }
+
+    // Remove all children from a node.
+    // Useful for cleaning up placeholder.
+    function removeChildren(element) {
+      while (element.lastChild) {
+        element.removeChild(element.lastChild);
+      }
+    }
+
+    </script>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <!-- FOR LOCAL TESTING: -->
+    <!-- <script src="/Users/robina/bootstrap/bootstrap-3.3.6/dist/js/bootstrap.min.js"></script> -->
+  </body>
+</html>

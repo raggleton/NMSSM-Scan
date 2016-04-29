@@ -1,0 +1,10 @@
+m_a,BR(h->aa->4tau) limit,xsec*BR limit (xsec = xsec_SM_125)
+5.0,26,558.840
+7.0,0.491,10.553
+9.0,0.23,4.944
+11.0,0.165,3.546
+13.0,0.171,3.675
+15.0,0.254,5.459
+,,
+,,
+,,"use xsec_zh and not xsec_zh_ll as they used the former, forgetting to include BR(Z->ll)"
