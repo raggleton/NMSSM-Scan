@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+export PATH=/software/miniconda/bin/:$PATH
+echo $PATH
 source activate ra12451_pandas
 
 # For running on HTcondor
