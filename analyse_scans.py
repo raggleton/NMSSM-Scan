@@ -220,7 +220,6 @@ def get_slha_dict(filename, fields):
     # ensures all dicts have the same keys
     for f in fields:
         results[f.name] = ''
-    print results.keys()
 
     results['file'] = filename
 
