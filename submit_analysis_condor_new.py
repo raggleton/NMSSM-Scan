@@ -6,6 +6,12 @@ the spectrum files, and output them as CSV files.
 
 This will use a job directory both here and on HDFS, and submit jobs as a
 DAG for ease of monitoring/maintaining.
+
+Usage:
+
+    ./submit_analysis_condor_new.py <jobs_A_B_C> <jobs_D_E_F> ...
+
+where <jobs_X_Y_Z> are local dir names that have a corresponding dir on /hdfs
 """
 
 
