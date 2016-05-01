@@ -114,6 +114,10 @@ def analyse_scans(in_args=sys.argv[1:]):
 
         # Loop through each spectrum file
         for i, spectr in enumerate(glob.iglob(os.path.join(args.input, 'spectr_*.dat'))):
+
+            if i % 100 == 0:
+                log.info('Parsing %dth file', i)
+
             if i == args.n:
                 break
 
