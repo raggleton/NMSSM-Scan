@@ -227,6 +227,8 @@ def get_slha_dict(filename, fields):
 
     results['file'] = filename
 
+    p_block = re.compile(r'BLOCK +(\w+)', re.I)
+
     # Now go through the file, line by line. If we encounter a BLOCK line,
     # then we loop through the block contents, checking each line against all
     # of the user's regexes. If there is a match, it is stored in the results
@@ -241,19 +243,26 @@ def get_slha_dict(filename, fields):
                     continue
 
                 if line.upper().startswith('BLOCK'):
-                    block = re.search(r'BLOCK +(\w+)', line, re.I).group(1).strip()
-                    log.debug(block)
+                    block = p_block.search(line).group(1).strip()
+                    # block = line.split('#')[0].replace('BLOCK ', '').replace("Block ", '').strip().split(' ')[0]
+                    # log.debug(block)
 
                     line = f.next()
                     if block in scan_dict.keys():
                         # Now loop over contents of this block and try matching
                         # against the regexes
                         while 'BLOCK' not in line.upper():
-                            for field in scan_dict[block]:
+                            # tmp_list = scan_dict[block]
+                            found_field = None
+                            for ind, field in enumerate(scan_dict[block]):
                                 result = field.regex.search(line)
                                 if result:
                                     results[field.name] = field.type(result.group(1))
-                                    log.debug('%s: %s', field.name, result.group(1))
+                                    found_field = ind
+                                    break
+                                    # log.debug('%s: %s', field.name, result.group(1))
+                            if found_field:
+                                del scan_dict[block][found_field]
                             line = f.next()
                     else:
                         line = f.next()
