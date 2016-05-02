@@ -25,7 +25,7 @@ logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 log = logging.getLogger(__name__)
 
 # fileextension for output files - may need to be used in further processing
-oFormat = 'csv'
+OFMT = 'csv'
 
 
 class AnalysisParser(argparse.ArgumentParser):
@@ -91,9 +91,9 @@ def analyse_scans(in_args=sys.argv[1:]):
 
     # Create output filenames
     # ------------------------------------------------------------------------
-    outfile = os.path.join(args.oDir, 'output%s.%s' % (args.ID, oFormat))
-    outfile_good = os.path.join(args.oDir, 'output_good%s.%s' % (args.ID, oFormat))
-    outfile_ma1Lt11 = os.path.join(args.oDir, 'output_ma1Lt11%s.%s' % (args.ID, oFormat))
+    outfile = os.path.join(args.oDir, 'output%s.%s' % (args.ID, OFMT))
+    outfile_good = os.path.join(args.oDir, 'output_good%s.%s' % (args.ID, OFMT))
+    outfile_ma1Lt11 = os.path.join(args.oDir, 'output_ma1Lt11%s.%s' % (args.ID, OFMT))
     log.info('Writing CSV to %s' % ', '.join([outfile, outfile_good, outfile_ma1Lt11]))
 
     # Analyse SLHA files
@@ -104,6 +104,8 @@ def analyse_scans(in_args=sys.argv[1:]):
     # ignore any points with ma1 > mass_cut
     mass_cut = 60
 
+    done_cols = False
+
     with open(outfile, 'w') as f, \
          open(outfile_good, 'w') as f_good, \
          open(outfile_ma1Lt11, 'w') as f_ma1Lt11:
@@ -111,7 +113,11 @@ def analyse_scans(in_args=sys.argv[1:]):
         columns = []  # to hold column order - important as dict not sorted
 
         # Loop through each spectrum file
-        for i, spectr in enumerate(glob.iglob(os.path.join(args.input, 'spectr_*'))):
+        for i, spectr in enumerate(glob.iglob(os.path.join(args.input, 'spectr_*.dat'))):
+
+            if i % 100 == 0:
+                log.info('Parsing %dth file', i)
+
             if i == args.n:
                 break
 
@@ -123,9 +129,9 @@ def analyse_scans(in_args=sys.argv[1:]):
             if isinstance(nmssmtools_constraints, type(None)):
                 continue
             results_dict = get_slha_dict(spectr, NMSSMToolsFields.nmssmtools_fields)
-            # use / as joiner as CSV file
-            results_dict['constraints'] = '/'.join(nmssmtools_constraints)
-            log.debug(results_dict)
+            # need joiner as CSV file
+            results_dict['constraints'] = '|'.join(nmssmtools_constraints)
+            # log.debug(results_dict)
 
             if args.superiso:
                 # Get matching SuperIso output file and parse
@@ -144,17 +150,20 @@ def analyse_scans(in_args=sys.argv[1:]):
                 log.debug(nmssmcalc_dict)
 
             # First time, write out column headers
-            if i == 0:
+            if not done_cols:
                 # This defines the output column order & writes headers
                 columns = sorted(results_dict.keys())
+                log.debug('Columns: %s', columns)
                 for o in f, f_good, f_ma1Lt11:
                     o.write(','.join(columns) + '\n')
+                done_cols = True
 
             # Now write to file if we want this result
             if 0 < results_dict['ma1'] < mass_cut:
                 # everything goes into the general output file - must keep
                 # same order as header columns
-                results_str = ','.join([str(results_dict[x]) for x in columns])
+                results_str = ','.join([str(results_dict.get(x, '')) for x in columns])
+                log.debug('All: %s', results_str)
                 f.write(results_str + '\n')
                 n_all += 1
 
@@ -174,8 +183,8 @@ def analyse_scans(in_args=sys.argv[1:]):
     log.info('# N. with 0 < ma1 < %g: %d' % (mass_cut, n_all))
     log.info('# N. with 0 < ma1 < %g + passing exp. constraints: %d' % (mass_cut, n_good))
     log.info('# N. with 0 < ma1 < 11: %d' % n_ma1Lt11)
-    log.info('# Fraction useful: %.3f' % (float(n_all) / num_spectr_files))
-    log.info('# Fraction good: %.3f' % (float(n_good) / num_spectr_files))
+    log.info('# Fraction useful: %.3f' % (float(n_all) / float(num_spectr_files)))
+    log.info('# Fraction good: %.3f' % (float(n_good) / float(num_spectr_files)))
     log.info('#' * 60)
 
 
@@ -212,7 +221,13 @@ def get_slha_dict(filename, fields):
             scan_dict[f.block].append(new_field)
 
     results = defaultdict(str)
+    # ensures all dicts have the same keys
+    for f in fields:
+        results[f.name] = ''
+
     results['file'] = filename
+
+    p_block = re.compile(r'BLOCK +(\w+)', re.I)
 
     # Now go through the file, line by line. If we encounter a BLOCK line,
     # then we loop through the block contents, checking each line against all
@@ -228,19 +243,26 @@ def get_slha_dict(filename, fields):
                     continue
 
                 if line.upper().startswith('BLOCK'):
-                    block = re.search(r'BLOCK +(\w+)', line, re.I).group(1).strip()
-                    log.debug(block)
+                    block = p_block.search(line).group(1).strip()
+                    # block = line.split('#')[0].replace('BLOCK ', '').replace("Block ", '').strip().split(' ')[0]
+                    # log.debug(block)
 
                     line = f.next()
                     if block in scan_dict.keys():
                         # Now loop over contents of this block and try matching
                         # against the regexes
                         while 'BLOCK' not in line.upper():
-                            for field in scan_dict[block]:
+                            # tmp_list = scan_dict[block]
+                            found_field = None
+                            for ind, field in enumerate(scan_dict[block]):
                                 result = field.regex.search(line)
                                 if result:
                                     results[field.name] = field.type(result.group(1))
-                                    log.debug('%s: %s', field.name, result.group(1))
+                                    found_field = ind
+                                    break
+                                    # log.debug('%s: %s', field.name, result.group(1))
+                            if found_field:
+                                del scan_dict[block][found_field]
                             line = f.next()
                     else:
                         line = f.next()

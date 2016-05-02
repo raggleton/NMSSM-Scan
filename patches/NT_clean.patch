@@ -1,0 +1,18 @@
+2,9c2,9
+<   echo "Remove all generated files? (Y/N)"
+<   read answer
+<   if(test  $answer = Y -o $answer = y  ) then
+<     echo OK!
+<   else
+<     echo cleaning is refused!
+<     exit 1
+<   fi 
+---
+> #  echo "Remove all generated files? (Y/N)"
+> #  read answer
+> #  if(test  $answer = Y -o $answer = y  ) then
+> #    echo OK!
+> #  else
+> #    echo cleaning is refused!
+> #    exit 1
+> #  fi 

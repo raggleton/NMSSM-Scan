@@ -200,5 +200,9 @@ nmssmtools_fields = [
     Field(block='HiggsBoundsResults', name="HBobsratio", type=float,
           regex=re.compile(r' +\d +\d +([E\d\.\-\+]+) +\# obsratio')),
     Field(block='HiggsBoundsResults', name="HBchannel", type=float,
-          regex=re.compile(r' +\d +\d +([E\d\.\-\+]+) +\# channel id number'))
+          regex=re.compile(r' +\d +\d +([E\d\.\-\+]+) +\# channel id number')),
+
+    # Higgssignals results
+    Field(block='HiggsSignalsResults', name='HSprob', type=float,
+          regex=re.compile(r' +13 +([E\d\.\-\+]+) +\# Probability '))#(total chi\^2, total number observables)'))
 ]

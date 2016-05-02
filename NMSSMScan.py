@@ -7,7 +7,6 @@ between parameters.
 This allows for running on a batch system, where each worker node can scan
 randomly over a given range, improving efficiency.
 
-IMPORTANT: must set NMSSMTOOLS_DIR and HIGGSBOUNDS_DIR before running
 """
 
 import os
@@ -26,9 +25,6 @@ import common_utils as cu
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 log = logging.getLogger(__name__)
 
-NMSSMTOOLS_DIR = '/users/%s/NMSSMTools_4.8.2' % os.environ['LOGNAME']
-HIGGSBOUNDS_DIR = '/users/%s/HiggsBounds-4.2.1'% os.environ['LOGNAME']
-
 
 def NMSSMScan(in_args=sys.argv[1:]):
     parser = argparse.ArgumentParser(description=__doc__)
@@ -44,8 +40,24 @@ def NMSSMScan(in_args=sys.argv[1:]):
                         help='Number of points to run over',
                         type=int,
                         default=1)
+    parser.add_argument('--NT',
+                        help='NMSSMTools directory',
+                        required=True,
+                        type=str)
+    parser.add_argument('--HB',
+                        help='HiggsBounds directory',
+                        type=str)
+                        # action='store_true')
+    parser.add_argument('--HS',
+                        help='HiggsSignals irectory',
+                        type=str)
+                        # action='store_true')
+    parser.add_argument('--sushi',
+                        help="sushi directory (don't include /bin",
+                        type=str)
+                        # action='store_true')
     parser.add_argument("--dry",
-                        help="Dry run, don't submit to queue.",
+                        help="Dry run, don't run programs.",
                         action='store_true')
     parser.add_argument("-v",
                         help="Display debug messages.",
@@ -87,6 +99,10 @@ def NMSSMScan(in_args=sys.argv[1:]):
 
     # loop over number of points requested, making an input card for each
     for ind in xrange(args.number):
+
+        if ind % 200 == 0:
+            log.info('Processing %dth point', ind)
+
         # generate a random point within the range
         for v in param_dict.itervalues():
             v['value'] = random.uniform(v['min'], v['max'])
@@ -97,7 +113,7 @@ def NMSSMScan(in_args=sys.argv[1:]):
         for i in range(len(new_card_text)):
             for k, v in param_dict.iteritems():
                 s_match = r'(\s+\d+\s+)[\w.]+(\s+#\s%s.*)' % k
-                s_repl = r'\g<1>'+str(v['value'])+'D0\g<2>'
+                s_repl = r'\g<1>' + str(v['value']) + 'D0\g<2>'
                 new_card_text[i] = re.sub(s_match, s_repl, new_card_text[i])
 
         # write a new card
@@ -108,24 +124,43 @@ def NMSSMScan(in_args=sys.argv[1:]):
                 new_card.write(line)
 
         base_dir = os.getcwd()
-        # run NMSSMTools with the new card
-        if not args.dry:
-            # TODO: fix as this is so prone to error
-            os.chdir(glob('NMSSMTools_*')[0])
-            ntools_cmds = ['./run', new_card_path]
-            log.debug(ntools_cmds)
-            call(ntools_cmds)
-            os.chdir(base_dir)
 
-        # run HiggsBounds
-        if not args.dry:
-            # TODO: fix as this is so prone to error
-            os.chdir(glob('HiggsBounds-*')[0])
+        if args.dry:
+            continue
+
+        # Run your tools!
+        # --------------------------------------------------------------------
+        # run NMSSMTools with the new card
+        # NMSSMTools requires relpath NOT abspath!
+        os.chdir(args.NT)
+        ntools_cmds = ['./run', os.path.relpath(new_card_path)]
+        log.debug(ntools_cmds)
+        call(ntools_cmds)
+        os.chdir(base_dir)
+
+        # run HiggsBounds and HiggsSignals
+        if args.HB:
+            os.chdir(args.HB)
             spectr_name = new_card_path.replace('inp', 'spectr')
-            hb_cmds = ['./HiggsBounds', 'LandH', 'SLHA', '5', '1', spectr_name]
+            hb_cmds = ['./HiggsBounds', 'LandH', 'SLHA', '5', '1', os.path.relpath(spectr_name)]
             log.debug(hb_cmds)
             call(hb_cmds)
             os.chdir(base_dir)
+
+        if args.HS:
+            os.chdir(args.HS)
+            hs_cmds = ['./HiggsSignals', 'latestresults', 'peak', '2', 'SLHA', '5', '1', os.path.relpath(spectr_name)]
+            log.debug(hs_cmds)
+            call(hs_cmds)
+            os.chdir(base_dir)
+
+        if args.sushi:
+            pass
+            # os.chdir(args.sushi, 'bin'))
+            # sushi_cmds = ['./sushi', input, output]
+            # log.debug(sushi_cmds)
+            # call(sushi_cmds)
+            # os.chidr(base_dir)
 
     # print some stats
     print '*' * 40
@@ -134,13 +169,9 @@ def NMSSMScan(in_args=sys.argv[1:]):
 
 
 def generate_odir():
-    """Generate an output directory on hdfs on soolin"""
+    """Generate an output directory"""
     return os.path.join(os.getcwd(), 'jobs_%s' % (strftime("%d_%b_%y_%H%M")))
 
-def generate_odir_soolin():
-    """Generate an output directory on hdfs on soolin"""
-    return '/hdfs/user/%s/NMSSM-Scan/jobs_%s' % (os.environ['LOGNAME'],
-                                                 strftime("%d_%b_%y_%H%M"))
 
 def generate_new_card_path(oDir, card, ind):
     """Generate a new filepath for the output card.

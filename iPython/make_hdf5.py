@@ -1,22 +1,21 @@
 #!/usr/bin/env python
 
 """
-
 Make a HDF5 binary from lots of CSV files so it can be easily used in pandas
-
 """
 
 import sys
 import argparse
 import pandas as pd
-import numpy as np
+# import numpy as np
 import glob
 import math
-from itertools import product, chain, permutations
+from itertools import product
 from shutil import copyfile
+from bisect import bisect_left
 
 
-def load_df(folders, filestem):
+def load_df(folders, filestem, n_files=-1):
     """Load dataframe with CSV files from several folders in directory arg,
     from CSV files named <filestem>[0-9]*.dat
 
@@ -30,10 +29,13 @@ def load_df(folders, filestem):
     file_list = []
     for fo in folders:
         print "Getting CSVs from:", fo
+        file_list += [fi for fi in glob.glob(fo + "/%s[0-9]*.csv" % filestem)]
         file_list += [fi for fi in glob.glob(fo + "/%s[0-9]*.dat" % filestem)]
 
     if not file_list:
         raise IndexError("file_list is empty - are you sure you've input the correct folders?")
+
+    file_list = file_list[:n_files]
 
     # Make a copy of the first file (so we can keep the column headers)
     copyfile(file_list[0], "merge.csv")
@@ -51,14 +53,14 @@ def load_df(folders, filestem):
     df = pd.read_csv("merge.csv", delimiter=",")
 
     # rename from column "lambda" to "lambda_"
-    df.rename(columns={'lambda':'lambda_'}, inplace=True)
+    df.rename(columns={'lambda': 'lambda_'}, inplace=True)
 
     # Fix the constraints column, such that the ones that pass (i.e. == "",
     # which pandas interprets as NaN) have NaN replaced by something sensible
-    df.fillna({"constraints":""}, axis=0, inplace=True)
+    df.fillna({"constraints": ""}, axis=0, inplace=True)
 
     print "Entries:", len(df.index)
-    print "Columns:", df.columns.values
+    print "Columns:", df.columns.values, len(df.columns.values), "columns"
     return df
 
 
@@ -69,20 +71,23 @@ def store_channel_xsec(df):
     with final states 4tau, 2b2tau, 4b.
     Denoted as gg -> X -> YY ->f1f1f2f2
     """
-    process_scaled = [] # Store them for later
-    process = []
+    print 'Storing individual channel cross-sections'
+
+    process_scaled = []  # Store them for later
+    # process = []
 
     # low mass channels, gg - X -> 2Y -> 4F/2F+2F'
-    # prod = {'ggf': 'ggrc2', 'vbf': 'vvrc2', 'zh':'vvrc2', 'wh':'vvrc2'}
-    prod = {'ggf': 'ggrc2'}
-    X = ["h1", "h2", 'h3']
+    prod = {'ggf': 'ggrc2', 'vbf': 'vvrc2'}#, 'zh':'vvrc2', 'wh':'vvrc2'}
+    # prod = {'ggf': 'ggrc2'}
+    X = ["h1", "h2"]
     Y = ["a1", "h1"]
     F = ["tautau", "bb"]
     for production, coupling in prod.iteritems():
-        for x, y in product(X,Y):
+        for x, y in product(X, Y):
             if x == y:
                 continue
-            for f1, f2 in product(F,F):
+            for f1, f2 in product(F, F):
+                print production, coupling, x, y, f1, f2
                 ff = ""
                 factor = 1
                 if f1 == f2 == "tautau":
@@ -93,25 +98,21 @@ def store_channel_xsec(df):
                     factor = 2
                     ff = "2b2tau"
                 name = "xsec_scaled_"+production+"_"+x+"_"+"2"+y+"_"+ff
-                if not name in process_scaled:
+                if name not in process_scaled:
                     # store scaled total XS * BR
                     process_scaled.append(name)
-                    df[name] = df[x+coupling] * df["Br"+x+y+y] * df["Br"+y+f1] * df["Br"+y+f2] * factor
+                    common_part = df["Br"+x+y+y] * df["Br"+y+f1] * df["Br"+y+f2]
+                    df[name] = common_part * factor
                     # store actual XS * BR
-                    # we store it twice for backwards-compatibility otherwise old script break
                     name = name.replace("_scaled", "")
-                    process.append(name)
-                    df[name] = df["xsec_"+production+"13_"+x] * df[x+coupling] * df["Br"+x+y+y] * df["Br"+y+f1] * df["Br"+y+f2] * factor
-                    # name_new = name.replace("xsec", "xsec13")
-                    # df[name_new] = df[name]
-                    # name = name_new.replace("13", "8")
-                    # df[name] = df["xsec_ggf8_"+x] * df[x+"ggrc2"] * df["Br"+x+y+y] * df["Br"+y+f1] * df["Br"+y+f2] * factor
+                    # process.append(name)
+                    df[name] = df["xsec_"+production+"13_"+x] * common_part * factor
+                    name = name.replace("13", "8")
+                    df[name] = df["xsec_"+production+"8_"+x] * common_part * factor
 
     # More for middle mass channels, ZA1, etc
-    prod = {'ggf': 'ggrc2', 'vbf': 'vvrc2', 'zh':'vvrc2', 'wh':'vvrc2'}
-    br_z_ll = (3.363 + 3.366)/100.  # for Z->ee/mumu, taken frmo PDG
-
-
+    # prod = {'ggf': 'ggrc2', 'vbf': 'vvrc2', 'zh':'vvrc2', 'wh':'vvrc2'}
+    # br_z_ll = (3.363 + 3.366)/100.  # for Z->ee/mumu, taken frmo PDG
 
 
 def subset_pass_constraints(df):
@@ -121,22 +122,18 @@ def subset_pass_constraints(df):
     and see what's left over.
     """
     # All the constraints strings to test against. Must follow regex.
-    constraints = [
+    accept_constraints = [
         r"Muon magn\. mom\. more than 2 sigma away",
         r"Relic density too small \(Planck\)"
-        # r"Excluded by sparticle searches at the LHC",
-        # r"Excluded by ggF/bb\->H/A\->tautau at the LHC",
-        # r"Excluded H_125\->AA\->4mu \(CMS\)",
-        # r"Excluded by ggF\->H/A\->gamgam \(ATLAS\)"
     ]
 
     # We want a bitmask, so for each entry we simply want a True or False
     # First make a copy of the constraints Series
     con_series = df.constraints.copy(deep=True)
     # Now for each entry we remove the constraints we don't mind failing
-    for c in constraints:
+    for c in accept_constraints:
         con_series = con_series.str.replace(c, "")
-    con_series = con_series.str.replace(r"^/+$", "") # Any leftover separators
+    con_series = con_series.str.replace(r"^\|+$", "")  # Any leftover separators
     # Now figure out which ones are empty
     mask = con_series.str.match("^$")
     # Return those entries, allowing for a +ve muon mag moment contribution
@@ -169,12 +166,16 @@ def make_dataframes(folders, file_stem):
     # df_orig = load_df(folders, "output_good")
 
     # Drop columns tp save space
-    drop_cols = ['h1u', 'h1d', 'h1b', 'h1V', 'h1G', 'h1A',
-                 'h2u', 'h2d', 'h2b', 'h2V', 'h2G', 'h2A',
-                 # 'Brh3gg', 'Brh3tautau', 'Brh3bb', 'Brh3ww',
-                 # 'Brh3zz', 'Brh3gammagamma', 'Brh3zgamma', 'Brh3h1h1', 'Brh3h2h2', 'Brh3h1h2',
-                 # 'Brh3a1a1', 'Brh3a1z',
-                 'bsgamma', 'bsmumu', 'btaunu', 'delms', 'delmd']
+    drop_cols = [
+        'h1u', 'h1d', 'h1b', 'h1V', 'h1G', 'h1A',
+        'h2u', 'h2d', 'h2b', 'h2V', 'h2G', 'h2A',
+        'Brh3gg', 'Brh3tautau', 'Brh3bb', 'Brh3ww',
+        'Brh3zz', 'Brh3gammagamma', 'Brh3zgamma',
+        'Brh3h1h1', 'Brh3h2h2', 'Brh3h1h2',
+        'Brh3a1a1', 'Brh3a1z',
+        # 'bsgamma', 'bsmumu', 'btaunu', 'delms', 'delmd']
+    ]
+
     for col in drop_cols:
         if col in df_orig.columns.values:
             df_orig.drop(col, inplace=True, axis=1)
@@ -188,49 +189,48 @@ def make_dataframes(folders, file_stem):
     # cs = pd.read_csv("parton_lumi_ratio.csv")
     cs = pd.read_csv("YR3_cross_sections.csv")
     masses = cs["MH [GeV]"]
-    n_masses = len(masses)
+    mass_len = len(masses)
     xsec_ggf13 = cs["ggF 13TeV Cross Section [pb]"]
     xsec_vbf13 = cs["VBF 13TeV Cross Section [pb]"]
-    xsec_wh13 = cs["WH 13TeV Cross Section [pb]"]
-    xsec_zh13 = cs["ZH 13TeV Cross Section [pb]"]
+    # xsec_wh13 = cs["WH 13TeV Cross Section [pb]"]
+    # xsec_zh13 = cs["ZH 13TeV Cross Section [pb]"]
     xsec_ggf8 = cs["ggF 8TeV Cross Section [pb]"]
+    xsec_vbf8 = cs["VBF 8TeV Cross Section [pb]"]
 
-    def find_xsec(mass, xsec):
-        """
-        Return cross-section for the Higgs masses closest to the mass argument.
-        xsec is a list of cross-sections, corresponding to masses in masses list.
-        """
-        # use numpy arrays to your advantage and do it all so much faster
-        # get vector of absolute difference between masses in CSV and argument mass
-        # then get the index of the smallest difference
-        # then get the xsec corrresponding to that index
-        # this fn takes ~ 310 us, the old one took ~ 4.4ms -> 10x faster!
-        m_ind = np.absolute(masses - np.ones_like(n_masses) * mass).argmin()
-        return xsec[m_ind]
+    def find_closest_mass_ind(mass):
+        pos = bisect_left(masses, mass)
+        if pos == mass_len:
+            return mass_len - 1
+        return pos
 
-    # Store SM cross section for gg fusion at 13 TeV for production of h1 and h2
-    df_orig["xsec_ggf13_h1"] = df_orig.apply(lambda row: find_xsec(row['mh1'], xsec_ggf13), axis=1)
-    df_orig["xsec_ggf13_h2"] = df_orig.apply(lambda row: find_xsec(row['mh2'], xsec_ggf13), axis=1)
-    df_orig["xsec_ggf13_h3"] = df_orig.apply(lambda row: find_xsec(row['mh3'], xsec_ggf13), axis=1)
+    print 'Storing nearest-mass indices'
+    df_orig['mass_ind_h1'] = df_orig.apply(lambda row: find_closest_mass_ind(row['mh1']), axis=1)
+    df_orig['mass_ind_h2'] = df_orig.apply(lambda row: find_closest_mass_ind(row['mh2']), axis=1)
+    df_orig['mass_ind_h3'] = df_orig.apply(lambda row: find_closest_mass_ind(row['mh3']), axis=1)
 
-    df_orig["xsec_vbf13_h1"] = df_orig.apply(lambda row: find_xsec(row['mh1'], xsec_vbf13), axis=1)
-    df_orig["xsec_vbf13_h2"] = df_orig.apply(lambda row: find_xsec(row['mh2'], xsec_vbf13), axis=1)
-    df_orig["xsec_vbf13_h3"] = df_orig.apply(lambda row: find_xsec(row['mh3'], xsec_vbf13), axis=1)
+    # ALL XSEC STORED ARE CORRECTLY SCALED BY REDUCED COUPLING
+    print "Storing 13 TeV gg xsec"
+    df_orig["xsec_ggf13_h1"] = df_orig['h1ggrc2'] * xsec_ggf13[df_orig['mass_ind_h1']].values
+    df_orig["xsec_ggf13_h2"] = df_orig['h2ggrc2'] * xsec_ggf13[df_orig['mass_ind_h2']].values
+    df_orig["xsec_ggf13_h3"] = df_orig['h3ggrc2'] * xsec_ggf13[df_orig['mass_ind_h3']].values
 
-    df_orig["xsec_zh13_h1"] = df_orig.apply(lambda row: find_xsec(row['mh1'], xsec_zh13), axis=1)
-    df_orig["xsec_zh13_h2"] = df_orig.apply(lambda row: find_xsec(row['mh2'], xsec_zh13), axis=1)
-    df_orig["xsec_zh13_h3"] = df_orig.apply(lambda row: find_xsec(row['mh3'], xsec_zh13), axis=1)
+    print "Storing 13 TeV vbf xsec"
+    df_orig["xsec_vbf13_h1"] = df_orig['h1vvrc2'] * xsec_vbf13[df_orig['mass_ind_h1']].values
+    df_orig["xsec_vbf13_h2"] = df_orig['h2vvrc2'] * xsec_vbf13[df_orig['mass_ind_h2']].values
+    df_orig["xsec_vbf13_h3"] = df_orig['h3vvrc2'] * xsec_vbf13[df_orig['mass_ind_h3']].values
 
-    df_orig["xsec_wh13_h1"] = df_orig.apply(lambda row: find_xsec(row['mh1'], xsec_wh13), axis=1)
-    df_orig["xsec_wh13_h2"] = df_orig.apply(lambda row: find_xsec(row['mh2'], xsec_wh13), axis=1)
-    df_orig["xsec_wh13_h3"] = df_orig.apply(lambda row: find_xsec(row['mh3'], xsec_wh13), axis=1)
+    print "Storing 8 TeV ggf xsec"
+    df_orig["xsec_ggf8_h1"] = df_orig['h1ggrc2'] * xsec_ggf8[df_orig['mass_ind_h1']].values
+    df_orig["xsec_ggf8_h2"] = df_orig['h2ggrc2'] * xsec_ggf8[df_orig['mass_ind_h2']].values
+    df_orig["xsec_ggf8_h3"] = df_orig['h3ggrc2'] * xsec_ggf8[df_orig['mass_ind_h3']].values
 
-    # Store SM cross section for gg fusion at 8 TeV for production of h1 and h2
-    df_orig["xsec_ggf8_h1"] = df_orig.apply(lambda row: find_xsec(row['mh1'], xsec_ggf8), axis=1)
-    df_orig["xsec_ggf8_h2"] = df_orig.apply(lambda row: find_xsec(row['mh2'], xsec_ggf8), axis=1)
+    print "Storing 8 TeV vbf xsec"
+    df_orig["xsec_vbf8_h1"] = df_orig['h1vvrc2'] * xsec_vbf8[df_orig['mass_ind_h1']].values
+    df_orig["xsec_vbf8_h2"] = df_orig['h2vvrc2'] * xsec_vbf8[df_orig['mass_ind_h2']].values
+    df_orig["xsec_vbf8_h3"] = df_orig['h3vvrc2'] * xsec_vbf8[df_orig['mass_ind_h3']].values
 
     # Now add in individual channel xsec
-    # store_channel_xsec(df_orig)
+    store_channel_xsec(df_orig)
     print df_orig.columns.values
 
     # Make some subsets here:
@@ -268,7 +268,6 @@ def make_dataframes(folders, file_stem):
     return df_orig, df_pass_all, df_ma1Lt10, df_h1SM, df_h2SM
 
 
-#---------------------------------------------
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description=__doc__)
@@ -283,16 +282,14 @@ if __name__ == "__main__":
     df_orig, df_pass_all, df_ma1Lt10, df_h1SM, df_h2SM = make_dataframes(args.input, file_stem='output')
 
     print "Saving as HDF5..."
-    store = pd.HDFStore(args.output, complevel=9, comlib='bzip2')
-
-    if isinstance(df_orig, pd.DataFrame):
-        store.put('full12loop_all', df_orig, format='table', data_columns=True)
-    if isinstance(df_pass_all, pd.DataFrame):
-        store.put('full12loop_good_posMuMagMom_planckUpperOnly', df_pass_all, format='table', data_columns=True)
-    if isinstance(df_ma1Lt10, pd.DataFrame):
-        store.put('full12loop_good_posMuMagMom_planckUpperOnly_maLt10', df_ma1Lt10, format='table', data_columns=True)
-    if isinstance(df_h1SM, pd.DataFrame):
-        store.put('full12loop_good_posMuMagMom_planckUpperOnly_h1SM', df_h1SM, format='table', data_columns=True)
-    if isinstance(df_h2SM, pd.DataFrame):
-        store.put('full12loop_good_posMuMagMom_planckUpperOnly_h2SM', df_h2SM, format='table', data_columns=True)
-
+    with pd.HDFStore(args.output, complevel=9, comlib='bzip2') as store:
+        if isinstance(df_orig, pd.DataFrame):
+            store.put('full12loop_all', df_orig, format='table', data_columns=True)
+        if isinstance(df_pass_all, pd.DataFrame):
+            store.put('full12loop_good_posMuMagMom_planckUpperOnly', df_pass_all, format='table', data_columns=True)
+        if isinstance(df_ma1Lt10, pd.DataFrame):
+            store.put('full12loop_good_posMuMagMom_planckUpperOnly_maLt10', df_ma1Lt10, format='table', data_columns=True)
+        if isinstance(df_h1SM, pd.DataFrame):
+            store.put('full12loop_good_posMuMagMom_planckUpperOnly_h1SM', df_h1SM, format='table', data_columns=True)
+        if isinstance(df_h2SM, pd.DataFrame):
+            store.put('full12loop_good_posMuMagMom_planckUpperOnly_h2SM', df_h2SM, format='table', data_columns=True)
