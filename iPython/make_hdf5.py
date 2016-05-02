@@ -124,22 +124,18 @@ def subset_pass_constraints(df):
     and see what's left over.
     """
     # All the constraints strings to test against. Must follow regex.
-    constraints = [
+    accept_constraints = [
         r"Muon magn\. mom\. more than 2 sigma away",
         r"Relic density too small \(Planck\)"
-        # r"Excluded by sparticle searches at the LHC",
-        # r"Excluded by ggF/bb\->H/A\->tautau at the LHC",
-        # r"Excluded H_125\->AA\->4mu \(CMS\)",
-        # r"Excluded by ggF\->H/A\->gamgam \(ATLAS\)"
     ]
 
     # We want a bitmask, so for each entry we simply want a True or False
     # First make a copy of the constraints Series
     con_series = df.constraints.copy(deep=True)
     # Now for each entry we remove the constraints we don't mind failing
-    for c in constraints:
+    for c in accept_constraints:
         con_series = con_series.str.replace(c, "")
-    con_series = con_series.str.replace(r"^/+$", "") # Any leftover separators
+    con_series = con_series.str.replace(r"^\|+$", "")  # Any leftover separators
     # Now figure out which ones are empty
     mask = con_series.str.match("^$")
     # Return those entries, allowing for a +ve muon mag moment contribution
