@@ -44,7 +44,7 @@ param_dict = dict(lambda_=r"$\lambda$", mueff=r"$\mu_{eff}\ \mathrm{[GeV]}$",
                   akappa=r"$A_{\kappa}\ \mathrm{[GeV]}$", tgbeta=r"$\tan\beta$")
 
 
-def generate_fig(size=[14, 6]):
+def generate_fig(size=[8, 6]):
     """
     Simple figure generator, cos I'm really lazy.
 
