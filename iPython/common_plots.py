@@ -313,7 +313,33 @@ def paper_compare_plot1(df, title):
     return fig, ax
 
 
-def plot_constraints(df, title):
+def texify_str(p):
+    # Make the labels tex-friendly
+    p = "$\mathrm{" + p + "}$"
+    p = p.replace(r"_s", r"}_{s}\mathrm{")
+    p = p.replace(r"_d", r"}_{d}\mathrm{")
+    # p = p.replace(r"_", r"\_")
+    p = p.replace(r"gamma", r"}\gamma\mathrm{")
+    p = p.replace(r"->gg", r"}\to\gamma\gamma\mathrm{")
+    p = p.replace(r">>", r"}\gg\mathrm{")
+    p = p.replace(r"->", r"}\to\mathrm{")
+    # p = p.replace(r">", r"\gt")
+    p = p.replace(r"~~~", r"\ ")
+    p = p.replace(r"~~", r"\ ")
+    p = p.replace(r"to", r"to ")
+    p = p.replace(r"chi2", r"}\chi^2\mathrm{")
+    p = p.replace(r"Delta", r"}\Delta\mathrm{")
+    p = p.replace(r"Msusy", r"}M_{SUSY}\mathrm{")
+    p = p.replace(r"MGUT", r"}M_{GUT}\mathrm{")
+    p = p.replace(r"tautau", r"}\tau\tau\mathrm{")
+    p = p.replace(r" tau nu", r"}\tau \nu\mathrm{")
+    p = p.replace(r"mu+ mu-", r"}\mu^+\mu^-\mathrm{")
+    # p = p.replace(r" nu", r"\nu")
+    p = p.replace(r" ", r"\ ")
+    return p
+
+
+def plot_constraints(df, title, fraction=0.9):
     """
     This plots a bar chart of the most popular reasons
     for points failing experimental constraints, in a given DataFrame.
@@ -324,46 +350,72 @@ def plot_constraints(df, title):
     cons = []
     for cc in c:
         if cc:
-            for p in cc.split("/"):
-                p = "$\mathrm{"+p+"}$"
-                p = p.replace(r"_s", r"\_{s}")
-                p = p.replace(r"_d", r"\_{d}")
-                # p = p.replace(r"_", r"\_")
-                p = p.replace(r"gamma", r"\gamma")
-                p = p.replace(r"->gg", r"->\gamma\gamma")
-                p = p.replace(r">>", r"\gg")
-                p = p.replace(r"->", r"\to")
-                # p = p.replace(r">", r"\gt")
-                p = p.replace(r" ", r"\ ")
-                p = p.replace(r"~~~", r"\ ")
-                p = p.replace(r"~~", r"\ ")
-                p = p.replace(r"to", r"to ")
-                p = p.replace(r"chi2", r"}\chi^2 \mathrm{")
-                p = p.replace(r"Delta", r"}\Delta \mathrm{")
-                p = p.replace(r"Msusy", r"M_{SUSY}")
-                p = p.replace(r"MGUT", r"M_{GUT}")
-                p = p.replace(r"tautau", r"\tau\tau")
-                cons.append(p)
-    # print cons
+            cons.extend(cc.split("|"))
 
-    # use Series
     s = pd.Series(cons)
-    vc = s.value_counts(normalize=True)
-    vc_cum = vc.cumsum()
+    vc = s.value_counts()
+    vc /= float(len(df[df['constraints'] != '']))
 
     # find out how many points make up the top X%
-    limit = 0.9
-    last_i = next(x[0] for x in enumerate(vc_cum) if x[1] > limit)
+    # last_i = next(x[0] for x in enumerate(vc_cum) if x[1] > fraction)
+    last_i = 10
+
+    vc.index = [texify_str(x) for x in vc.index]
+
+    # make the graph here
+    fig = generate_fig([8, 6])
+    ax = generate_axes(fig)
+    vc[:last_i][::-1].plot(kind="barh")  # this ensures most common at top
+    ax.set_xlabel("Faction of points that fail given constraint",
+                  multialignment='center', fontsize=22)
+    ax.set_title(title, y=1.03)
+    return ax
+
+# make a map of channel numbers Vs channel names from HiggsBounds
+HB_MAP = {}
+with open('Key.dat') as hb_file:
+    for line in hb_file:
+        if line.startswith("process"):
+            channel = int(line.split()[1])
+            line = next(hb_file)
+            channel_name = line.strip()
+            HB_MAP[channel] = channel_name
+
+
+def plot_constraints_HB(df, title, fraction=0.9):
+    """Plot bar chart of most popular reasons for points failing HiggsBounds.
+    Note that each HiggsBounds only tells you the most sensitive experimental
+    result the point failed (unlike NMSSMTools, which tells you all the reasons
+    a point failed).
+    """
+
+    c = df["HBchannel"].tolist()
+    cons = []
+    for cc in c:
+        if cc:
+            cons.append(HB_MAP[int(cc)])
+    # print cons
+
+    s = pd.Series(cons)
+    vc = s.value_counts()
+    vc /= float(len(df.index))
+    # vc_cum = vc.cumsum()
+
+    # find out how many points make up the top X%
+    # last_i = next(x[0] for x in enumerate(vc_cum) if x[1] > fraction)
+    last_i = 10
 
     # make the graph here
     # fig, ax = plt.subplots(nrows=1, ncols=1)
     # fig.set_size_inches(6, 4)
-    fig = generate_fig([8,6])
+    fig = generate_fig([8, 6])
     ax = generate_axes(fig)
-    vc[:last_i].plot(kind="barh")
-    ax.set_xlabel("Fraction of failing points that fail given experimental constraint\n"
-                  "(encompassing " + str(limit*100) + " % of all failing points)",
+    vc[:last_i][::-1].plot(kind="barh", color='green', fontsize=14)
+    ax.set_xlabel("Faction of points that fail given constraint",
                   multialignment='center', fontsize=22)
+    # ax.set_xlabel("Fraction of failing points that fail given HiggsBounds constraint\n"
+    #               "(encompassing " + str(fraction * 100) + " % of all failing points)",
+    #               multialignment='center', fontsize=22)
     ax.set_title(title, y=1.03)
     return ax
 
