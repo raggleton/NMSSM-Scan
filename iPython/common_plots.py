@@ -420,50 +420,14 @@ def plot_constraints_HB(df, title, fraction=0.9):
     return ax
 
 
-def plot_input_params_hists(df, ylabel, title, errorbars=True, **kwargs):
+def plot_input_params_hists(df, ylabel, title, errorbars=True, param_dict=nmssm_params, **kwargs):
     """Make histograms for each input parameter using dataframe df"""
     # Calculate sensible number of rows & columns.
     cols = 2
-    rows = (len(nmssm_params.keys()) / 2) + (len(nmssm_params.keys()) % 2)
-    if len(nmssm_params.keys()) % 3 == 0:
+    rows = (len(param_dict.keys()) / 2) + (len(param_dict.keys()) % 2)
+    if len(param_dict.keys()) % 3 == 0:
         cols = 3
-        rows = len(nmssm_params.keys()) / 3
-    # Setup plotting ares
-    fig = plt.figure()
-    fig.suptitle(title, fontsize=30)
-    fig.set_size_inches(24, 8*rows)
-    plt.subplots_adjust(wspace=0.3)
-    plt.subplots_adjust(hspace=0.3)
-
-    # Make a subplot for each param, then plot it
-    # Need to use Series (aka numpy array), can't use d.fplot() as x labels
-    # do not show up except on final row.
-    # And since the np array must be indexed properly, we use .values to
-    # get out a raw array.
-    for i, (param, attr) in enumerate(nmssm_params.items()):
-        ax = fig.add_subplot(rows, cols, i+1)
-        y, bins, patches = plt.hist(df[param].values, color=attr.color, **kwargs)
-        # put error bars on
-        bincenters = 0.5*(bins[1:]+bins[:-1])
-        menStd = np.sqrt(y)
-        width = 0.0
-        plt.bar(bincenters, y, width=width, yerr=menStd, alpha=0, ecolor="black", error_kw=dict(elinewidth=2, capthick=2))
-        ax.set_xlabel(attr.label)
-        ax.set_ylabel(ylabel)
-        plt.minorticks_on()
-
-
-
-def plot_input_params_scatters(df, yvar, ylabel, yrange=None, title="", **kwargs):
-    """Make scatter plots for each input parameter against variable var,
-    using dataframe df"""
-
-    # Calculate sensible number of rows & columns.
-    cols = 2
-    rows = (len(nmssm_params.keys()) / 2) + (len(nmssm_params.keys()) % 2)
-    if len(nmssm_params.keys()) % 3 == 0:
-        cols = 3
-        rows = len(nmssm_params.keys()) / 3
+        rows = len(param_dict.keys()) / 3
     # Setup plotting ares
     fig = plt.figure()
     fig.suptitle(title, fontsize=30)
@@ -476,11 +440,46 @@ def plot_input_params_scatters(df, yvar, ylabel, yrange=None, title="", **kwargs
     # do not show up except on final row.
     # And since the np array must be indexed properly, we use .values to
     # get out a raw array.
-    for i, (param, attr) in enumerate(nmssm_params.items()):
-        ax = fig.add_subplot(rows, cols, i+1)
+    for i, (param, attr) in enumerate(param_dict.items()):
+        ax = fig.add_subplot(rows, cols, i + 1)
+        y, bins, patches = plt.hist(df[param].values, color=attr.color, **kwargs)
+        # put error bars on
+        bincenters = 0.5 * (bins[1:] + bins[:-1])
+        menStd = np.sqrt(y)
+        width = 0.0
+        plt.bar(bincenters, y, width=width, yerr=menStd, alpha=0, ecolor="black", error_kw=dict(elinewidth=2, capthick=2))
+        ax.set_xlabel(attr.label)
+        ax.set_ylabel(ylabel)
+        plt.minorticks_on()
+
+
+def plot_input_params_scatters(df, yvar, ylabel, yrange=None, title="", param_dict=nmssm_params, **kwargs):
+    """Make scatter plots for each input parameter against variable var,
+    using dataframe df"""
+
+    # Calculate sensible number of rows & columns.
+    cols = 2
+    rows = (len(param_dict.keys()) / 2) + (len(param_dict.keys()) % 2)
+    if len(param_dict.keys()) % 3 == 0:
+        cols = 3
+        rows = len(param_dict.keys()) / 3
+    # Setup plotting ares
+    fig = plt.figure()
+    fig.suptitle(title, fontsize=30)
+    fig.set_size_inches(24, 8 * rows)
+    plt.subplots_adjust(wspace=0.3)
+    plt.subplots_adjust(hspace=0.3)
+
+    # Make a subplot for each param, then plot it
+    # Need to use Series (aka numpy array), can't use d.fplot() as x labels
+    # do not show up except on final row.
+    # And since the np array must be indexed properly, we use .values to
+    # get out a raw array.
+    for i, (param, attr) in enumerate(param_dict.items()):
+        ax = fig.add_subplot(rows, cols, i + 1)
         plt.scatter(x=df[param].values, y=df[yvar].values, color=attr.color, **kwargs)
         ax.set_xlabel(attr.label)
-        ax.set_xlim(attr.range)
+        # ax.set_xlim(attr.range)
         ax.set_ylabel(ylabel)
         if yrange:
             ax.set_ylim(yrange)
