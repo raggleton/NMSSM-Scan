@@ -16,13 +16,29 @@ from bisect import bisect
 # for axis labels, colours, binning for histograms, etc
 Param = namedtuple('Param', ['label', 'color', 'bins', 'range'])
 
-nmssm_params = {"lambda_": Param(label=r"$\lambda$", color="orange", bins=25, range=[0, 0.7]),
-                "mueff": Param(label=r"$\mu_{eff}\ \mathrm{[GeV]}$", color="green", bins=25, range=[100, 300]),
-                "kappa": Param(label=r"$\kappa$", color="steelblue", bins=25, range=[0, 0.7]),
-                "alambda": Param(label=r"$A_{\lambda}\ \mathrm{[GeV]}$", color="salmon", bins=25, range=[-1000, 4000]),
-                "akappa": Param(label=r"$A_{\kappa}\ \mathrm{[GeV]}$", color="red", bins=25, range=[-30, 2.5]),
-                "tgbeta": Param(label=r"$\tan\beta$", color="purple", bins=25, range=[0, 50])
-                }
+nmssm_params = {
+    "lambda_": Param(label=r"$\lambda$", color="orange", bins=25, range=[0, 0.7]),
+    "mueff": Param(label=r"$\mu_{eff}\ \mathrm{[GeV]}$", color="green", bins=25, range=[100, 300]),
+    "kappa": Param(label=r"$\kappa$", color="steelblue", bins=25, range=[0, 0.7]),
+    "alambda": Param(label=r"$A_{\lambda}\ \mathrm{[GeV]}$", color="salmon", bins=25, range=[-1000, 4000]),
+    "akappa": Param(label=r"$A_{\kappa}\ \mathrm{[GeV]}$", color="red", bins=25, range=[-30, 2.5]),
+    "tgbeta": Param(label=r"$\tan\beta$", color="purple", bins=25, range=[0, 50])
+}
+
+nmssm_params_extended = {
+    "lambda_": Param(label=r"$\lambda$", color="orange", bins=25, range=[0, 0.7]),
+    "mueff": Param(label=r"$\mu_{eff}\ \mathrm{[GeV]}$", color="green", bins=25, range=[100, 300]),
+    "kappa": Param(label=r"$\kappa$", color="steelblue", bins=25, range=[0, 0.7]),
+    "alambda": Param(label=r"$A_{\lambda}\ \mathrm{[GeV]}$", color="salmon", bins=25, range=[-1000, 4000]),
+    "akappa": Param(label=r"$A_{\kappa}\ \mathrm{[GeV]}$", color="red", bins=25, range=[-30, 2.5]),
+    "tgbeta": Param(label=r"$\tan\beta$", color="purple", bins=25, range=[0, 50]),
+    "m3": Param(label=r"$M_3$", color="olive", bins=25, range=[0, 2000]),
+    "mq3": Param(label=r"$MQ3$", color="darksage", bins=25, range=[0, 2000]),
+    "au3": Param(label=r"$AU3$", color="cyan", bins=25, range=[0, 2000]),
+    # "md3": Param(label=r"$MD3$", color="purple", bins=25, range=[0, 2000]),
+    # "ad3": Param(label=r"$AD3$", color="purple", bins=25, range=[0, 2000])
+}
+
 param_dict = dict(lambda_=r"$\lambda$", mueff=r"$\mu_{eff}\ \mathrm{[GeV]}$",
                   kappa=r"$\kappa$", alambda=r"$A_{\lambda}\ \mathrm{[GeV]}$",
                   akappa=r"$A_{\kappa}\ \mathrm{[GeV]}$", tgbeta=r"$\tan\beta$")
