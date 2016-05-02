@@ -16,7 +16,7 @@ from itertools import product, chain, permutations
 from shutil import copyfile
 
 
-def load_df(folders, filestem):
+def load_df(folders, filestem, n_files=-1):
     """Load dataframe with CSV files from several folders in directory arg,
     from CSV files named <filestem>[0-9]*.dat
 
@@ -30,10 +30,13 @@ def load_df(folders, filestem):
     file_list = []
     for fo in folders:
         print "Getting CSVs from:", fo
+        file_list += [fi for fi in glob.glob(fo + "/%s[0-9]*.csv" % filestem)]
         file_list += [fi for fi in glob.glob(fo + "/%s[0-9]*.dat" % filestem)]
 
     if not file_list:
         raise IndexError("file_list is empty - are you sure you've input the correct folders?")
+
+    file_list = file_list[:n_files]
 
     # Make a copy of the first file (so we can keep the column headers)
     copyfile(file_list[0], "merge.csv")
