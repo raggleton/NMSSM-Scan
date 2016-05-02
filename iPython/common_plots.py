@@ -63,8 +63,20 @@ def generate_axes(fig=None):
     """
     if not fig:
         fig = generate_fig()
-    ax = fig.add_subplot(1,1,1)
+    ax = fig.add_subplot(1, 1, 1)
     return ax
+
+
+def generate_fig_axes(fig=None, size=[8, 6]):
+    """
+    Simple axes generator, cos I'm super lazy.
+
+    Puts 1 Axes object onto the figure (which is optional)
+    """
+    if not fig:
+        fig = generate_fig(size)
+    ax = fig.add_subplot(1, 1, 1)
+    return fig, ax
 
 
 def plot_histogram(ax=None, array=None, var=None, df=None,
