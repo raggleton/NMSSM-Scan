@@ -53,14 +53,14 @@ def load_df(folders, filestem, n_files=-1):
     df = pd.read_csv("merge.csv", delimiter=",")
 
     # rename from column "lambda" to "lambda_"
-    df.rename(columns={'lambda':'lambda_'}, inplace=True)
+    df.rename(columns={'lambda': 'lambda_'}, inplace=True)
 
     # Fix the constraints column, such that the ones that pass (i.e. == "",
     # which pandas interprets as NaN) have NaN replaced by something sensible
-    df.fillna({"constraints":""}, axis=0, inplace=True)
+    df.fillna({"constraints": ""}, axis=0, inplace=True)
 
     print "Entries:", len(df.index)
-    print "Columns:", df.columns.values
+    print "Columns:", df.columns.values, len(df.columns.values), "columns"
     return df
 
 
@@ -71,20 +71,23 @@ def store_channel_xsec(df):
     with final states 4tau, 2b2tau, 4b.
     Denoted as gg -> X -> YY ->f1f1f2f2
     """
-    process_scaled = [] # Store them for later
-    process = []
+    print 'Storing individual channel cross-sections'
+
+    process_scaled = []  # Store them for later
+    # process = []
 
     # low mass channels, gg - X -> 2Y -> 4F/2F+2F'
-    # prod = {'ggf': 'ggrc2', 'vbf': 'vvrc2', 'zh':'vvrc2', 'wh':'vvrc2'}
-    prod = {'ggf': 'ggrc2'}
-    X = ["h1", "h2", 'h3']
+    prod = {'ggf': 'ggrc2', 'vbf': 'vvrc2'}#, 'zh':'vvrc2', 'wh':'vvrc2'}
+    # prod = {'ggf': 'ggrc2'}
+    X = ["h1", "h2"]
     Y = ["a1", "h1"]
     F = ["tautau", "bb"]
     for production, coupling in prod.iteritems():
-        for x, y in product(X,Y):
+        for x, y in product(X, Y):
             if x == y:
                 continue
-            for f1, f2 in product(F,F):
+            for f1, f2 in product(F, F):
+                print production, coupling, x, y, f1, f2
                 ff = ""
                 factor = 1
                 if f1 == f2 == "tautau":
@@ -95,25 +98,21 @@ def store_channel_xsec(df):
                     factor = 2
                     ff = "2b2tau"
                 name = "xsec_scaled_"+production+"_"+x+"_"+"2"+y+"_"+ff
-                if not name in process_scaled:
+                if name not in process_scaled:
                     # store scaled total XS * BR
                     process_scaled.append(name)
-                    df[name] = df[x+coupling] * df["Br"+x+y+y] * df["Br"+y+f1] * df["Br"+y+f2] * factor
+                    common_part = df["Br"+x+y+y] * df["Br"+y+f1] * df["Br"+y+f2]
+                    df[name] = common_part * factor
                     # store actual XS * BR
-                    # we store it twice for backwards-compatibility otherwise old script break
                     name = name.replace("_scaled", "")
-                    process.append(name)
-                    df[name] = df["xsec_"+production+"13_"+x] * df[x+coupling] * df["Br"+x+y+y] * df["Br"+y+f1] * df["Br"+y+f2] * factor
-                    # name_new = name.replace("xsec", "xsec13")
-                    # df[name_new] = df[name]
-                    # name = name_new.replace("13", "8")
-                    # df[name] = df["xsec_ggf8_"+x] * df[x+"ggrc2"] * df["Br"+x+y+y] * df["Br"+y+f1] * df["Br"+y+f2] * factor
+                    # process.append(name)
+                    df[name] = df["xsec_"+production+"13_"+x] * common_part * factor
+                    name = name.replace("13", "8")
+                    df[name] = df["xsec_"+production+"8_"+x] * common_part * factor
 
     # More for middle mass channels, ZA1, etc
-    prod = {'ggf': 'ggrc2', 'vbf': 'vvrc2', 'zh':'vvrc2', 'wh':'vvrc2'}
-    br_z_ll = (3.363 + 3.366)/100.  # for Z->ee/mumu, taken frmo PDG
-
-
+    # prod = {'ggf': 'ggrc2', 'vbf': 'vvrc2', 'zh':'vvrc2', 'wh':'vvrc2'}
+    # br_z_ll = (3.363 + 3.366)/100.  # for Z->ee/mumu, taken frmo PDG
 
 
 def subset_pass_constraints(df):
@@ -167,12 +166,16 @@ def make_dataframes(folders, file_stem):
     # df_orig = load_df(folders, "output_good")
 
     # Drop columns tp save space
-    drop_cols = ['h1u', 'h1d', 'h1b', 'h1V', 'h1G', 'h1A',
-                 'h2u', 'h2d', 'h2b', 'h2V', 'h2G', 'h2A',
-                 # 'Brh3gg', 'Brh3tautau', 'Brh3bb', 'Brh3ww',
-                 # 'Brh3zz', 'Brh3gammagamma', 'Brh3zgamma', 'Brh3h1h1', 'Brh3h2h2', 'Brh3h1h2',
-                 # 'Brh3a1a1', 'Brh3a1z',
-                 'bsgamma', 'bsmumu', 'btaunu', 'delms', 'delmd']
+    drop_cols = [
+        'h1u', 'h1d', 'h1b', 'h1V', 'h1G', 'h1A',
+        'h2u', 'h2d', 'h2b', 'h2V', 'h2G', 'h2A',
+        'Brh3gg', 'Brh3tautau', 'Brh3bb', 'Brh3ww',
+        'Brh3zz', 'Brh3gammagamma', 'Brh3zgamma',
+        'Brh3h1h1', 'Brh3h2h2', 'Brh3h1h2',
+        'Brh3a1a1', 'Brh3a1z',
+        # 'bsgamma', 'bsmumu', 'btaunu', 'delms', 'delmd']
+    ]
+
     for col in drop_cols:
         if col in df_orig.columns.values:
             df_orig.drop(col, inplace=True, axis=1)
