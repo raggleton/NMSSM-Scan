@@ -104,26 +104,28 @@ def plot_histogram(ax=None, array=None, var=None, df=None,
 
     weights = None
     if normed:
-        weights = np.ones_like(vals)/len(vals)
+        weights = np.ones_like(vals) / len(vals)
     y, bins, patches = ax.hist(vals, weights=weights, label=label, **kwargs)
     if errorbars:
         # put error bars on
-        bincenters = 0.5*(bins[1:]+bins[:-1])
+        bincenters = 0.5 * (bins[1:] + bins[:-1])
         menStd = np.sqrt(y)
         if normed:
             # need to do this otherwise it does errors incorrectly as
             # sqrt(normalised bin), not sqrt(bin)/sum of all bins
-            menStd = menStd/np.sqrt(len(vals))
+            menStd = menStd / np.sqrt(len(vals))
         width = 0.0
         ecolor = 'black' if 'color' not in kwargs.keys() else kwargs['color']
         ax.bar(bincenters, y, width=width, yerr=menStd, alpha=0,
                ecolor=ecolor, error_kw=dict(elinewidth=2, capthick=2))
+    if xlabel == "":
+        xlabel = var
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     ax.set_title(title, y=1.04)
     plt.minorticks_on()
     plt.tight_layout()
-    return y, bins, patches
+    return ax, y, bins, patches
 
 
 def plot_scatter(ax=None, xarray=None, yarray=None, xvar=None, yvar=None, df=None,
@@ -155,7 +157,7 @@ def plot_scatter(ax=None, xarray=None, yarray=None, xvar=None, yvar=None, df=Non
     ax.set_title(title, y=1.04)
     plt.minorticks_on()
     plt.tight_layout()
-    return paths
+    return ax, paths
 
 
 def add_median_line(df=None, var=None, array=None, **kwargs):
@@ -185,13 +187,13 @@ def plot_many_hists_compare(var, dfs, title, labels, xlabel, ylabel,
     max_y = 0
     for i, df in enumerate(dfs):
         y, bins, patches = plot_histogram(ax=ax, df=df, var=var, xlabel=xlabel,
-                                          ylabel=ylable, title=title,
+                                          ylabel=ylabel, title=title,
                                           errorbars=errorbars, normed=normed,
-                                          edgecolor=colours[i], **kwargs)
+                                          edgecolor=colors[i], **kwargs)
         max_y = max(max_y, max(y))
     ax.set_y(top=max_y)
 
-    return fig, ax
+    return plt.gcf(), ax
 
 
 def plot_many_scatters_compare(varx, vary, dfs, title,
@@ -227,17 +229,18 @@ def plot_many_scatters(varx, vary, dfs, titles, xlabel, ylabel, **kwargs):
             cols = 3
             rows = len(dfs) / 3
     fig, ax = plt.subplots(nrows=rows, ncols=cols)
-    fig.set_size_inches(24, 8*rows)
+    fig.set_size_inches(24, 8 * rows)
     plt.subplots_adjust(wspace=0.3, hspace=0.3)
 
     axes = ax.reshape(-1)
-    for i, [df,title] in enumerate(izip(dfs, titles)):
+    for i, [df, title] in enumerate(izip(dfs, titles)):
         df.plot(kind="scatter", x=varx, y=vary, ax=axes[i], **kwargs)
         axes[i].set_xlabel(xlabel)
         axes[i].set_ylabel(ylabel)
         axes[i].set_title(title, y=1.05)
 
     return fig, ax
+
 
 def plot_many_hists(var, dfs, titles, xlabel, ylabel, same_y=True, **kwargs):
     """
@@ -256,11 +259,11 @@ def plot_many_hists(var, dfs, titles, xlabel, ylabel, same_y=True, **kwargs):
             cols = 3
             rows = len(dfs) / 3
     fig, ax = plt.subplots(nrows=rows, ncols=cols)
-    fig.set_size_inches(24, 8*rows)
+    fig.set_size_inches(24, 8 * rows)
     plt.subplots_adjust(wspace=0.2)
 
     axes = ax.reshape(-1)
-    for i, [df,title] in enumerate(izip(dfs, titles)):
+    for i, [df, title] in enumerate(izip(dfs, titles)):
         df[var].plot(kind="hist", x=varx, y=vary, ax=axes[i], title=title, **kwargs)
         axes[i].set_xlabel(xlabel)
         axes[i].set_ylabel(ylabel)
@@ -294,7 +297,7 @@ def paper_compare_plot1(df, title):
     df.plot(kind="scatter", x="ma1", y="mh1", marker="+", ax=ax[0],
             c=df.tgbeta, cmap=col_map, vmin=0, vmax=50)
     ax[0].set_xlim([0, 150])
-    ax[0].set_ylim([122,129])
+    ax[0].set_ylim([122, 129])
     ax[0].set_xlabel(r"$m_{a_1}\ \mathrm{[GeV]}$")
     ax[0].set_ylabel(r"$m_{h_1}\ \mathrm{[GeV]}$")
     ax[0].set_title(title, y=1.03)
@@ -302,7 +305,7 @@ def paper_compare_plot1(df, title):
     df.plot(kind="scatter", x="kappa", y="mh1", marker="+", ax=ax[1],
             c=df["lambda_"], cmap=col_map, vmin=0, vmax=0.7, title=title)
     ax[1].set_xlim([0, 0.7])
-    ax[1].set_ylim([122,129])
+    ax[1].set_ylim([122, 129])
     ax[1].set_xlabel(r"$\kappa$")
     ax[1].set_ylabel(r"$m_{h_1}\ \mathrm{[GeV]}$")
     ax[1].set_title(title, y=1.03)
@@ -412,7 +415,7 @@ def plot_input_params_scatters(df, yvar, ylabel, yrange=None, title="", **kwargs
     # Setup plotting ares
     fig = plt.figure()
     fig.suptitle(title, fontsize=30)
-    fig.set_size_inches(24, 8*rows)
+    fig.set_size_inches(24, 8 * rows)
     plt.subplots_adjust(wspace=0.3)
     plt.subplots_adjust(hspace=0.3)
 
@@ -451,6 +454,5 @@ def make_highlight_region(ax, limits, axis, **kwargs):
         xmin, xmax = ax.get_xlim()
     if not kwargs:
         kwargs = dict(color='grey', alpha=0.2)
-    patch = patches.Rectangle((xmin, ymin), xmax-xmin, ymax-ymin, **kwargs)
+    patch = patches.Rectangle((xmin, ymin), xmax - xmin, ymax - ymin, **kwargs)
     ax.add_patch(patch)
-    return patch
