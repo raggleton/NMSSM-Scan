@@ -507,3 +507,101 @@ def make_highlight_region(ax, limits, axis, **kwargs):
         kwargs = dict(color='grey', alpha=0.2)
     patch = patches.Rectangle((xmin, ymin), xmax - xmin, ymax - ymin, **kwargs)
     ax.add_patch(patch)
+    return patch
+
+# LIMITS
+# -----------------------------------------------------------------------------
+# HIG 14 019 limit:
+cms_limits_4tau_xsec = {4: 7.1, 5: 10.3, 6: 8.6, 7: 5.0, 8: 4.5}
+
+
+def plot_cms_limit(ax=None, color='red', **kwargs):
+    """
+    Plot limits from the CMS 4tau paper (HIG-14-019), at 8TeV.
+    """
+    # mass: xsec*BR limit
+    limits = OrderedDict(sorted(cms_limits_4tau_xsec.items(), key=lambda t: t))
+    masses = limits.keys()
+    xsecs = limits.values()
+    if not ax:
+        ax = plt.gca()
+    ax.plot(masses, xsecs, label='CMS 8 TeV limit (HIG-14-019)', color=color, **kwargs)
+    upper_edge = np.ones_like(xsecs) * ax.get_ylim()[1]
+    ax.fill_between(masses, xsecs, y2=upper_edge, where=xsecs < upper_edge,
+                    label='CMS 8 TeV limit (HIG-14-019)', alpha=0.3, color=color)
+
+
+# The boosted tau ID analysis:
+cms_limits_4tau_boostedTau_xsec = {5: 558.84, 7: 10.5535, 9: 4.9436, 11: 3.5465, 13: 3.6754, 15: 5.4594}
+
+
+def plot_cms_boostedTau_limit(ax=None, color='red', **kwargs):
+    """
+    Plot limits from the CMS 4tau bboosted tau ID paper (HIG-14-022), at 8TeV.
+    """
+    # mass: xsec*BR limit
+    limits = OrderedDict(sorted(cms_limits_4tau_boostedTau_xsec.items(), key=lambda t: t))
+    masses = limits.keys()
+    xsecs = limits.values()
+    if not ax:
+        ax = plt.gca()
+    ax.plot(masses, xsecs, label='CMS 8 TeV limit (HIG-14-022)', color=color, **kwargs)
+    upper_edge = np.ones_like(xsecs) * ax.get_ylim()[1]
+    ax.fill_between(masses, xsecs, y2=upper_edge, where=xsecs < upper_edge,
+                    label='CMS 8 TeV limit (HIG-14-022)', alpha=0.3, color=color)
+
+
+# these are limits having divided by sigma_SM(ggh) = 19.27
+atlas_limits_br = {3.7: 3.59E-2, 4: 4.93E-2, 5: 8.61E-2, 6: 1.27E-1, 7: 1.59E-1, 8: 1.02E-1, 9: 1.20E-1, 10: 4.19E-1, 11: 1.25E-1, 12: 2.73E-1, 13: 3.05E-1, 14: 3.48E-1, 15: 3.35E-1, 16: 3.75E-1, 17: 3.35E-1, 18: 5.34E-1, 19: 3.11E-1, 20: 5.86E-1, 25: 5.97E-1, 30: 7.46E-1, 35: 1.19, 40: 7.6E-1}
+atlas_limits_xsec = {4: 0.950011, 5: 1.659147, 6: 2.44729, 7: 3.06393, 8: 1.96554, 9: 2.3124, 10: 8.07413, 11: 2.40875, 12: 5.26071, 13: 5.87735, 14: 6.70596, 15: 6.45545, 16: 7.22625, 17: 6.45545, 18: 10.29018, 19: 5.99297, 20: 11.29222, 25: 11.50419, 30: 14.37542, 35: 22.9313, 40: 14.6452, 3.7: 0.691793}
+
+
+def plot_atlas_limit(ax=None, color='red', **kwargs):
+    """
+    Plot limits from the ATLAS mumutautau paper, at 8TeV.
+    """
+    # mass: xsec*BR/xsec_SM, so need to * SM
+    limits = OrderedDict(sorted(atlas_limits_xsec.items(), key=lambda t: t))
+    masses = limits.keys()
+    xsecs = limits.values()
+    if not ax:
+        ax = plt.gca()
+    ax.plot(masses, xsecs, label='ATLAS 8 TeV limit', color=color, **kwargs)
+    upper_edge = np.ones_like(xsecs) * ax.get_ylim()[1]
+    ax.fill_between(masses, xsecs, y2=upper_edge, where=xsecs < upper_edge,
+                    label='ATLAS 8 TeV limit', alpha=0.3, color=color)
+
+
+def pass_limit(m_a, xsec, limits_dict):
+    """Return bool as to whether cross-section for xsec * BR(h -> aa -> 4tau)
+    passes given limits.
+
+    m_a: mass of a
+    xsec: total xsec * BR(h -> aa ->4tau)
+    limits: dict of {mass: limit}
+    """
+    limits = OrderedDict(sorted(limits_dict.items(), key=lambda t: t))
+    if m_a > max(limits.keys()) or m_a < min(limits.keys()):
+        # outside of range of limits - pass
+        return True
+    else:
+        masses = limits.keys()
+        xsecs = limits.values()
+        ind_upper = bisect(masses, m_a)
+        # do linear interpolation to get limit based on closest mass points
+        xsec_interp = np.interp(m_a, masses[ind_upper - 1:ind_upper + 1],
+                                xsecs[ind_upper - 1:ind_upper + 1])
+        return xsec < xsec_interp
+
+
+def pass_new_limits_4tau(m_a, xsec):
+    """Return bool as to whether cross-section for xsec * BR(h -> aa -> 4tau) passes CMS & ATLAS limits.
+    m_a: mass of a
+    xsec: total xsec * BR(h -> aa ->4tau)
+    """
+    return (pass_limit(m_a, xsec, atlas_limits_xsec) and
+            pass_limit(m_a, xsec, cms_limits_4tau_xsec) and
+            pass_limit(m_a, xsec, cms_limits_4tau_boostedTau_xsec))
+
+
+
