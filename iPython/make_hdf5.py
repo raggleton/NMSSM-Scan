@@ -1,19 +1,18 @@
 #!/usr/bin/env python
 
 """
-
 Make a HDF5 binary from lots of CSV files so it can be easily used in pandas
-
 """
 
 import sys
 import argparse
 import pandas as pd
-import numpy as np
+# import numpy as np
 import glob
 import math
-from itertools import product, chain, permutations
+from itertools import product
 from shutil import copyfile
+from bisect import bisect_left
 
 
 def load_df(folders, filestem, n_files=-1):
@@ -187,49 +186,48 @@ def make_dataframes(folders, file_stem):
     # cs = pd.read_csv("parton_lumi_ratio.csv")
     cs = pd.read_csv("YR3_cross_sections.csv")
     masses = cs["MH [GeV]"]
-    n_masses = len(masses)
+    mass_len = len(masses)
     xsec_ggf13 = cs["ggF 13TeV Cross Section [pb]"]
     xsec_vbf13 = cs["VBF 13TeV Cross Section [pb]"]
-    xsec_wh13 = cs["WH 13TeV Cross Section [pb]"]
-    xsec_zh13 = cs["ZH 13TeV Cross Section [pb]"]
+    # xsec_wh13 = cs["WH 13TeV Cross Section [pb]"]
+    # xsec_zh13 = cs["ZH 13TeV Cross Section [pb]"]
     xsec_ggf8 = cs["ggF 8TeV Cross Section [pb]"]
+    xsec_vbf8 = cs["VBF 8TeV Cross Section [pb]"]
 
-    def find_xsec(mass, xsec):
-        """
-        Return cross-section for the Higgs masses closest to the mass argument.
-        xsec is a list of cross-sections, corresponding to masses in masses list.
-        """
-        # use numpy arrays to your advantage and do it all so much faster
-        # get vector of absolute difference between masses in CSV and argument mass
-        # then get the index of the smallest difference
-        # then get the xsec corrresponding to that index
-        # this fn takes ~ 310 us, the old one took ~ 4.4ms -> 10x faster!
-        m_ind = np.absolute(masses - np.ones_like(n_masses) * mass).argmin()
-        return xsec[m_ind]
+    def find_closest_mass_ind(mass):
+        pos = bisect_left(masses, mass)
+        if pos == mass_len:
+            return mass_len - 1
+        return pos
 
-    # Store SM cross section for gg fusion at 13 TeV for production of h1 and h2
-    df_orig["xsec_ggf13_h1"] = df_orig.apply(lambda row: find_xsec(row['mh1'], xsec_ggf13), axis=1)
-    df_orig["xsec_ggf13_h2"] = df_orig.apply(lambda row: find_xsec(row['mh2'], xsec_ggf13), axis=1)
-    df_orig["xsec_ggf13_h3"] = df_orig.apply(lambda row: find_xsec(row['mh3'], xsec_ggf13), axis=1)
+    print 'Storing nearest-mass indices'
+    df_orig['mass_ind_h1'] = df_orig.apply(lambda row: find_closest_mass_ind(row['mh1']), axis=1)
+    df_orig['mass_ind_h2'] = df_orig.apply(lambda row: find_closest_mass_ind(row['mh2']), axis=1)
+    df_orig['mass_ind_h3'] = df_orig.apply(lambda row: find_closest_mass_ind(row['mh3']), axis=1)
 
-    df_orig["xsec_vbf13_h1"] = df_orig.apply(lambda row: find_xsec(row['mh1'], xsec_vbf13), axis=1)
-    df_orig["xsec_vbf13_h2"] = df_orig.apply(lambda row: find_xsec(row['mh2'], xsec_vbf13), axis=1)
-    df_orig["xsec_vbf13_h3"] = df_orig.apply(lambda row: find_xsec(row['mh3'], xsec_vbf13), axis=1)
+    # ALL XSEC STORED ARE CORRECTLY SCALED BY REDUCED COUPLING
+    print "Storing 13 TeV gg xsec"
+    df_orig["xsec_ggf13_h1"] = df_orig['h1ggrc2'] * xsec_ggf13[df_orig['mass_ind_h1']].values
+    df_orig["xsec_ggf13_h2"] = df_orig['h2ggrc2'] * xsec_ggf13[df_orig['mass_ind_h2']].values
+    df_orig["xsec_ggf13_h3"] = df_orig['h3ggrc2'] * xsec_ggf13[df_orig['mass_ind_h3']].values
 
-    df_orig["xsec_zh13_h1"] = df_orig.apply(lambda row: find_xsec(row['mh1'], xsec_zh13), axis=1)
-    df_orig["xsec_zh13_h2"] = df_orig.apply(lambda row: find_xsec(row['mh2'], xsec_zh13), axis=1)
-    df_orig["xsec_zh13_h3"] = df_orig.apply(lambda row: find_xsec(row['mh3'], xsec_zh13), axis=1)
+    print "Storing 13 TeV vbf xsec"
+    df_orig["xsec_vbf13_h1"] = df_orig['h1vvrc2'] * xsec_vbf13[df_orig['mass_ind_h1']].values
+    df_orig["xsec_vbf13_h2"] = df_orig['h2vvrc2'] * xsec_vbf13[df_orig['mass_ind_h2']].values
+    df_orig["xsec_vbf13_h3"] = df_orig['h3vvrc2'] * xsec_vbf13[df_orig['mass_ind_h3']].values
 
-    df_orig["xsec_wh13_h1"] = df_orig.apply(lambda row: find_xsec(row['mh1'], xsec_wh13), axis=1)
-    df_orig["xsec_wh13_h2"] = df_orig.apply(lambda row: find_xsec(row['mh2'], xsec_wh13), axis=1)
-    df_orig["xsec_wh13_h3"] = df_orig.apply(lambda row: find_xsec(row['mh3'], xsec_wh13), axis=1)
+    print "Storing 8 TeV ggf xsec"
+    df_orig["xsec_ggf8_h1"] = df_orig['h1ggrc2'] * xsec_ggf8[df_orig['mass_ind_h1']].values
+    df_orig["xsec_ggf8_h2"] = df_orig['h2ggrc2'] * xsec_ggf8[df_orig['mass_ind_h2']].values
+    df_orig["xsec_ggf8_h3"] = df_orig['h3ggrc2'] * xsec_ggf8[df_orig['mass_ind_h3']].values
 
-    # Store SM cross section for gg fusion at 8 TeV for production of h1 and h2
-    df_orig["xsec_ggf8_h1"] = df_orig.apply(lambda row: find_xsec(row['mh1'], xsec_ggf8), axis=1)
-    df_orig["xsec_ggf8_h2"] = df_orig.apply(lambda row: find_xsec(row['mh2'], xsec_ggf8), axis=1)
+    print "Storing 8 TeV vbf xsec"
+    df_orig["xsec_vbf8_h1"] = df_orig['h1vvrc2'] * xsec_vbf8[df_orig['mass_ind_h1']].values
+    df_orig["xsec_vbf8_h2"] = df_orig['h2vvrc2'] * xsec_vbf8[df_orig['mass_ind_h2']].values
+    df_orig["xsec_vbf8_h3"] = df_orig['h3vvrc2'] * xsec_vbf8[df_orig['mass_ind_h3']].values
 
     # Now add in individual channel xsec
-    # store_channel_xsec(df_orig)
+    store_channel_xsec(df_orig)
     print df_orig.columns.values
 
     # Make some subsets here:
