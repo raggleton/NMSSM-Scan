@@ -7,8 +7,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from itertools import izip
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 import re
+from bisect import bisect
 
 
 # NMSSM params with various associated attributes, such as latex equivalents
