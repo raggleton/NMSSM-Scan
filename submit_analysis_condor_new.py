@@ -49,7 +49,7 @@ def submit_all_analyses(job_dirs, storage_dir, hdfs_dir):
 
         analysis_jobset = ht.JobSet(exe='HTCondor/analyse_condor.sh',
                                     copy_exe=True,
-                                    setup_script=None,
+                                    setup_script='HTCondor/setupPyEnv.sh',
                                     filename=os.path.join(storage_dir, jdir, 'analysis.condor'),
                                     out_dir=log_dir, out_file=log_stem + '.out',
                                     err_dir=log_dir, err_file=log_stem + '.err',
