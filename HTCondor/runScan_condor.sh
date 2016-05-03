@@ -95,7 +95,7 @@ fi
 # Run NMSSMTools over parameter points
 # -----------------------------------------------------------------------------
 python NMSSMScan.py --card inp_*.dat -n $3 --param paramRange*.json --oDir . --NT NMSSMTools_${NTVER} $HBOPT $HSOPT $SUSHIOPT
-ls
+# ls
 
 # Setup SuperIso
 # -----------------------------------------------------------------------------
@@ -135,4 +135,4 @@ if [[ $doNMSSMCalc == 1 ]]; then
     cp "$jobdir/nmssmcalc$batchNum.tgz" "$jobdir"
 fi
 
-ls
+# ls

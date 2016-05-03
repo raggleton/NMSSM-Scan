@@ -23,7 +23,7 @@ fi
 if [ ! -d "$SPECTRDIR" ]; then
     mkdir "$SPECTRDIR"
 fi
-tar -xvzf $hdfsdir/spectr"$PID".tgz -C "$SPECTRDIR"
+tar -xzf $hdfsdir/spectr"$PID".tgz -C "$SPECTRDIR"
 
 # Check if superiso output exists. If so, untar.
 # -----------------------------------------------------------------------------
