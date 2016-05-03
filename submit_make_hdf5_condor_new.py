@@ -66,6 +66,9 @@ def submit(job_dirs, storage_dir, hdfs_dir):
         maker_dag.add_job(job)
         maker_dag.submit()
 
+    print 'Check status with:'
+    print 'DAGstatus.py', maker_dag.status_file
+
     return 0
 
 
