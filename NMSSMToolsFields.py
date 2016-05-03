@@ -22,24 +22,55 @@ nmssmtools_fields = [
     Field(block='EXTPAR', name="akappa", type=float,
           regex=re.compile(r' +64 +([E\d\.\-\+]+) +\# AKAPPA')),
 
-    Field(block='EXTPAR', name="m0", type=float,
-          regex=re.compile(r' +1 +([E\d\.\-\+]+) +\# M0\(MGUT\)')),
-    Field(block='EXTPAR', name="m12", type=float,
-          regex=re.compile(r' +2 +([E\d\.\-\+]+) +\# M12\(MGUT\)')),
-    Field(block='EXTPAR', name="a0", type=float,
-          regex=re.compile(r' +5 +([E\d\.\-\+]+) +\# A0\(MGUT\)')),
+    # Field(block='EXTPAR', name="m0", type=float,
+    #       regex=re.compile(r' +1 +([E\d\.\-\+]+) +\# M0\(MGUT\)')),
+    # Field(block='EXTPAR', name="m12", type=float,
+    #       regex=re.compile(r' +2 +([E\d\.\-\+]+) +\# M12\(MGUT\)')),
+    # Field(block='EXTPAR', name="a0", type=float,
+    #       regex=re.compile(r' +5 +([E\d\.\-\+]+) +\# A0\(MGUT\)')),
     Field(block='EXTPAR', name="m3", type=float,
           regex=re.compile(r' +3 +([E\d\.\-\+]+) +\# M3')),
+    Field(block='EXTPAR', name="m2", type=float,
+          regex=re.compile(r' +2 +([E\d\.\-\+]+) +\# M2')),
+    Field(block='EXTPAR', name="m1", type=float,
+          regex=re.compile(r' +1 +([E\d\.\-\+]+) +\# M1')),
+
     Field(block='EXTPAR', name="mu3", type=float,
           regex=re.compile(r' +46 +([E\d\.\-\+]+) +\# RIGHT T-SQUARKS')),
+    Field(block='EXTPAR', name="mu2", type=float,
+          regex=re.compile(r' +45 +([E\d\.\-\+]+) +\# RIGHT C-SQUARKS')),
+
     Field(block='EXTPAR', name="mq3", type=float,
           regex=re.compile(r' +43 +([E\d\.\-\+]+) +\# LEFT 3RD GEN. SQUARKS')),
+    Field(block='EXTPAR', name="mq2", type=float,
+          regex=re.compile(r' +42 +([E\d\.\-\+]+) +\# LEFT 2ND GEN. SQUARKS')),
+
     Field(block='EXTPAR', name="au3", type=float,
           regex=re.compile(r' +11 +([E\d\.\-\+]+) +\# ATOP')),
-    Field(block='EXTPAR', name="md3", type=float,
-          regex=re.compile(r' +47 +([E\d\.\-\+]+) +\# RIGHT D-SQUARKS')),
     Field(block='EXTPAR', name="ad3", type=float,
           regex=re.compile(r' +12 +([E\d\.\-\+]+) +\# ABOTTOM')),
+
+    Field(block='EXTPAR', name="ml3", type=float,
+          regex=re.compile(r' +33 +([E\d\.\-\+]+) +\# LEFT STAU')),
+    Field(block='EXTPAR', name="ml2", type=float,
+          regex=re.compile(r' +32 +([E\d\.\-\+]+) +\# LEFT SMUON')),
+
+    Field(block='EXTPAR', name="me3", type=float,
+          regex=re.compile(r' +36 +([E\d\.\-\+]+) +\# RIGHT STAU')),
+    Field(block='EXTPAR', name="me2", type=float,
+          regex=re.compile(r' +35 +([E\d\.\-\+]+) +\# RIGHT SMUON')),
+
+    Field(block='EXTPAR', name="ae3", type=float,
+          regex=re.compile(r' +13 +([E\d\.\-\+]+) +\# ATAU')),
+    Field(block='EXTPAR', name="ae2", type=float,
+          regex=re.compile(r' +16 +([E\d\.\-\+]+) +\# AMUON')),
+
+    Field(block='EXTPAR', name="md3", type=float,
+          regex=re.compile(r' +49 +([E\d\.\-\+]+) +\# RIGHT B-SQUARKS')),
+    Field(block='EXTPAR', name="md2", type=float,
+          regex=re.compile(r' +48 +([E\d\.\-\+]+) +\# RIGHT S-SQUARKS')),
+
+
 
     # masses
     Field(block='MASS', name="mh1", type=float,
