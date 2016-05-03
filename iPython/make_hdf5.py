@@ -104,7 +104,7 @@ def store_channel_xsec(df):
                     common_part = df["Br"+x+y+y] * df["Br"+y+f1] * df["Br"+y+f2]
                     df[name] = common_part * factor
                     # store actual XS * BR
-                    name = name.replace("_scaled", "")
+                    name = name.replace("_scaled", "_13")
                     # process.append(name)
                     df[name] = df["xsec_"+production+"13_"+x] * common_part * factor
                     name = name.replace("13", "8")
@@ -282,7 +282,8 @@ if __name__ == "__main__":
     df_orig, df_pass_all, df_ma1Lt10, df_h1SM, df_h2SM = make_dataframes(args.input, file_stem='output')
 
     print "Saving as HDF5..."
-    with pd.HDFStore(args.output, complevel=9, comlib='bzip2') as store:
+    # with pd.HDFStore(args.output, complevel=9, comlib='bzip2') as store:
+    with pd.HDFStore(args.output, complevel=9, comlib='blosc') as store:
         if isinstance(df_orig, pd.DataFrame):
             store.put('full12loop_all', df_orig, format='table', data_columns=True)
         if isinstance(df_pass_all, pd.DataFrame):

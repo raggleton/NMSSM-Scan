@@ -1,9 +1,5 @@
 #!/bin/bash -e
 
-export PATH=/software/miniconda/bin/:$PATH
-echo $PATH
-source activate ra12451_pandas
-
 # For running on HTcondor
 # ASSUMES THAT THE DIRECTORY WITH SPECTRUM FILES EXISTS ON /hdfs
 # Args: <dir with spectrum files> <process ID for uniqueness>
@@ -23,7 +19,7 @@ fi
 if [ ! -d "$SPECTRDIR" ]; then
     mkdir "$SPECTRDIR"
 fi
-tar -xvzf $hdfsdir/spectr"$PID".tgz -C "$SPECTRDIR"
+tar -xzf $hdfsdir/spectr"$PID".tgz -C "$SPECTRDIR"
 
 # Check if superiso output exists. If so, untar.
 # -----------------------------------------------------------------------------

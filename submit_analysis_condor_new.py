@@ -49,7 +49,7 @@ def submit_all_analyses(job_dirs, storage_dir, hdfs_dir):
 
         analysis_jobset = ht.JobSet(exe='HTCondor/analyse_condor.sh',
                                     copy_exe=True,
-                                    setup_script=None,
+                                    setup_script='HTCondor/setupPyEnv.sh',
                                     filename=os.path.join(storage_dir, jdir, 'analysis.condor'),
                                     out_dir=log_dir, out_file=log_stem + '.out',
                                     err_dir=log_dir, err_file=log_stem + '.err',
@@ -63,17 +63,16 @@ def submit_all_analyses(job_dirs, storage_dir, hdfs_dir):
         analysis_dag = ht.DAGMan(filename=os.path.join(storage_dir, jdir, 'analysis.dag'),
                                  status_file=os.path.join(storage_dir, jdir, 'analysis.status'))
 
-        # add a job to analyse each spectr*.tgz
+        # add a job to analyse all spectr*.tgz
         spectr_tars = glob(os.path.join(hdfs_dir, jdir, 'spectr*tgz'))
-        for tar in spectr_tars:
-            ind = int(os.path.basename(tar).split('.')[0].replace("spectr", ''))
+        for ind, s_tar in enumerate(spectr_tars):
+            pid = os.path.basename(s_tar).replace('spectr', '').split('.')[0]
             job = ht.Job(name='%d_%s_analysis' % (ind, jdir.strip('/')),
-                         args=[jdir, str(ind)],
+                         args=[jdir, pid],
                          hdfs_mirror_dir=os.path.join(hdfs_dir, jdir))
             analysis_jobset.add_job(job)
             analysis_dag.add_job(job)
-
-        analysis_dag.submit()
+        analysis_dag.submit(submit_per_interval=25)
 
         print 'Check status with:'
         print 'DAGstatus.py', analysis_dag.status_file

@@ -193,6 +193,11 @@ nmssmtools_fields = [
           regex=re.compile(r' +6 +([E\d\.\-\+]+) +\# Del_a_mu')),
     Field(block='LOWEN', name="omega", type=float,
           regex=re.compile(r' +10 +([E\d\.\-\+]+) +\# Omega h\^2')),
+    # b ->c tau nu
+    Field(block='LOWEN', name="rd", type=float,
+          regex=re.compile(r'# +([E\d\.\-\+]+) +RD')),
+    Field(block='LOWEN', name="rds", type=float,
+          regex=re.compile(r'# +([E\d\.\-\+]+) +RD\*')),
 
     # HiggsBounds results
     Field(block='HiggsBoundsResults', name="HBresult", type=float,
@@ -204,5 +209,9 @@ nmssmtools_fields = [
 
     # Higgssignals results
     Field(block='HiggsSignalsResults', name='HSprob', type=float,
-          regex=re.compile(r' +13 +([E\d\.\-\+]+) +\# Probability '))#(total chi\^2, total number observables)'))
+          regex=re.compile(r' +13 +([E\d\.\-\+]+) +\# Probability ')),#(total chi\^2, total number observables)'))
+    # Field(block='HiggsSignalsResults', name='HSchi2', type=float,
+    #       regex=re.compile(r' +12 +([E\d\.\-\+]+) +\# chi\^2 (total)')),
+    # Field(block='HiggsSignalsResults', name='HSchi2', type=float,
+    #       regex=re.compile(r' +12 +([E\d\.\-\+]+) +\# chi\^2 (total)'))
 ]
