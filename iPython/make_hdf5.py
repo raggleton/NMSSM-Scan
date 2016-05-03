@@ -104,7 +104,7 @@ def store_channel_xsec(df):
                     common_part = df["Br"+x+y+y] * df["Br"+y+f1] * df["Br"+y+f2]
                     df[name] = common_part * factor
                     # store actual XS * BR
-                    name = name.replace("_scaled", "")
+                    name = name.replace("_scaled", "_13")
                     # process.append(name)
                     df[name] = df["xsec_"+production+"13_"+x] * common_part * factor
                     name = name.replace("13", "8")
