@@ -282,7 +282,8 @@ if __name__ == "__main__":
     df_orig, df_pass_all, df_ma1Lt10, df_h1SM, df_h2SM = make_dataframes(args.input, file_stem='output')
 
     print "Saving as HDF5..."
-    with pd.HDFStore(args.output, complevel=9, comlib='bzip2') as store:
+    # with pd.HDFStore(args.output, complevel=9, comlib='bzip2') as store:
+    with pd.HDFStore(args.output, complevel=9, comlib='blosc') as store:
         if isinstance(df_orig, pd.DataFrame):
             store.put('full12loop_all', df_orig, format='table', data_columns=True)
         if isinstance(df_pass_all, pd.DataFrame):
