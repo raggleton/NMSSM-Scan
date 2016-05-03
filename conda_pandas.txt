@@ -11,7 +11,6 @@ flake8=2.5.1=py27_0
 fontconfig=2.11.1=5
 freetype=2.5.5=0
 get_terminal_size=1.0.0=py27_0
-git=2.6.4=0
 hdf5=1.8.16=0
 ipython=4.2.0=py27_0
 ipython_genutils=0.1.0=py27_0
