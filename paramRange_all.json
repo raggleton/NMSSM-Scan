@@ -2,31 +2,31 @@
     "_comment:" : ["Largest param range scan for everything."],
     "LAMBDA": {
         "min": 0,
-        "max": 0.6
+        "max": 0.4
     },
     "KAPPA": {
         "min": 0,
-        "max": 0.6
+        "max": 0.5
     },
     "TANB": {
-        "min": 10,
-        "max": 75
+        "min": 20,
+        "max": 100
     },
     "MUEFF": {
-        "min": 60,
-        "max": 250
+        "min": 20,
+        "max": 200
     },
     "ALAMBDA": {
-        "min": 500,
-        "max": 5500
+        "min": 0,
+        "max": 3000
     },
     "AKAPPA": {
-        "min": -10,
-        "max": 10
+        "min": -8,
+        "max": 2
     },
     "M1": {
         "min": 50,
-        "max": 500
+        "max": 200
     },
     "M2": {
         "min": 50,

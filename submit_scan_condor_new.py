@@ -23,13 +23,13 @@ log = logging.getLogger(__name__)
 
 
 # Number of parallel jobs to submit
-NUM_JOBS = 500
+NUM_JOBS = 1000
 
 # Number of points to scan per job
 NUM_POINTS = 5000
 
 # Shorthand description for this batch of jobs
-JOB_DESC = "MICRO_SCAN_NTv491_HBv431_HSv140_all"
+JOB_DESC = "MICRO_SCAN_NTv491_HBv431_HSv140_all_smallAlambdaMuEff_largeTanBeta"
 # JOB_DESC = "test"
 
 # Input card to use as template for NMSSMTools
