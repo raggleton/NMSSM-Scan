@@ -16,6 +16,7 @@ where <jobs_X_Y_Z> are local dir names that have a corresponding dir on /hdfs
 
 import os
 import sys
+from glob import iglob
 import htcondenser as ht
 import logging
 
@@ -39,6 +40,11 @@ def submit(job_dirs, storage_dir, hdfs_dir):
         jdir = jdir.strip('/')
         log_dir = os.path.join(storage_dir, jdir, 'logs')
         csv_dir = os.path.join(hdfs_dir, jdir)
+
+        # remove old files
+        for f in iglob(os.path.join(storage_dir, jdir, 'make*')):
+            log.debug('Removing %s', f)
+            os.remove(f)
 
         maker_jobset = ht.JobSet(exe='iPython/make_hdf5.py',
                                  copy_exe=True,

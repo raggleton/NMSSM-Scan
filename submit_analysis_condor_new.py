@@ -17,7 +17,7 @@ where <jobs_X_Y_Z> are local dir names that have a corresponding dir on /hdfs
 
 import os
 import sys
-from glob import glob
+from glob import iglob
 import htcondenser as ht
 import logging
 
@@ -47,6 +47,11 @@ def submit_all_analyses(job_dirs, storage_dir, hdfs_dir):
         jdir = jdir.strip('/')
         log_dir = os.path.join(storage_dir, jdir, 'logs')
 
+        # remove old files
+        for f in iglob(os.path.join(storage_dir, jdir, 'analysis*')):
+            log.debug('Removing %s', f)
+            os.remove(f)
+
         analysis_jobset = ht.JobSet(exe='HTCondor/analyse_condor.sh',
                                     copy_exe=True,
                                     setup_script='HTCondor/setupPyEnv.sh',
@@ -63,9 +68,8 @@ def submit_all_analyses(job_dirs, storage_dir, hdfs_dir):
         analysis_dag = ht.DAGMan(filename=os.path.join(storage_dir, jdir, 'analysis.dag'),
                                  status_file=os.path.join(storage_dir, jdir, 'analysis.status'))
 
-        # add a job to analyse all spectr*.tgz
-        spectr_tars = glob(os.path.join(hdfs_dir, jdir, 'spectr*tgz'))
-        for ind, s_tar in enumerate(spectr_tars):
+        # add a job to analyse each spectr*.tgz
+        for ind, s_tar in enumerate(iglob(os.path.join(hdfs_dir, jdir, 'spectr*tgz'))):
             pid = os.path.basename(s_tar).replace('spectr', '').split('.')[0]
             job = ht.Job(name='%d_%s_analysis' % (ind, jdir.strip('/')),
                          args=[jdir, pid],
