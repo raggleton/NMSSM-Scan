@@ -98,6 +98,8 @@ nmssmtools_fields = [
     # h1
     Field(block='DCINFO', name="Brh1gg", type=float,
           regex=re.compile(r' +([E\d\.\-\+]+) +2 +21 +21 +\# BR\(H_1 \-> gluon gluon\)')),
+    Field(block='DCINFO', name="Brh1mumu", type=float,
+          regex=re.compile(r' +([E\d\.\-\+]+) +2 +13 +\-13 +\# BR\(H_1 \-> muon muon\)')),
     Field(block='DCINFO', name="Brh1tautau", type=float,
           regex=re.compile(r' +([E\d\.\-\+]+) +2 +15 +\-15 +\# BR\(H_1 \-> tau tau\)')),
     Field(block='DCINFO', name="Brh1cc", type=float,

@@ -81,7 +81,7 @@ def store_channel_xsec(df):
     # prod = {'ggf': 'ggrc2'}
     X = ["h1", "h2"]
     Y = ["a1", "h1"]
-    F = ["tautau", "bb"]
+    F = ["bb", "tautau", "mumu"]
     for production, coupling in prod.iteritems():
         for x, y in product(X, Y):
             if x == y:
@@ -90,13 +90,12 @@ def store_channel_xsec(df):
                 print production, coupling, x, y, f1, f2
                 ff = ""
                 factor = 1
-                if f1 == f2 == "tautau":
-                    ff = "4tau"
-                elif f1 == f2 == "bb":
-                    ff = "4b"
+                if f1 == f2:
+                    half = len(f1)/2
+                    ff = "4" + f1[:half]
                 else:
                     factor = 2
-                    ff = "2b2tau"
+                    ff = "2%s2%s" % (f1[:len(f1)/2], f2[:len(f2)/2])
                 name = "xsec_scaled_"+production+"_"+x+"_"+"2"+y+"_"+ff
                 if name not in process_scaled:
                     # store scaled total XS * BR
