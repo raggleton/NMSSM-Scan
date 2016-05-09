@@ -165,7 +165,7 @@ def make_dataframes(folders, file_stem):
     """
 
     print "Making one big dataframe..."
-    df_orig = load_df(folders, file_stem)
+    df_orig = load_df(folders, file_stem, n_files=500)
     # df_orig = load_df(folders, "output")
     # df_orig = load_df(folders, "output_ma1Lt11")
     # df_orig = load_df(folders, "output_good")
