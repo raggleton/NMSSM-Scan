@@ -132,7 +132,9 @@ def subset_pass_constraints(df):
     # Now for each entry we remove the constraints we don't mind failing
     for c in accept_constraints:
         con_series = con_series.str.replace(c, "")
-    con_series = con_series.str.replace(r"^\|+$", "")  # Any leftover separators
+    # con_series = con_series.str.replace(r"^\|+$", "")  # Any leftover separators
+    con_series = con_series.apply(lambda x: x.strip('|'))
+    con_series = con_series.str.replace(r"\|\|+", r"|")  # Any multiple separators
     # Now figure out which ones are empty
     mask = con_series.str.match("^$")
     # Return those entries, allowing for a +ve muon mag moment contribution
