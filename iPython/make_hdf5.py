@@ -123,7 +123,11 @@ def subset_pass_constraints(df):
     # All the constraints strings to test against. Must follow regex.
     accept_constraints = [
         r"Muon magn\. mom\. more than 2 sigma away",
-        r"Relic density too small \(Planck\)"
+        r"Relic density too small \(Planck\)",
+        r"b \-> c tau nu more than 2 sigma away \(as SM\)",
+        r"chi2\(H\->ZZ\) > 6\.18",
+        r"chi2\(H\->bb\) > 6\.18",
+        r"chi2\(H\->gg\) > 6\.18"
     ]
 
     # We want a bitmask, so for each entry we simply want a True or False
@@ -239,6 +243,7 @@ def make_dataframes(folders, file_stem):
 
     # Points passing all experimental constraints chosen
     df_pass_all = subset_pass_constraints(df_orig)
+    # df_pass_all = None
 
     # subset with 2m_tau < ma1 < 10
     df_ma1Lt10 = None
@@ -254,13 +259,14 @@ def make_dataframes(folders, file_stem):
     df_h2SM = None
 
     n_orig = len(df_orig.index)
-    n_pass_all = len(df_pass_all.index)
 
     def percent_str(numerator, denominator):
         return "%.3f %% +- %.3f %%" % (100*numerator/float(denominator), 100*math.sqrt(numerator)/float(denominator))
 
     print "Running over", n_orig, "points"
-    print n_pass_all, "points passing all constraints (= %s)" % percent_str(n_pass_all, n_orig)
+    if isinstance(df_pass_all, pd.DataFrame):
+        n_pass_all = len(df_pass_all.index)
+        print n_pass_all, "points passing all constraints (= %s)" % percent_str(n_pass_all, n_orig)
     # print len(df_ma1Lt10.index), "of these have 2m_tau < ma1 < 10 GeV (= %s)" % percent_str(len(df_ma1Lt10.index), n_pass_all)
     # print len(df_h1SM.index), "points in the h1 = h(125) subset (= %s)" % percent_str(len(df_h1SM.index), n_pass_all)
     # print len(df_h2SM.index), "points in the h2 = h(125) subset (= %s)" % percent_str(len(df_h2SM.index), n_pass_all)
@@ -288,7 +294,7 @@ if __name__ == "__main__":
         if isinstance(df_orig, pd.DataFrame):
             store.put('full12loop_all', df_orig, format='table', data_columns=True)
         if isinstance(df_pass_all, pd.DataFrame):
-            store.put('full12loop_good_posMuMagMom_planckUpperOnly', df_pass_all, format='table', data_columns=True)
+            store.put('full12loop_good_posMuMagMom_planckUpperOnly_ignorebctaunu_ignorechi2', df_pass_all, format='table', data_columns=True)
         if isinstance(df_ma1Lt10, pd.DataFrame):
             store.put('full12loop_good_posMuMagMom_planckUpperOnly_maLt10', df_ma1Lt10, format='table', data_columns=True)
         if isinstance(df_h1SM, pd.DataFrame):
