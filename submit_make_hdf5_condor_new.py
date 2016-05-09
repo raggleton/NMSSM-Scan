@@ -8,7 +8,7 @@ This will use a job directory both here and on HDFS.
 
 Usage:
 
-    ./submit_analysis_condor_new.py <jobs_A_B_C> <jobs_D_E_F> ...
+    ./submit_make_hdf5_condor_new.py <jobs_A_B_C> <jobs_D_E_F> ...
 
 where <jobs_X_Y_Z> are local dir names that have a corresponding dir on /hdfs
 """
@@ -31,10 +31,12 @@ STORAGE_DIR = "/storage/%s/NMSSM-Scan/" % (os.environ['LOGNAME'])
 
 
 def submit(job_dirs, storage_dir, hdfs_dir):
-    """Do"""
+    """Submit the make_hdf5 job"""
     common_input_files = ['iPython/parton_lumi_ratio.csv', 'iPython/YR3_cross_sections.csv']
 
     log_stem = 'makeHDF5.$(cluster).$(process)'
+
+    status_files = []
 
     for jdir in job_dirs:
         jdir = jdir.strip('/')
@@ -71,9 +73,10 @@ def submit(job_dirs, storage_dir, hdfs_dir):
         maker_jobset.add_job(job)
         maker_dag.add_job(job)
         maker_dag.submit()
+        status_files.append(maker_dag.status_file)
 
     print 'Check status with:'
-    print 'DAGstatus.py', maker_dag.status_file
+    print 'DAGstatus.py', ' '.join(status_files)
 
     return 0
 

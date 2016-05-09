@@ -43,6 +43,8 @@ def submit_all_analyses(job_dirs, storage_dir, hdfs_dir):
 
     log_stem = 'analysis.$(cluster).$(process)'
 
+    status_files = []
+
     for jdir in job_dirs:
         jdir = jdir.strip('/')
         log_dir = os.path.join(storage_dir, jdir, 'logs')
@@ -77,9 +79,10 @@ def submit_all_analyses(job_dirs, storage_dir, hdfs_dir):
             analysis_jobset.add_job(job)
             analysis_dag.add_job(job)
         analysis_dag.submit(submit_per_interval=25)
+        status_files.append(analysis_dag.status_file)
 
-        print 'Check status with:'
-        print 'DAGstatus.py', analysis_dag.status_file
+    print 'Check status with:'
+    print 'DAGstatus.py', ' '.join(status_files)
 
     return 0
 
