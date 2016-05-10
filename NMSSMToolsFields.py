@@ -70,8 +70,6 @@ nmssmtools_fields = [
     Field(block='EXTPAR', name="md2", type=float,
           regex=re.compile(r' +48 +([E\d\.\-\+]+) +\# RIGHT S-SQUARKS')),
 
-
-
     # masses
     Field(block='MASS', name="mh1", type=float,
           regex=re.compile(r' +25 +([E\d\.\-\+]+) +\# lightest neutral scalar')),
@@ -93,6 +91,14 @@ nmssmtools_fields = [
           regex=re.compile(r'   1000005 +([E\d\.\-\+]+) +#  ~b_1')),
     Field(block='MASS', name="msbottom2", type=float,
           regex=re.compile(r'   2000005 +([E\d\.\-\+]+) +#  ~b_2')),
+    Field(block='MASS', name="mgluino", type=float,
+          regex=re.compile(r'   1000021 +([E\d\.\-\+]+) +#  ~g')),
+    Field(block='MASS', name="mneutralino1", type=float,
+          regex=re.compile(r'   1000022 +([E\d\.\-\+]+) +# neutralino\(1\)')),
+    Field(block='MASS', name="mneutralino2", type=float,
+          regex=re.compile(r'   1000023 +([E\d\.\-\+]+) +# neutralino\(2\)')),
+    Field(block='MASS', name="mchargino1", type=float,
+          regex=re.compile(r'   1000024 +([E\d\.\-\+]+) +# chargino\(1\)')),
 
     # Higgs branching ratios
     # h1
