@@ -115,8 +115,25 @@ if [[ $doSuperIso == 1 ]]; then
     ls
 fi
 
-echo "Final contents:"
+# Save space - delete useless files
+# -----------------------------------------------------------------------------
+for f in $(grep -l "M_A1^2<1" spectr*.dat);
+do
+    echo "rm $f"
+    rm $f
+done
 
+for f in $(grep -l "M_H1^2<1" spectr*.dat);
+do
+    echo "rm $f"
+    rm $f
+done
+
+for f in $(grep -l "M_HC^2<1" spectr*.dat);
+do
+    echo "rm $f"
+    rm $f
+done
 
 # Zip up files to transfer to HDFS
 # -----------------------------------------------------------------------------
