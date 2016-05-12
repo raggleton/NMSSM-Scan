@@ -371,7 +371,7 @@ def texify_str(p):
     return p
 
 
-def plot_constraints(df, title, fraction=0.9):
+def plot_constraints(df, title, num=10, failing_only=True):
     """
     This plots a bar chart of the most popular reasons
     for points failing experimental constraints, in a given DataFrame.
@@ -383,21 +383,25 @@ def plot_constraints(df, title, fraction=0.9):
     for cc in c:
         if cc:
             cons.extend(cc.split("|"))
+        else:
+            cons.extend('None')
 
     s = pd.Series(cons)
     vc = s.value_counts()
-    vc /= float(len(df[df['constraints'] != '']))
+    if failing_only:
+        vc /= float(len(df[df.constraints != ''].index))
+    else:
+        vc /= float(len(df.index))
 
     # find out how many points make up the top X%
     # last_i = next(x[0] for x in enumerate(vc_cum) if x[1] > fraction)
-    last_i = 10
 
     vc.index = [texify_str(x) for x in vc.index]
 
     # make the graph here
     fig = generate_fig([8, 6])
     ax = generate_axes(fig)
-    vc[:last_i][::-1].plot(kind="barh")  # this ensures most common at top
+    vc[:num][::-1].plot(kind="barh")  # this ensures most common at top
     ax.set_xlabel("Faction of points that fail given constraint",
                   multialignment='center', fontsize=22)
     ax.set_title(title, y=1.03)
@@ -414,7 +418,7 @@ with open('Key.dat') as hb_file:
             HB_MAP[channel] = channel_name
 
 
-def plot_constraints_HB(df, title, fraction=0.9):
+def plot_constraints_HB(df, title, num=10):
     """Plot bar chart of most popular reasons for points failing HiggsBounds.
     Note that each HiggsBounds only tells you the most sensitive experimental
     result the point failed (unlike NMSSMTools, which tells you all the reasons
@@ -435,15 +439,14 @@ def plot_constraints_HB(df, title, fraction=0.9):
 
     # find out how many points make up the top X%
     # last_i = next(x[0] for x in enumerate(vc_cum) if x[1] > fraction)
-    last_i = 10
 
     # make the graph here
     # fig, ax = plt.subplots(nrows=1, ncols=1)
     # fig.set_size_inches(6, 4)
     fig = generate_fig([8, 6])
     ax = generate_axes(fig)
-    vc[:last_i][::-1].plot(kind="barh", color='green', fontsize=14)
-    ax.set_xlabel("Faction of points that fail given constraint",
+    vc[:num][::-1].plot(kind="barh", color='green', fontsize=14)
+    ax.set_xlabel("Most sensitive channel for HB",
                   multialignment='center', fontsize=22)
     # ax.set_xlabel("Fraction of failing points that fail given HiggsBounds constraint\n"
     #               "(encompassing " + str(fraction * 100) + " % of all failing points)",
