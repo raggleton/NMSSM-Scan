@@ -86,6 +86,7 @@ def generate_fig(size=[8, 6]):
     return fig
 
 
+# legacy, remove me
 def generate_axes(fig=None):
     """
     Simple axes generator, cos I'm super lazy.
@@ -129,7 +130,7 @@ def plot_histogram(ax=None, array=None, var=None, df=None,
     if array is not None:
         vals = array
     elif var is not None and df is not None:
-        vals = df[var].values
+        vals = df[var].dropna().values
     else:
         raise Exception("plot_histogram needs a numpy array or variable name + dataframe")
 
