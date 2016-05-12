@@ -148,7 +148,8 @@ def plot_scan_exclusions(scan_dicts, experimental_dicts, y_var, x_label, y_label
         plt.suptitle(title)
 
     if text:
-        plt.text(*text_coords, s=text, transform=plt.gca().transAxes)
+        plt.text(*text_coords, s=text, transform=plt.gca().transAxes,
+                 bbox=dict(color='white', alpha=0.9, boxstyle='round,rounding_size=0.05'))
 
     # line for mh/2
     mh = 125.
