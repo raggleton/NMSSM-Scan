@@ -458,20 +458,17 @@ def plot_constraints_HB(df, title, num=10):
 def plot_input_params_hists(df, ylabel, title, errorbars=True, param_dict=nmssm_params, **kwargs):
     """Make histograms for each input parameter using dataframe df"""
     # Calculate sensible number of rows & columns.
-    cols = 2
-    rows = (len(param_dict.keys()) / 2) + (len(param_dict.keys()) % 2)
-    if len(param_dict.keys()) % 3 == 0:
-        cols = 3
-        rows = len(param_dict.keys()) / 3
+    cols = 3
+    rows = (len(param_dict.keys()) / cols) + (len(param_dict.keys()) % cols)
     # Setup plotting ares
     fig = plt.figure()
-    fig.suptitle(title, fontsize=30)
-    fig.set_size_inches(24, 8 * rows)
+    fig.suptitle(title)
+    fig.set_size_inches(6 * cols, 6 * rows)
     plt.subplots_adjust(wspace=0.3)
     plt.subplots_adjust(hspace=0.3)
 
     # Make a subplot for each param, then plot it
-    # Need to use Series (aka numpy array), can't use d.fplot() as x labels
+    # Need to use Series (aka numpy array), can't use df.plot() as x labels
     # do not show up except on final row.
     # And since the np array must be indexed properly, we use .values to
     # get out a raw array.
@@ -493,20 +490,17 @@ def plot_input_params_scatters(df, yvar, ylabel, yrange=None, title="", param_di
     using dataframe df"""
 
     # Calculate sensible number of rows & columns.
-    cols = 2
-    rows = (len(param_dict.keys()) / 2) + (len(param_dict.keys()) % 2)
-    if len(param_dict.keys()) % 3 == 0:
-        cols = 3
-        rows = len(param_dict.keys()) / 3
+    cols = 3
+    rows = (len(param_dict.keys()) / cols) + (len(param_dict.keys()) % cols)
     # Setup plotting ares
     fig = plt.figure()
-    fig.suptitle(title, fontsize=30)
-    fig.set_size_inches(24, 8 * rows)
+    fig.suptitle(title)
+    fig.set_size_inches(6 * cols, 6 * rows)
     plt.subplots_adjust(wspace=0.3)
     plt.subplots_adjust(hspace=0.3)
 
     # Make a subplot for each param, then plot it
-    # Need to use Series (aka numpy array), can't use d.fplot() as x labels
+    # Need to use Series (aka numpy array), can't use df.plot() as x labels
     # do not show up except on final row.
     # And since the np array must be indexed properly, we use .values to
     # get out a raw array.
