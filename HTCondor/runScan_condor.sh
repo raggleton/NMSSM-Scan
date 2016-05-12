@@ -135,8 +135,12 @@ do
     rm $f
 done
 
+rm omega*
+
 # Zip up files to transfer to HDFS
 # -----------------------------------------------------------------------------
+nfiles=`ls spectr*.dat | wc -l`
+echo "Zipping up $nfiles files"
 tar -cvzf "spectr${batchNum}.tgz" spectr*.dat
 cp "spectr${batchNum}.tgz" "$jobdir"
 
