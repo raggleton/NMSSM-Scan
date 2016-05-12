@@ -14,7 +14,6 @@ import sys
 import argparse
 import logging
 import random
-from glob import glob
 from subprocess import call
 import json
 import re
@@ -101,7 +100,7 @@ def NMSSMScan(in_args=sys.argv[1:]):
     for ind in xrange(args.number):
 
         if ind % 200 == 0:
-            log.info('Processing %dth point', ind)
+            log.info('Processing %dth point at %s', ind, strftime("%H%M%S"))
 
         # generate a random point within the range
         for v in param_dict.itervalues():
@@ -138,6 +137,11 @@ def NMSSMScan(in_args=sys.argv[1:]):
         call(ntools_cmds)
         os.chdir(base_dir)
 
+        if args.HB or args.HS:
+            # need to add in DMASS block for HB/HS
+            # this is somewhat aribitrary
+            add_dmass_block(spectr=new_card_path.replace('inp', 'spectr'), dmh1=5, dmh2=5)
+
         # run HiggsBounds and HiggsSignals
         if args.HB:
             os.chdir(args.HB)
@@ -166,6 +170,22 @@ def NMSSMScan(in_args=sys.argv[1:]):
     print '*' * 40
     print '* Num iterations:', args.number
     print '*' * 40
+
+
+def add_dmass_block(spectr, dmh1=2, dmh2=2):
+    """Add DMASS block to spectrum file so can be used with
+    HiggsBounds/HiggsSignals correctly.
+
+    spectr : str
+        Spectrum filepath
+    dmh1 : int / float
+        Uncertainty on mh1
+    dmh2 : int/float
+        Uncertainty on mh2
+    """
+    block = '"BLOCK DMASS\n  25  %.8E\n  35  %.8E\n"' % (dmh1, dmh2)
+    with open(spectr, 'a') as f:
+        f.write(block)
 
 
 def generate_odir():
