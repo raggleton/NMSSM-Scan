@@ -19,6 +19,7 @@ import glob
 import re
 from collections import defaultdict
 import NMSSMToolsFields, SuperIsoFields, NMSSMCalcFields
+from time import strftime
 
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
@@ -116,7 +117,7 @@ def analyse_scans(in_args=sys.argv[1:]):
         for i, spectr in enumerate(glob.iglob(os.path.join(args.input, 'spectr_*.dat'))):
 
             if i % 100 == 0:
-                log.info('Parsing %dth file', i)
+                log.info('Parsing %dth file at %s', i, strftime("%H%M%S"))
 
             if i == args.n:
                 break
