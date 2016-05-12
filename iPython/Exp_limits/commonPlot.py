@@ -101,18 +101,23 @@ def plot_scan_exclusions(scan_dicts, experimental_dicts, y_var, x_label, y_label
         See http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.legend
         Default is 'best'
     """
-    for entry in scan_dicts:
-        df = entry['df']
-        plt.plot(df['m_a'].values, df[y_var].values, 'o',
-                 label=entry['label'],
-                 color=entry['color'], alpha=0.7)
+    if scan_dicts:
+        for entry in scan_dicts:
+            df = entry['df']
+            mass_key = 'm_a' if 'm_a' in df.columns.values else 'ma1'
+            colname = entry.get('yvar', y_var)
+            plt.plot(df[mass_key].values, df[colname].values,
+                     entry.get('shape', 'o'),
+                     label=entry['label'],
+                     color=entry['color'], alpha=0.7)
 
-    for entry in experimental_dicts:
-        df = entry['df']
-        colname = entry.get('yvar', y_var)
-        plt.plot(df['m_a'].values, df[colname].values,
-                 label=entry['label'],
-                 color=entry['color'], linewidth=2)
+    if experimental_dicts:
+        for entry in experimental_dicts:
+            df = entry['df']
+            colname = entry.get('yvar', y_var)
+            plt.plot(df['m_a'].values, df[colname].values,
+                     label=entry['label'],
+                     color=entry['color'], linewidth=2)
 
     if x_range:
         plt.xlim(*x_range)
