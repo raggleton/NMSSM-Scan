@@ -6,6 +6,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
+import matplotlib.cm as cmx
+import matplotlib.colors as mplcolors
 from itertools import izip
 from collections import namedtuple, OrderedDict
 import re
