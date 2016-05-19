@@ -141,7 +141,7 @@ def NMSSMScan(in_args=sys.argv[1:]):
         if args.HB or args.HS:
             # need to add in DMASS block for HB/HS
             # this is somewhat aribitrary
-            add_dmass_block(spectr=spectr_name, dmh1=3, dmh2=3)
+            add_dmass_block(spectr=spectr_name, dmh1=2, dmh2=2)
 
         # run HiggsBounds and HiggsSignals
         if args.HB:
