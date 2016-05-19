@@ -56,8 +56,10 @@ if [[ $doHiggsSignals == 1 ]]; then
     cd HiggsSignals-${HSVER}
     make clean
     # patch to remove spurious printout
-    patch datatables.f90 < ../HS_datatables.patch;
-    patch HiggsSignals_subroutines.F90 < ../HS_subroutines.patch;
+    patch datatables.f90 < ../HS_datatables.patch
+    patch HiggsSignals_subroutines.F90 < ../HS_subroutines.patch
+    # patch to assign mass better
+    patch usefulbits_HS.f90 < ../HS_assignmass.patch
     ./configure
     make
     cd ..

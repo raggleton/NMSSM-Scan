@@ -81,8 +81,8 @@ def submit_scans(num_jobs, num_points, job_description, card, param_range, stora
 
     common_input_files = [param_range, 'NMSSMScan.py', 'common_utils.py', card,
                           'patches/NT.patch', 'patches/NT_clean.patch',
-                          'patches/HB.patch',
-                          'patches/HS_datatables.patch', 'patches/HS_subroutines.patch']
+                          'patches/HB.patch', 'patches/HS_datatables.patch',
+                          'patches/HS_subroutines.patch', 'patches/HS_assignmass.patch']
 
     scan_jobset = ht.JobSet(exe='HTCondor/runScan_condor.sh',
                             copy_exe=True,
