@@ -238,19 +238,4 @@ nmssmtools_fields = [
     Field(block='LOWEN', name="rds", type=float,
           regex=re.compile(r'# +([E\d\.\-\+]+) +RD\*')),
 
-    # HiggsBounds results
-    Field(block='HiggsBoundsResults', name="HBresult", type=float,
-          regex=re.compile(r' +\d +\d +([01\-]) +\# HBresult')),
-    Field(block='HiggsBoundsResults', name="HBobsratio", type=float,
-          regex=re.compile(r' +\d +\d +([E\d\.\-\+]+) +\# obsratio')),
-    Field(block='HiggsBoundsResults', name="HBchannel", type=float,
-          regex=re.compile(r' +\d +\d +([E\d\.\-\+]+) +\# channel id number')),
-
-    # Higgssignals results
-    Field(block='HiggsSignalsResults', name='HSprob', type=float,
-          regex=re.compile(r' +13 +([E\d\.\-\+]+) +\# Probability ')),
-    Field(block='HiggsSignalsResults', name='HSchi2', type=float,
-          regex=re.compile(r' +12 +([E\d\.\-\+]+) +\# chi\^2 \(total\)')),
-    Field(block='HiggsSignalsResults', name='HSnobs', type=int,
-          regex=re.compile(r' +7 +([E\d\.\-\+]+) +\# Number of observables \(total\)')),
 ]

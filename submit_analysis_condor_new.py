@@ -39,6 +39,7 @@ def submit_all_analyses(job_dirs, storage_dir, hdfs_dir):
     """
 
     common_input_files = ['analyse_scans.py', 'NMSSMToolsFields.py',
+                          'HiggsBoundsSignalsFields.py',
                           'SuperIsoFields.py', 'NMSSMCalcFields.py']
 
     log_stem = 'analysis.$(cluster).$(process)'
