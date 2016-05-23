@@ -39,7 +39,7 @@ def submit(job_dirs, storage_dir, hdfs_dir):
     status_files = []
 
     for jdir in job_dirs:
-        if not os.path.isdir(jdir)
+        if not os.path.isdir(jdir):
             raise IOError('No such directory %s' % jdir)
 
         jdir = jdir.strip('/')
