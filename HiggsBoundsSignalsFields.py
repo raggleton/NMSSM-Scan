@@ -34,6 +34,9 @@ for chan in range(1, 86):
   chan_field = Field(block='HiggsSignalsPeakObservables', name='HS_%d_muPred' % chan, type=float,
                      regex=re.compile(r' +%d +17 +([E\d\.\-\+]+) +\# Total predicted signal strength modifier mu' % chan))
   higgssignals_fields.append(chan_field)
+  chi2_field = Field(block='HiggsSignalsPeakObservables', name='HS_%d_chi2' % chan, type=float,
+                     regex=re.compile(r' +%d +20 +([E\d\.\-\+]+) +\# Chi\-squared value \(total\)' % chan))
+  higgssignals_fields.append(chi2_field)
   # chan_field = Field(block='HiggsSignalsPeakObservables', name='HS_%d_muObs' % chan, type=float,
   #                    regex=re.compile(r' +%d +9 +([E\d\.\-\+]+) +\# Observed signal strength modifier \(mu\)' % chan))
   # higgssignals_fields.append(chan_field)
