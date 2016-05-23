@@ -18,7 +18,7 @@ import logging
 import glob
 import re
 from collections import defaultdict
-import NMSSMToolsFields, SuperIsoFields, NMSSMCalcFields
+import NMSSMToolsFields, SuperIsoFields, NMSSMCalcFields, HiggsBoundsSignalsFields
 from time import strftime
 
 
@@ -129,7 +129,11 @@ def analyse_scans(in_args=sys.argv[1:]):
             nmssmtools_constraints = get_nmssmtools_constraints(spectr)
             if isinstance(nmssmtools_constraints, type(None)):
                 continue
-            results_dict = get_slha_dict(spectr, NMSSMToolsFields.nmssmtools_fields)
+
+            dict_fields = (NMSSMToolsFields.nmssmtools_fields +
+                           HiggsBoundsSignalsFields.higgsbounds_fields +
+                           HiggsBoundsSignalsFields.higgssignals_fields)
+            results_dict = get_slha_dict(spectr, dict_fields)
             # need joiner as CSV file
             results_dict['constraints'] = '|'.join(nmssmtools_constraints)
             # log.debug(results_dict)
@@ -154,7 +158,7 @@ def analyse_scans(in_args=sys.argv[1:]):
             if not done_cols:
                 # This defines the output column order & writes headers
                 columns = sorted(results_dict.keys())
-                log.debug('Columns: %s', columns)
+                # log.debug('Columns: %s', columns)
                 for o in f, f_good, f_ma1Lt11:
                     o.write(','.join(columns) + '\n')
                 done_cols = True
@@ -260,8 +264,8 @@ def get_slha_dict(filename, fields):
                                 if result:
                                     results[field.name] = field.type(result.group(1))
                                     found_field = ind
+                                    log.debug('%s: %s', field.name, result.group(1))
                                     break
-                                    # log.debug('%s: %s', field.name, result.group(1))
                             if found_field:
                                 del scan_dict[block][found_field]
                             line = f.next()

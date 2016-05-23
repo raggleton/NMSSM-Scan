@@ -39,6 +39,7 @@ def submit_all_analyses(job_dirs, storage_dir, hdfs_dir):
     """
 
     common_input_files = ['analyse_scans.py', 'NMSSMToolsFields.py',
+                          'HiggsBoundsSignalsFields.py',
                           'SuperIsoFields.py', 'NMSSMCalcFields.py']
 
     log_stem = 'analysis.$(cluster).$(process)'
@@ -46,6 +47,9 @@ def submit_all_analyses(job_dirs, storage_dir, hdfs_dir):
     status_files = []
 
     for jdir in job_dirs:
+        if not os.path.isdir(jdir)
+            raise IOError('No such directory %s' % jdir)
+
         jdir = jdir.strip('/')
         log_dir = os.path.join(storage_dir, jdir, 'logs')
 

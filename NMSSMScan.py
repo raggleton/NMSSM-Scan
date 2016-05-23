@@ -137,15 +137,15 @@ def NMSSMScan(in_args=sys.argv[1:]):
         call(ntools_cmds)
         os.chdir(base_dir)
 
+        spectr_name = new_card_path.replace('inp', 'spectr')
         if args.HB or args.HS:
             # need to add in DMASS block for HB/HS
             # this is somewhat aribitrary
-            add_dmass_block(spectr=new_card_path.replace('inp', 'spectr'), dmh1=5, dmh2=5)
+            add_dmass_block(spectr=spectr_name, dmh1=2, dmh2=2)
 
         # run HiggsBounds and HiggsSignals
         if args.HB:
             os.chdir(args.HB)
-            spectr_name = new_card_path.replace('inp', 'spectr')
             hb_cmds = ['./HiggsBounds', 'LandH', 'SLHA', '5', '1', os.path.relpath(spectr_name)]
             log.debug(hb_cmds)
             call(hb_cmds)
@@ -183,7 +183,7 @@ def add_dmass_block(spectr, dmh1=2, dmh2=2):
     dmh2 : int/float
         Uncertainty on mh2
     """
-    block = '"BLOCK DMASS\n  25  %.8E\n  35  %.8E\n"' % (dmh1, dmh2)
+    block = 'BLOCK DMASS\n  25  %.8E\n  35  %.8E\n' % (dmh1, dmh2)
     with open(spectr, 'a') as f:
         f.write(block)
 
