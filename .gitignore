@@ -24,3 +24,4 @@ data
 .idea
 ScanVenv
 iPython/*.md
+*.zip
