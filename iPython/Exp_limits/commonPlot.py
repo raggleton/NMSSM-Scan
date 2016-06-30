@@ -27,6 +27,10 @@ mpl.rcParams.update({'font.size': 24, 'font.family': 'STIXGeneral', 'mathtext.fo
 
 XSEC_SM = 19.27  # SM Higgs CrossSection in pb
 
+M_a_STR = r'$m_a\ \mathrm{[GeV]}$'
+
+M_A_STR = r'$m_A\ \mathrm{[GeV]}$'
+
 
 def save_plt(filename, ext):
     """Save current figure to file.
@@ -104,6 +108,8 @@ def plot_scan_exclusions(scan_dicts, experimental_dicts, y_var, x_label, y_label
     if scan_dicts:
         for entry in scan_dicts:
             df = entry['df']
+            if len(df.index) == 0:
+                continue
             mass_key = 'm_a' if 'm_a' in df.columns.values else 'ma1'
             colname = entry.get('yvar', y_var)
             plt.plot(df[mass_key].values, df[colname].values,
