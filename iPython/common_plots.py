@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import matplotlib.cm as cmx
 import matplotlib.colors as mplcolors
+from matplotlib.ticker import MultipleLocator
 from itertools import izip
 from collections import namedtuple, OrderedDict
 import re
@@ -77,6 +78,15 @@ param_dict = dict(lambda_=r"$\lambda$", mueff=r"$\mu_{eff}\ \mathrm{[GeV]}$",
                   akappa=r"$A_{\kappa}\ \mathrm{[GeV]}$", tgbeta=r"$\tan\beta$")
 
 
+def save_plot(filename):
+    """Save the plot. Auto creates dirs if necessary."""
+    filename = os.path.abspath(filename)
+    plot_dir = os.path.dirname(filename)
+    if not os.path.isdir(plot_dir):
+        os.makedirs(plot_dir)
+    plt.savefig(filename)
+
+
 def generate_fig(size=[8, 6]):
     """
     Simple figure generator, cos I'm really lazy.
@@ -111,6 +121,16 @@ def generate_fig_axes(fig=None, size=[8, 6]):
         fig = generate_fig(size)
     ax = fig.add_subplot(1, 1, 1)
     return fig, ax
+
+
+def set_major_tick_interval(which, interval):
+    """Sets major tick intervals on an axis, cos I never remember this snippet"""
+    if which.upper() == 'X':
+        plt.gca().xaxis.set_major_locator(MultipleLocator(interval))
+    elif which.upper() == 'Y':
+        plt.gca().yaxis.set_major_locator(MultipleLocator(interval))
+    else:
+        raise RuntimeError('Cannot use %s to specify axis' % which)
 
 
 def plot_histogram(ax=None, array=None, var=None, df=None,
