@@ -12,8 +12,11 @@ import matplotlib.pyplot as plt
 
 
 def make_all_NMSSM_plots():
-    for cdir in ['range_all_final_relaxed', 'range_large_final_relaxed',
-                 'range_all_final_relaxed_smallAlambdaMuEff_largeTanBeta']:
+    for cdir in ['range_all_final_relaxed',
+                 'range_large_final_relaxed',
+                 'range_all_final_relaxed_smallAlambdaMuEff_largeTanBeta',
+                 'range_large_final_relaxed_DMASS2',
+                 'range_large_final_relaxed_DMASS2_fixedAssignMass'][3:]:
         make_NMSSM_plot(cdir)
 
 def make_NMSSM_plot(csv_dir):
@@ -24,7 +27,7 @@ def make_NMSSM_plot(csv_dir):
     scan_dicts = [
         {'df': df_fail_NT_pass_HS_pass_HB, 'label': "Fail NT, Pass HS", 'color': 'dodgerblue', 'shape': '^'},
         {'df': df_pass_NT_fail_HS_pass_HB, 'label': "Pass NT, Fail HS", 'color': 'green', 'shape': '^'},
-        {'df': df_pass_NT_pass_HS_pass_HB, 'label': "Pass NT, Pass HS", 'color': 'magenta', 'shape': '^'},
+        {'df': df_pass_NT_pass_HS_pass_HB, 'label': "Pass NT, Pass HS", 'color': 'orange', 'shape': '^'},
     ]
 
     # Get experimental limits
