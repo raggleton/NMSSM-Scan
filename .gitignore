@@ -24,3 +24,4 @@ data
 *.slha
 .idea
 ScanVenv
+iPython/*.md
