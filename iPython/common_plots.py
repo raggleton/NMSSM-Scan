@@ -6,6 +6,9 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
+import matplotlib.cm as cmx
+import matplotlib.colors as mplcolors
+from matplotlib.ticker import MultipleLocator
 from itertools import izip
 from collections import namedtuple, OrderedDict
 import re
@@ -34,14 +37,54 @@ nmssm_params_extended = {
     "tgbeta": Param(label=r"$\tan\beta$", color="purple", bins=25, range=[0, 50]),
     "m3": Param(label=r"$M_3$", color="olive", bins=25, range=[0, 2000]),
     "mq3": Param(label=r"$MQ3$", color="darksage", bins=25, range=[0, 2000]),
+    "mu3": Param(label=r"$MU3$", color="darksage", bins=25, range=[0, 2000]),
     "au3": Param(label=r"$AU3$", color="cyan", bins=25, range=[0, 2000]),
-    # "md3": Param(label=r"$MD3$", color="purple", bins=25, range=[0, 2000]),
-    # "ad3": Param(label=r"$AD3$", color="purple", bins=25, range=[0, 2000])
+    "md3": Param(label=r"$MD3$", color="purple", bins=25, range=[0, 2000]),
+    "ad3": Param(label=r"$AD3$", color="purple", bins=25, range=[0, 2000]),
+    # "m0": Param(label=r"$M0$", color="purple", bins=25, range=[0, 2000]),
+    # "m12": Param(label=r"$M12$", color="purple", bins=25, range=[0, 2000]),
+}
+
+nmssm_params_all = {
+    "lambda_": Param(label=r"$\lambda$", color="orange", bins=25, range=[0, 0.7]),
+    "mueff": Param(label=r"$\mu_{eff}\ \mathrm{[GeV]}$", color="green", bins=25, range=[100, 300]),
+    "kappa": Param(label=r"$\kappa$", color="steelblue", bins=25, range=[0, 0.7]),
+    "alambda": Param(label=r"$A_{\lambda}\ \mathrm{[GeV]}$", color="salmon", bins=25, range=[-1000, 4000]),
+    "akappa": Param(label=r"$A_{\kappa}\ \mathrm{[GeV]}$", color="red", bins=25, range=[-30, 2.5]),
+    "tgbeta": Param(label=r"$\tan\beta$", color="purple", bins=25, range=[0, 50]),
+    "m3": Param(label=r"$M_3$", color="olive", bins=25, range=[500, 3000]),
+    "m2": Param(label=r"$M_2$", color="olive", bins=25, range=[50, 1000]),
+    "m1": Param(label=r"$M_1$", color="olive", bins=25, range=[50, 500]),
+    "mq3": Param(label=r"$MQ3$", color="darksage", bins=25, range=[0, 2000]),
+    "mq2": Param(label=r"$MQ2$", color="darksage", bins=25, range=[0, 2000]),
+    "mu3": Param(label=r"$MU3$", color="darksage", bins=25, range=[0, 2000]),
+    "mu2": Param(label=r"$MU2$", color="darksage", bins=25, range=[0, 2000]),
+    "md3": Param(label=r"$MD3$", color="purple", bins=25, range=[0, 2000]),
+    "md2": Param(label=r"$MD2$", color="purple", bins=25, range=[0, 2000]),
+    "au3": Param(label=r"$AU3$", color="cyan", bins=25, range=[0, 2000]),
+    "ad3": Param(label=r"$AD3$", color="purple", bins=25, range=[0, 2000]),
+    "ml3": Param(label=r"$ML3$", color="purple", bins=25, range=[0, 2000]),
+    "ml2": Param(label=r"$ML2$", color="purple", bins=25, range=[0, 2000]),
+    "me3": Param(label=r"$ME3$", color="purple", bins=25, range=[0, 2000]),
+    "me2": Param(label=r"$ME2$", color="purple", bins=25, range=[0, 2000]),
+    "ae3": Param(label=r"$AE3$", color="purple", bins=25, range=[0, 2000]),
+    "ae2": Param(label=r"$AE2$", color="purple", bins=25, range=[0, 2000]),
+    # "m0": Param(label=r"$M0$", color="purple", bins=25, range=[0, 2000]),
+    # "m12": Param(label=r"$M12$", color="purple", bins=25, range=[0, 2000]),
 }
 
 param_dict = dict(lambda_=r"$\lambda$", mueff=r"$\mu_{eff}\ \mathrm{[GeV]}$",
                   kappa=r"$\kappa$", alambda=r"$A_{\lambda}\ \mathrm{[GeV]}$",
                   akappa=r"$A_{\kappa}\ \mathrm{[GeV]}$", tgbeta=r"$\tan\beta$")
+
+
+def save_plot(filename):
+    """Save the plot. Auto creates dirs if necessary."""
+    filename = os.path.abspath(filename)
+    plot_dir = os.path.dirname(filename)
+    if not os.path.isdir(plot_dir):
+        os.makedirs(plot_dir)
+    plt.savefig(filename)
 
 
 def generate_fig(size=[8, 6]):
@@ -55,6 +98,7 @@ def generate_fig(size=[8, 6]):
     return fig
 
 
+# legacy, remove me
 def generate_axes(fig=None):
     """
     Simple axes generator, cos I'm super lazy.
@@ -79,6 +123,16 @@ def generate_fig_axes(fig=None, size=[8, 6]):
     return fig, ax
 
 
+def set_major_tick_interval(which, interval):
+    """Sets major tick intervals on an axis, cos I never remember this snippet"""
+    if which.upper() == 'X':
+        plt.gca().xaxis.set_major_locator(MultipleLocator(interval))
+    elif which.upper() == 'Y':
+        plt.gca().yaxis.set_major_locator(MultipleLocator(interval))
+    else:
+        raise RuntimeError('Cannot use %s to specify axis' % which)
+
+
 def plot_histogram(ax=None, array=None, var=None, df=None,
                    label="", xlabel="", ylabel="N", title="",
                    errorbars=True, normed=False, **kwargs):
@@ -98,7 +152,7 @@ def plot_histogram(ax=None, array=None, var=None, df=None,
     if array is not None:
         vals = array
     elif var is not None and df is not None:
-        vals = df[var].values
+        vals = df[var].dropna().values
     else:
         raise Exception("plot_histogram needs a numpy array or variable name + dataframe")
 
@@ -339,7 +393,7 @@ def texify_str(p):
     return p
 
 
-def plot_constraints(df, title, fraction=0.9):
+def plot_constraints(df, title, num=10, failing_only=True):
     """
     This plots a bar chart of the most popular reasons
     for points failing experimental constraints, in a given DataFrame.
@@ -351,21 +405,25 @@ def plot_constraints(df, title, fraction=0.9):
     for cc in c:
         if cc:
             cons.extend(cc.split("|"))
+        else:
+            cons.extend('None')
 
     s = pd.Series(cons)
     vc = s.value_counts()
-    vc /= float(len(df[df['constraints'] != '']))
+    if failing_only:
+        vc /= float(len(df[df.constraints != ''].index))
+    else:
+        vc /= float(len(df.index))
 
     # find out how many points make up the top X%
     # last_i = next(x[0] for x in enumerate(vc_cum) if x[1] > fraction)
-    last_i = 10
 
     vc.index = [texify_str(x) for x in vc.index]
 
     # make the graph here
     fig = generate_fig([8, 6])
     ax = generate_axes(fig)
-    vc[:last_i][::-1].plot(kind="barh")  # this ensures most common at top
+    vc[:num][::-1].plot(kind="barh")  # this ensures most common at top
     ax.set_xlabel("Faction of points that fail given constraint",
                   multialignment='center', fontsize=22)
     ax.set_title(title, y=1.03)
@@ -382,7 +440,7 @@ with open('Key.dat') as hb_file:
             HB_MAP[channel] = channel_name
 
 
-def plot_constraints_HB(df, title, fraction=0.9):
+def plot_constraints_HB(df, title, num=10):
     """Plot bar chart of most popular reasons for points failing HiggsBounds.
     Note that each HiggsBounds only tells you the most sensitive experimental
     result the point failed (unlike NMSSMTools, which tells you all the reasons
@@ -403,15 +461,14 @@ def plot_constraints_HB(df, title, fraction=0.9):
 
     # find out how many points make up the top X%
     # last_i = next(x[0] for x in enumerate(vc_cum) if x[1] > fraction)
-    last_i = 10
 
     # make the graph here
     # fig, ax = plt.subplots(nrows=1, ncols=1)
     # fig.set_size_inches(6, 4)
     fig = generate_fig([8, 6])
     ax = generate_axes(fig)
-    vc[:last_i][::-1].plot(kind="barh", color='green', fontsize=14)
-    ax.set_xlabel("Faction of points that fail given constraint",
+    vc[:num][::-1].plot(kind="barh", color='green', fontsize=14)
+    ax.set_xlabel("Most sensitive channel for HB",
                   multialignment='center', fontsize=22)
     # ax.set_xlabel("Fraction of failing points that fail given HiggsBounds constraint\n"
     #               "(encompassing " + str(fraction * 100) + " % of all failing points)",
@@ -423,20 +480,17 @@ def plot_constraints_HB(df, title, fraction=0.9):
 def plot_input_params_hists(df, ylabel, title, errorbars=True, param_dict=nmssm_params, **kwargs):
     """Make histograms for each input parameter using dataframe df"""
     # Calculate sensible number of rows & columns.
-    cols = 2
-    rows = (len(param_dict.keys()) / 2) + (len(param_dict.keys()) % 2)
-    if len(param_dict.keys()) % 3 == 0:
-        cols = 3
-        rows = len(param_dict.keys()) / 3
+    cols = 3
+    rows = (len(param_dict.keys()) / cols) + (len(param_dict.keys()) % cols)
     # Setup plotting ares
     fig = plt.figure()
-    fig.suptitle(title, fontsize=30)
-    fig.set_size_inches(24, 8 * rows)
+    fig.suptitle(title)
+    fig.set_size_inches(6 * cols, 6 * rows)
     plt.subplots_adjust(wspace=0.3)
     plt.subplots_adjust(hspace=0.3)
 
     # Make a subplot for each param, then plot it
-    # Need to use Series (aka numpy array), can't use d.fplot() as x labels
+    # Need to use Series (aka numpy array), can't use df.plot() as x labels
     # do not show up except on final row.
     # And since the np array must be indexed properly, we use .values to
     # get out a raw array.
@@ -458,20 +512,17 @@ def plot_input_params_scatters(df, yvar, ylabel, yrange=None, title="", param_di
     using dataframe df"""
 
     # Calculate sensible number of rows & columns.
-    cols = 2
-    rows = (len(param_dict.keys()) / 2) + (len(param_dict.keys()) % 2)
-    if len(param_dict.keys()) % 3 == 0:
-        cols = 3
-        rows = len(param_dict.keys()) / 3
+    cols = 3
+    rows = (len(param_dict.keys()) / cols) + (len(param_dict.keys()) % cols)
     # Setup plotting ares
     fig = plt.figure()
-    fig.suptitle(title, fontsize=30)
-    fig.set_size_inches(24, 8 * rows)
+    fig.suptitle(title)
+    fig.set_size_inches(6 * cols, 6 * rows)
     plt.subplots_adjust(wspace=0.3)
     plt.subplots_adjust(hspace=0.3)
 
     # Make a subplot for each param, then plot it
-    # Need to use Series (aka numpy array), can't use d.fplot() as x labels
+    # Need to use Series (aka numpy array), can't use df.plot() as x labels
     # do not show up except on final row.
     # And since the np array must be indexed properly, we use .values to
     # get out a raw array.

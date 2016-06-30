@@ -14,7 +14,6 @@ data
 *.svg
 *.eps
 *.pyc
-*.ipynb
 *.tex
 *.toc
 *.h5
@@ -24,3 +23,5 @@ data
 *.slha
 .idea
 ScanVenv
+iPython/*.md
+*.zip
