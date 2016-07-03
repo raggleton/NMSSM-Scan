@@ -13,64 +13,65 @@ from itertools import izip
 from collections import namedtuple, OrderedDict
 import re
 from bisect import bisect
+import os
 
 
 # NMSSM params with various associated attributes, such as latex equivalents
 # for axis labels, colours, binning for histograms, etc
-Param = namedtuple('Param', ['label', 'color', 'bins', 'range'])
+Param = namedtuple('Param', ['label', 'color', 'bins', 'range', 'interval'])
 
 nmssm_params = {
-    "lambda_": Param(label=r"$\lambda$", color="orange", bins=25, range=[0, 0.7]),
-    "mueff": Param(label=r"$\mu_{eff}\ \mathrm{[GeV]}$", color="green", bins=25, range=[100, 300]),
-    "kappa": Param(label=r"$\kappa$", color="steelblue", bins=25, range=[0, 0.7]),
-    "alambda": Param(label=r"$A_{\lambda}\ \mathrm{[GeV]}$", color="salmon", bins=25, range=[-1000, 4000]),
-    "akappa": Param(label=r"$A_{\kappa}\ \mathrm{[GeV]}$", color="red", bins=25, range=[-30, 2.5]),
-    "tgbeta": Param(label=r"$\tan\beta$", color="purple", bins=25, range=[0, 50])
+    "lambda_": Param(label=r"$\lambda$", color="orange", bins=25, range=[0, 0.7], interval=0.1),
+    "mueff": Param(label=r"$\mu_{eff}\ \mathrm{[GeV]}$", color="green", bins=25, range=[100, 300], interval=50),
+    "kappa": Param(label=r"$\kappa$", color="steelblue", bins=25, range=[0, 0.7], interval=0.1),
+    "alambda": Param(label=r"$A_{\lambda}\ \mathrm{[GeV]}$", color="salmon", bins=25, range=[-1000, 4000], interval=1000),
+    "akappa": Param(label=r"$A_{\kappa}\ \mathrm{[GeV]}$", color="red", bins=25, range=[-30, 2.5], interval=10),
+    "tgbeta": Param(label=r"$\tan\beta$", color="purple", bins=25, range=[0, 50], interval=10),
 }
 
 nmssm_params_extended = {
-    "lambda_": Param(label=r"$\lambda$", color="orange", bins=25, range=[0, 0.7]),
-    "mueff": Param(label=r"$\mu_{eff}\ \mathrm{[GeV]}$", color="green", bins=25, range=[100, 300]),
-    "kappa": Param(label=r"$\kappa$", color="steelblue", bins=25, range=[0, 0.7]),
-    "alambda": Param(label=r"$A_{\lambda}\ \mathrm{[GeV]}$", color="salmon", bins=25, range=[-1000, 4000]),
-    "akappa": Param(label=r"$A_{\kappa}\ \mathrm{[GeV]}$", color="red", bins=25, range=[-30, 2.5]),
-    "tgbeta": Param(label=r"$\tan\beta$", color="purple", bins=25, range=[0, 50]),
-    "m3": Param(label=r"$M_3$", color="olive", bins=25, range=[0, 2000]),
-    "mq3": Param(label=r"$MQ3$", color="darksage", bins=25, range=[0, 2000]),
-    "mu3": Param(label=r"$MU3$", color="darksage", bins=25, range=[0, 2000]),
-    "au3": Param(label=r"$AU3$", color="cyan", bins=25, range=[0, 2000]),
-    "md3": Param(label=r"$MD3$", color="purple", bins=25, range=[0, 2000]),
-    "ad3": Param(label=r"$AD3$", color="purple", bins=25, range=[0, 2000]),
-    # "m0": Param(label=r"$M0$", color="purple", bins=25, range=[0, 2000]),
-    # "m12": Param(label=r"$M12$", color="purple", bins=25, range=[0, 2000]),
+    "lambda_": Param(label=r"$\lambda$", color="orange", bins=25, range=[0, 0.7], interval=0.1),
+    "mueff": Param(label=r"$\mu_{eff}\ \mathrm{[GeV]}$", color="green", bins=25, range=[100, 300], interval=50),
+    "kappa": Param(label=r"$\kappa$", color="steelblue", bins=25, range=[0, 0.7], interval=0.1),
+    "alambda": Param(label=r"$A_{\lambda}\ \mathrm{[GeV]}$", color="salmon", bins=25, range=[-1000, 4000], interval=1000),
+    "akappa": Param(label=r"$A_{\kappa}\ \mathrm{[GeV]}$", color="red", bins=25, range=[-30, 2.5], interval=10),
+    "tgbeta": Param(label=r"$\tan\beta$", color="purple", bins=25, range=[0, 50], interval=10),
+    "m3": Param(label=r"$M_3$", color="olive", bins=25, range=[0, 2000], interval=-1),
+    "mq3": Param(label=r"$MQ3$", color="darksage", bins=25, range=[0, 2000], interval=-1),
+    "mu3": Param(label=r"$MU3$", color="darksage", bins=25, range=[0, 2000], interval=-1),
+    "au3": Param(label=r"$AU3$", color="cyan", bins=25, range=[0, 2000], interval=-1),
+    "md3": Param(label=r"$MD3$", color="purple", bins=25, range=[0, 2000], interval=-1),
+    "ad3": Param(label=r"$AD3$", color="purple", bins=25, range=[0, 2000], interval=-1),
+    # "m0": Param(label=r"$M0$", color="purple", bins=25, range=[0, 2000], interval=-1),
+    # "m12": Param(label=r"$M12$", color="purple", bins=25, range=[0, 2000], interval=-1),
 }
 
 nmssm_params_all = {
-    "lambda_": Param(label=r"$\lambda$", color="orange", bins=25, range=[0, 0.7]),
-    "mueff": Param(label=r"$\mu_{eff}\ \mathrm{[GeV]}$", color="green", bins=25, range=[100, 300]),
-    "kappa": Param(label=r"$\kappa$", color="steelblue", bins=25, range=[0, 0.7]),
-    "alambda": Param(label=r"$A_{\lambda}\ \mathrm{[GeV]}$", color="salmon", bins=25, range=[-1000, 4000]),
-    "akappa": Param(label=r"$A_{\kappa}\ \mathrm{[GeV]}$", color="red", bins=25, range=[-30, 2.5]),
-    "tgbeta": Param(label=r"$\tan\beta$", color="purple", bins=25, range=[0, 50]),
-    "m3": Param(label=r"$M_3$", color="olive", bins=25, range=[500, 3000]),
-    "m2": Param(label=r"$M_2$", color="olive", bins=25, range=[50, 1000]),
-    "m1": Param(label=r"$M_1$", color="olive", bins=25, range=[50, 500]),
-    "mq3": Param(label=r"$MQ3$", color="darksage", bins=25, range=[0, 2000]),
-    "mq2": Param(label=r"$MQ2$", color="darksage", bins=25, range=[0, 2000]),
-    "mu3": Param(label=r"$MU3$", color="darksage", bins=25, range=[0, 2000]),
-    "mu2": Param(label=r"$MU2$", color="darksage", bins=25, range=[0, 2000]),
-    "md3": Param(label=r"$MD3$", color="purple", bins=25, range=[0, 2000]),
-    "md2": Param(label=r"$MD2$", color="purple", bins=25, range=[0, 2000]),
-    "au3": Param(label=r"$AU3$", color="cyan", bins=25, range=[0, 2000]),
-    "ad3": Param(label=r"$AD3$", color="purple", bins=25, range=[0, 2000]),
-    "ml3": Param(label=r"$ML3$", color="purple", bins=25, range=[0, 2000]),
-    "ml2": Param(label=r"$ML2$", color="purple", bins=25, range=[0, 2000]),
-    "me3": Param(label=r"$ME3$", color="purple", bins=25, range=[0, 2000]),
-    "me2": Param(label=r"$ME2$", color="purple", bins=25, range=[0, 2000]),
-    "ae3": Param(label=r"$AE3$", color="purple", bins=25, range=[0, 2000]),
-    "ae2": Param(label=r"$AE2$", color="purple", bins=25, range=[0, 2000]),
-    # "m0": Param(label=r"$M0$", color="purple", bins=25, range=[0, 2000]),
-    # "m12": Param(label=r"$M12$", color="purple", bins=25, range=[0, 2000]),
+    "lambda_": Param(label=r"$\lambda$", color="orange", bins=25, range=[0, 0.7], interval=0.1),
+    "mueff": Param(label=r"$\mu_{eff}\ \mathrm{[GeV]}$", color="green", bins=25, range=[100, 300], interval=50),
+    "kappa": Param(label=r"$\kappa$", color="steelblue", bins=25, range=[0, 0.7], interval=0.1),
+    "alambda": Param(label=r"$A_{\lambda}\ \mathrm{[GeV]}$", color="salmon", bins=25, range=[-1000, 4000], interval=1000),
+    "akappa": Param(label=r"$A_{\kappa}\ \mathrm{[GeV]}$", color="red", bins=25, range=[-30, 2.5], interval=10),
+    "tgbeta": Param(label=r"$\tan\beta$", color="purple", bins=25, range=[0, 50], interval=10),
+    "m3": Param(label=r"$M_3$", color="olive", bins=25, range=[500, 3000], interval=-1),
+    "m2": Param(label=r"$M_2$", color="olive", bins=25, range=[50, 1000], interval=-1),
+    "m1": Param(label=r"$M_1$", color="olive", bins=25, range=[50, 500], interval=-1),
+    "mq3": Param(label=r"$MQ3$", color="darksage", bins=25, range=[0, 2000], interval=-1),
+    "mq2": Param(label=r"$MQ2$", color="darksage", bins=25, range=[0, 2000], interval=-1),
+    "mu3": Param(label=r"$MU3$", color="darksage", bins=25, range=[0, 2000], interval=-1),
+    "mu2": Param(label=r"$MU2$", color="darksage", bins=25, range=[0, 2000], interval=-1),
+    "md3": Param(label=r"$MD3$", color="purple", bins=25, range=[0, 2000], interval=-1),
+    "md2": Param(label=r"$MD2$", color="purple", bins=25, range=[0, 2000], interval=-1),
+    "au3": Param(label=r"$AU3$", color="cyan", bins=25, range=[0, 2000], interval=-1),
+    "ad3": Param(label=r"$AD3$", color="purple", bins=25, range=[0, 2000], interval=-1),
+    "ml3": Param(label=r"$ML3$", color="purple", bins=25, range=[0, 2000], interval=-1),
+    "ml2": Param(label=r"$ML2$", color="purple", bins=25, range=[0, 2000], interval=-1),
+    "me3": Param(label=r"$ME3$", color="purple", bins=25, range=[0, 2000], interval=-1),
+    "me2": Param(label=r"$ME2$", color="purple", bins=25, range=[0, 2000], interval=-1),
+    "ae3": Param(label=r"$AE3$", color="purple", bins=25, range=[0, 2000], interval=-1),
+    "ae2": Param(label=r"$AE2$", color="purple", bins=25, range=[0, 2000], interval=-1),
+    # "m0": Param(label=r"$M0$", color="purple", bins=25, range=[0, 2000], interval=-1),
+    # "m12": Param(label=r"$M12$", color="purple", bins=25, range=[0, 2000], interval=-1),
 }
 
 param_dict = dict(lambda_=r"$\lambda$", mueff=r"$\mu_{eff}\ \mathrm{[GeV]}$",
@@ -526,7 +527,7 @@ def plot_input_params_scatters(df, yvar, ylabel, yrange=None, title="", param_di
     # do not show up except on final row.
     # And since the np array must be indexed properly, we use .values to
     # get out a raw array.
-    for i, (param, attr) in enumerate(param_dict.items()):
+    for i, (param, attr) in enumerate(param_dict.iteritems()):
         ax = fig.add_subplot(rows, cols, i + 1)
         plt.scatter(x=df[param].values, y=df[yvar].values, color=attr.color, **kwargs)
         ax.set_xlabel(attr.label)
@@ -535,6 +536,8 @@ def plot_input_params_scatters(df, yvar, ylabel, yrange=None, title="", param_di
         if yrange:
             ax.set_ylim(yrange)
         plt.minorticks_on()
+        if attr.interval != -1:
+            set_major_tick_interval('X', attr.interval)
 
 
 def make_highlight_region(ax, limits, axis, **kwargs):
