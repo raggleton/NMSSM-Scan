@@ -412,9 +412,9 @@ def plot_constraints(df, title, num=10, failing_only=True):
     s = pd.Series(cons)
     vc = s.value_counts()
     if failing_only:
-        vc /= float(len(df[df.constraints != ''].index))
+        vc /= 0.01 * float(len(df[df.constraints != ''].index))
     else:
-        vc /= float(len(df.index))
+        vc /= 0.01 * float(len(df.index))
 
     # find out how many points make up the top X%
     # last_i = next(x[0] for x in enumerate(vc_cum) if x[1] > fraction)
@@ -425,10 +425,10 @@ def plot_constraints(df, title, num=10, failing_only=True):
     fig = generate_fig([8, 6])
     ax = generate_axes(fig)
     vc[:num][::-1].plot(kind="barh")  # this ensures most common at top
-    ax.set_xlabel("Faction of points that fail given constraint",
+    ax.set_xlabel("% of points that fail given constraint",
                   multialignment='center', fontsize=22)
     ax.set_title(title, y=1.03)
-    return ax
+    return ax, vc
 
 # make a map of channel numbers Vs channel names from HiggsBounds
 HB_MAP = {}
