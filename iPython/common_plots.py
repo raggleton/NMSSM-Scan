@@ -549,14 +549,14 @@ def make_highlight_region(ax, limits, axis, **kwargs):
     """
     xmin, xmax = 0, 0
     ymin, ymax = 0, 0
-    if axis == 'x':
+    if axis.lower() == 'x':
         xmin, xmax = limits
         ymin, ymax = ax.get_ylim()
     else:
         ymin, ymax = limits
         xmin, xmax = ax.get_xlim()
     if not kwargs:
-        kwargs = dict(color='grey', alpha=0.2)
+        kwargs = dict(color='grey', alpha=0.5)
     patch = patches.Rectangle((xmin, ymin), xmax - xmin, ymax - ymin, **kwargs)
     ax.add_patch(patch)
     return patch
