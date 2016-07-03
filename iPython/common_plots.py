@@ -381,7 +381,8 @@ def texify_str(p):
     # p = p.replace(r">", r"\gt")
     p = p.replace(r"~~~", r"\ ")
     p = p.replace(r"~~", r"\ ")
-    p = p.replace(r"to", r"to ")
+    # p = p.replace(r"too", r"too ")
+    # p = p.replace(r"to", r"to ")
     p = p.replace(r"chi2", r"}\chi^2\mathrm{")
     p = p.replace(r"Delta", r"}\Delta\mathrm{")
     p = p.replace(r"Msusy", r"}M_{SUSY}\mathrm{")
@@ -389,6 +390,7 @@ def texify_str(p):
     p = p.replace(r"tautau", r"}\tau\tau\mathrm{")
     p = p.replace(r" tau nu", r"}\tau \nu\mathrm{")
     p = p.replace(r"mu+ mu-", r"}\mu^+\mu^-\mathrm{")
+    p = p.replace(r"mu +mu-", r"}\mu^+\mu^-\mathrm{")
     # p = p.replace(r" nu", r"\nu")
     p = p.replace(r" ", r"\ ")
     return p
