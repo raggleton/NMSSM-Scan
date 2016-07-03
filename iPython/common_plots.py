@@ -478,10 +478,9 @@ def plot_constraints_HB(df, title, num=10):
     return ax
 
 
-def plot_input_params_hists(df, ylabel, title, errorbars=True, param_dict=nmssm_params, **kwargs):
+def plot_input_params_hists(df, ylabel, title, errorbars=True, param_dict=nmssm_params, cols=3, **kwargs):
     """Make histograms for each input parameter using dataframe df"""
     # Calculate sensible number of rows & columns.
-    cols = 3
     rows = (len(param_dict.keys()) / cols) + (len(param_dict.keys()) % cols)
     # Setup plotting ares
     fig = plt.figure()
@@ -508,12 +507,11 @@ def plot_input_params_hists(df, ylabel, title, errorbars=True, param_dict=nmssm_
         plt.minorticks_on()
 
 
-def plot_input_params_scatters(df, yvar, ylabel, yrange=None, title="", param_dict=nmssm_params, **kwargs):
+def plot_input_params_scatters(df, yvar, ylabel, yrange=None, title="", param_dict=nmssm_params, cols=3, **kwargs):
     """Make scatter plots for each input parameter against variable var,
     using dataframe df"""
 
     # Calculate sensible number of rows & columns.
-    cols = 3
     rows = (len(param_dict.keys()) / cols) + (len(param_dict.keys()) % cols)
     # Setup plotting ares
     fig = plt.figure()
