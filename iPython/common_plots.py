@@ -88,7 +88,7 @@ def save_plot(filename):
     plt.savefig(filename)
 
 
-def generate_fig(size=[8, 6]):
+def generate_fig(size=[6, 6]):
     """
     Simple figure generator, cos I'm really lazy.
 
