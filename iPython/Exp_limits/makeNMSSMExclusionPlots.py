@@ -110,6 +110,9 @@ def make_NMSSM_plot(csv_dir):
                                    title=title, text=common_text, text_coords=[0.56, 0.05],
                                    leg_loc='upper right')
 
+        if plt.ylim()[1] > plotr.XSEC_SM:
+            plotr.draw_xsec_sm()
+
         for ofmt in ['eps', 'png', 'pdf']:
             plt.savefig(os.path.join('NMSSM_Plots', csv_dir, fvar + '.' + ofmt))
         plt.clf()
