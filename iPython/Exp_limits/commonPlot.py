@@ -6,7 +6,7 @@ import matplotlib as mpl
 
 
 pd.set_option('precision',7)
-mpl.rcParams['figure.figsize'] = (9.0, 5.0)  # default size of plots
+mpl.rcParams['figure.figsize'] = (9.0, 6.0)  # default size of plots
 mpl.rcParams['font.size'] = 16
 mpl.rcParams['axes.labelsize'] = 16
 
@@ -115,7 +115,7 @@ def plot_scan_exclusions(scan_dicts, experimental_dicts, y_var, x_label, y_label
             plt.plot(df[mass_key].values, df[colname].values,
                      entry.get('shape', 'o'),
                      label=entry['label'],
-                     color=entry['color'], alpha=0.7)
+                     color=entry['color'], alpha=0.8)
 
     if experimental_dicts:
         for entry in experimental_dicts:
