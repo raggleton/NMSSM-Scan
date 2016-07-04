@@ -25,9 +25,9 @@ def make_NMSSM_plot(csv_dir):
     df_pass_NT_fail_HS_pass_HB = pd.read_csv(os.path.join('NMSSM_Plots', csv_dir, 'df_pass_NT_fail_HS_pass_HB.csv'))
 
     scan_dicts = [
-        {'df': df_fail_NT_pass_HS_pass_HB, 'label': "Fail NT, Pass HS", 'color': 'dodgerblue', 'shape': '^'},
+        {'df': df_fail_NT_pass_HS_pass_HB, 'label': "HiggsSignals only", 'color': 'dodgerblue', 'shape': '^'},
         {'df': df_pass_NT_fail_HS_pass_HB, 'label': "Pass NT, Fail HS", 'color': 'green', 'shape': '^'},
-        {'df': df_pass_NT_pass_HS_pass_HB, 'label': "Pass NT, Pass HS", 'color': 'orange', 'shape': '^'},
+        {'df': df_pass_NT_pass_HS_pass_HB, 'label': "+ NMSSMTools", 'color': 'darkorange', 'shape': '^'},
     ]
 
     # Get experimental limits
@@ -94,7 +94,7 @@ def make_NMSSM_plot(csv_dir):
         # h_i = h_2
         new_label_app = r', $h_i\ =\  h_2$'
         for d in scan_dicts:
-            d['shape'] = 'v'
+            d['shape'] = 's'
             d['label'] = d['label'].replace(label_app, new_label_app)
         plotr.plot_scan_exclusions(scan_dicts, None,
                                    y_var='xsec_8_ggf_h2_2a1_%s' % fs,
