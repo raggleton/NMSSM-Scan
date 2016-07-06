@@ -1,4 +1,4 @@
-name: ra12451_pandas
+name: ra12451_pandas3
 dependencies:
 - backports=1.0=py27_0
 - cairo=1.12.18=6
@@ -23,7 +23,7 @@ dependencies:
 - numexpr=2.5.2=np111py27_0
 - numpy=1.11.0=py27_0
 - openblas=0.2.14=4
-- openssl=1.0.2g=0
+- openssl=1.0.2h=0
 - pandas=0.18.0=np111py27_0
 - path.py=8.2.1=py27_0
 - pep8=1.7.0=py27_0
@@ -56,6 +56,7 @@ dependencies:
 - zlib=1.2.8=0
 - pip:
   - backports.shutil-get-terminal-size==1.0.0
+  - htcondenser==0.2.0
   - ipython-genutils==0.1.0
   - tables==3.2.2
 

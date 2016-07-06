@@ -1,6 +1,7 @@
 # This file may be used to create an environment using:
 # $ conda create --name <env> --file <this file>
 # platform: linux-64
+libgfortran=3.0=0
 backports=1.0=py27_0
 cairo=1.12.18=6
 curl=7.45.0=0
@@ -15,7 +16,6 @@ hdf5=1.8.16=0
 ipython=4.2.0=py27_0
 ipython_genutils=0.1.0=py27_0
 libgcc=5.2.0=0
-libgfortran=3.0=0
 libpng=1.6.17=0
 libxml2=2.9.2=0
 matplotlib=1.5.1=np111py27_0
@@ -24,7 +24,7 @@ mkl=11.3.1=0
 numexpr=2.5.2=np111py27_0
 numpy=1.11.0=py27_0
 openblas=0.2.14=4
-openssl=1.0.2g=0
+openssl=1.0.2h=0
 pandas=0.18.0=np111py27_0
 path.py=8.2.1=py27_0
 pep8=1.7.0=py27_0
