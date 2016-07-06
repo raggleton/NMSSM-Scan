@@ -222,7 +222,8 @@ def get_slha_dict(filename, fields):
             new_field = NMSSMToolsFields.Field(name=f.name,
                                                block=f.block,
                                                type=f.type,
-                                               regex=re.compile(f.regex))
+                                               regex=re.compile(f.regex),
+                                               comment=f.regex.pattern.split('#')[1].replace('\\', ''))
             scan_dict[f.block].append(new_field)
 
     results = defaultdict(str)
@@ -247,25 +248,26 @@ def get_slha_dict(filename, fields):
                     line = f.next()
                     continue
 
-                if line.upper().startswith('BLOCK'):
-                    block = p_block.search(line).group(1).strip()
-                    # block = line.split('#')[0].replace('BLOCK ', '').replace("Block ", '').strip().split(' ')[0]
+                if is_block_line(line):
+                    # block = p_block.search(line).group(1).strip()
+                    block = line.split('#')[0].replace('BLOCK ', '').replace("Block ", '').strip().split(' ')[0]
                     # log.debug(block)
 
                     line = f.next()
                     if block in scan_dict.keys():
                         # Now loop over contents of this block and try matching
                         # against the regexes
-                        while 'BLOCK' not in line.upper():
+                        while not is_block_line(line):
                             # tmp_list = scan_dict[block]
                             found_field = None
                             for ind, field in enumerate(scan_dict[block]):
-                                result = field.regex.search(line)
-                                if result:
-                                    results[field.name] = field.type(result.group(1))
-                                    found_field = ind
-                                    log.debug('%s: %s', field.name, result.group(1))
-                                    break
+                                if field.comment in line:
+                                    result = field.regex.search(line)
+                                    if result:
+                                        results[field.name] = field.type(result.group(1))
+                                        found_field = ind
+                                        log.debug('%s: %s', field.name, result.group(1))
+                                        break
                             if found_field:
                                 del scan_dict[block][found_field]
                             line = f.next()
@@ -299,7 +301,6 @@ def get_nmssmtools_constraints(filename):
             line = line.strip()
             if line.startswith('#'):
                 continue
-
             if line.upper().startswith('BLOCK SPINFO'):
                 line = f.next().strip()
                 constraints = []
@@ -354,6 +355,10 @@ def check_create_dir(directory):
                                "exists as a file object" % directory)
         os.makedirs(directory)
         log.debug("Making dir %s" % directory)
+
+
+def is_block_line(line):
+    return line.startswith('BLOCK') or line.startswith('Block')
 
 
 if __name__ == "__main__":

@@ -3,8 +3,6 @@
 
 from collections import namedtuple
 import re
-
-
-Field = namedtuple('Field', ['block', 'regex', 'name', 'type'])
+from NMSSMToolsFields import Field
 
 superiso_fields = []
