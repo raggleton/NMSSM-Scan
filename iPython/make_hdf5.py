@@ -170,7 +170,9 @@ def make_dataframes(folders, file_stem):
     # df_orig = load_df(folders, "output_ma1Lt11")
     # df_orig = load_df(folders, "output_good")
 
-    # Drop columns tp save space
+    print len(df_orig.index), 'entries in dataframe'
+
+    # Drop columns to save space
     drop_cols = [
         'h1u', 'h1d', 'h1b', 'h1V', 'h1G', 'h1A',
         'h2u', 'h2d', 'h2b', 'h2V', 'h2G', 'h2A',
@@ -261,7 +263,7 @@ def make_dataframes(folders, file_stem):
     n_orig = len(df_orig.index)
 
     def percent_str(numerator, denominator):
-        return "%.3f %% +- %.3f %%" % (100*numerator/float(denominator), 100*math.sqrt(numerator)/float(denominator))
+        return "%.3f %% " % (100*numerator/float(denominator))
 
     print "Running over", n_orig, "points"
     if isinstance(df_pass_all, pd.DataFrame):
