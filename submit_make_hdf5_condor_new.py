@@ -62,7 +62,7 @@ def submit(job_dirs, storage_dir, hdfs_dir):
                                  common_input_files=common_input_files,
                                  transfer_hdfs_input=False,
                                  hdfs_store=csv_dir,
-                                 memory='8GB', disk='8GB')
+                                 memory='6GB', disk='6GB')
 
         maker_dag = ht.DAGMan(filename=os.path.join(storage_dir, jdir, 'makeHDF5.dag'),
                               status_file=os.path.join(storage_dir, jdir, 'makeHDF5.status'))
