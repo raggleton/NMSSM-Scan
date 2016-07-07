@@ -303,3 +303,5 @@ if __name__ == "__main__":
             store.put('full12loop_good_posMuMagMom_planckUpperOnly_h1SM', df_h1SM, format='table', data_columns=True)
         if isinstance(df_h2SM, pd.DataFrame):
             store.put('full12loop_good_posMuMagMom_planckUpperOnly_h2SM', df_h2SM, format='table', data_columns=True)
+
+    sys.exit(0)
