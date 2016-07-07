@@ -77,7 +77,7 @@ def store_channel_xsec(df):
     # process = []
 
     # low mass channels, gg - X -> 2Y -> 4F/2F+2F'
-    prod = {'ggf': 'ggrc2', 'vbf': 'vvrc2'}#, 'zh':'vvrc2', 'wh':'vvrc2'}
+    prod = {'ggf': 'ggrc2'} #, 'vbf': 'vvrc2'}#, 'zh':'vvrc2', 'wh':'vvrc2'}
     # prod = {'ggf': 'ggrc2'}
     X = ["h1", "h2"]
     Y = ["a1", "h1"]
