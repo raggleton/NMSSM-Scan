@@ -16,7 +16,7 @@ doHiggsSignals=1
 doSushi=0
 
 # Versions
-NTVER="4.9.1"
+NTVER="4.9.3"
 HBVER="4.3.1"
 HSVER="1.4.0"
 
