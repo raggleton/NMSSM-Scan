@@ -2,7 +2,7 @@
     "_comment:" : ["Minimal param range scan using Daniele's as basis."],
     "LAMBDA": {
         "min": 0,
-        "max": 0.15
+        "max": 0.3
     },
     "KAPPA": {
         "min": 0,
@@ -10,15 +10,15 @@
     },
     "TANB": {
         "min": 18,
-        "max": 20.5
+        "max": 40
     },
     "MUEFF": {
         "min": 85,
-        "max": 135
+        "max": 220
     },
     "ALAMBDA": {
-        "min": 1000,
-        "max": 3500
+        "min": 800,
+        "max": 4000
     },
     "AKAPPA": {
         "min": -4,
