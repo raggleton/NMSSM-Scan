@@ -23,22 +23,27 @@ log = logging.getLogger(__name__)
 
 
 # Number of parallel jobs to submit
-NUM_JOBS = 1000
+NUM_JOBS = 500
 
 # Number of points to scan per job
 NUM_POINTS = 5000
 
 # Shorthand description for this batch of jobs
-JOB_DESC = "MICRO_SCAN_NTv491_HBv431_HSv140_all_smallAlambdaMuEff_largeTanBeta"
+# JOB_DESC = "MICRO_SCAN_NTv491_HBv431_HSv140_all_smallAlambdaMuEff_largeTanBeta"
+# JOB_DESC = "MICRO_SCAN_NTv493_HBv431_HSv140_largeRange_DMass2_fixAssignMass"
+JOB_DESC = "MICRO_SCAN_NTv493_HBv431_HSv140_smallMa1_DMass2_fixAssignMass"
+# JOB_DESC = "MICRO_SCAN_NTv491_HBv431_HSv140_largeRange_DMass2_largeTanBeta"
 # JOB_DESC = "test"
 
 # Input card to use as template for NMSSMTools
-# CARD = "Proto_files/inp_PROTO.dat"
-CARD = "Proto_files/inp_PROTO_all.dat"
+CARD = "Proto_files/inp_PROTO.dat"
+# CARD = "Proto_files/inp_PROTO_all.dat"
 
 # JSON file with range of params to scan over
+PARAM_RANGE = "paramRange_smallMa1.json"
 # PARAM_RANGE = "paramRange_largeRange.json"
-PARAM_RANGE = "paramRange_all.json"
+# PARAM_RANGE = "paramRange_highTanBeta.json"
+# PARAM_RANGE = "paramRange_all.json"
 
 # Output directory for results - will create a subdiretory for this set of jobs
 ODIR = "/hdfs/user/%s/NMSSM-Scan/" % (os.environ['LOGNAME'])
