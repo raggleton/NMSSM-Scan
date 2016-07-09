@@ -1,0 +1,51 @@
+{
+    "_comment:" : ["Larger param range scan including M3/MQ3/etc at high tan beta"],
+    "LAMBDA": {
+        "min": 0,
+        "max": 0.6
+    },
+    "KAPPA": {
+        "min": 0,
+        "max": 0.6
+    },
+    "TANB": {
+        "min": 18,
+        "max": 50
+    },
+    "MUEFF": {
+        "min": 150,
+        "max": 250
+    },
+    "ALAMBDA": {
+        "min": 100,
+        "max": 4000
+    },
+    "AKAPPA": {
+        "min": -20,
+        "max": 1
+    },
+    "M3": {
+        "min": 250,
+        "max": 2500
+    },
+    "MQ3": {
+        "min": 800,
+        "max": 2500
+    },
+    "MU3": {
+        "min": 500,
+        "max": 2500
+    },
+    "MD3": {
+        "min": 500,
+        "max": 2500
+    },
+    "AU3": {
+        "min": 1500,
+        "max": 5000
+    },
+    "AD3": {
+        "min": 500,
+        "max": 2500
+    }
+}
