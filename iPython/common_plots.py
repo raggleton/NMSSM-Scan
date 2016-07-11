@@ -215,6 +215,63 @@ def plot_scatter(ax=None, xarray=None, yarray=None, xvar=None, yvar=None, df=Non
     return ax, paths
 
 
+def plot_histogram2d(ax=None,
+                     df=None, xvar=None, yvar=None,
+                     xarray=None, yarray=None,
+                     bins=[25, 25], range=None,
+                     xlabel=None, ylabel=None, zlabel=None,
+                     norm_axis=None, **kwargs):
+    """Make 2D histogram, with optional axis normalisation"""
+    if ax is None:
+        fig, ax = generate_fig_axes()
+
+    if (xarray is not None and yarray is not None
+        and df is None and xvar is None and yvar is None):
+        vals_x, vals_y = xarray, yarray
+    elif (xvar is not None and yvar is not None and df is not None
+          and xarray is None and yarray is None):
+        vals_x, vals_y = df[xvar].values, df[yvar].values
+    else:
+        raise Exception("plot_hist2d needs numpy arrays or variable names + dataframe")
+
+    arr, xedges, yedges = np.histogram2d(vals_x, vals_y, bins=bins, range=range)
+
+
+    # normalise bins along one axis,
+    # so that the coloring highlights the "hot spot"
+    # in each bin of that axis.
+    if norm_axis not in [None, 'X', 'x', 'y', 'Y']:
+        raise RuntimeError("norm_axis must be one of None, 'x', 'y' ")
+    if norm_axis:
+        if norm_axis.lower() == 'y':
+            arr = arr.T
+        maxes = []
+        for ind, xbin in enumerate(arr):
+            if xbin.sum() > 0:
+                arr[ind] = xbin / xbin.sum()
+            maxes.append(arr[ind].max())
+        maxes = np.array(maxes)
+        the_max = maxes.max()
+        ratios = the_max / maxes
+        # now set so the maximum in each bin is the same
+        for ind, xbin in enumerate(arr):
+            if xbin.max() > 0:
+                arr[ind] = xbin * ratios[ind]
+        if norm_axis.lower() == 'y':
+            arr = arr.T
+
+    qm = ax.pcolormesh(xedges, yedges, arr.T, edgecolors='None', **kwargs)
+
+    xlabel = xlabel or ''
+    ylabel = ylabel or ''
+    zlabel = zlabel or ''
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    plt.gcf().colorbar(qm, label=zlabel)
+
+    return ax, qm, arr
+
+
 def add_median_line(df=None, var=None, array=None, **kwargs):
     """Add line showing median. Takes in numpy array, or Series val from DataFrame"""
     if array is not None:
@@ -530,6 +587,71 @@ def plot_input_params_scatters(df, yvar, ylabel, yrange=None, title="", param_di
     for i, (param, attr) in enumerate(param_dict.iteritems()):
         ax = fig.add_subplot(rows, cols, i + 1)
         plt.scatter(x=df[param].values, y=df[yvar].values, color=attr.color, **kwargs)
+        ax.set_xlabel(attr.label)
+        # ax.set_xlim(attr.range)
+        ax.set_ylabel(ylabel)
+        if yrange:
+            ax.set_ylim(yrange)
+        plt.minorticks_on()
+        if attr.interval != -1:
+            set_major_tick_interval('X', attr.interval)
+
+
+def plot_input_params_hexbin(df, yvar, ylabel, yrange=None, title="", param_dict=nmssm_params, cols=3, **kwargs):
+    """Make scatter plots for each input parameter against variable var,
+    using dataframe df"""
+
+    # Calculate sensible number of rows & columns.
+    rows = (len(param_dict.keys()) / cols) + (len(param_dict.keys()) % cols)
+    # Setup plotting ares
+    fig = plt.figure()
+    fig.suptitle(title)
+    fig.set_size_inches(6 * cols, 6 * rows)
+    plt.subplots_adjust(wspace=0.3)
+    plt.subplots_adjust(hspace=0.3)
+
+    # Make a subplot for each param, then plot it
+    # Need to use Series (aka numpy array), can't use df.plot() as x labels
+    # do not show up except on final row.
+    # And since the np array must be indexed properly, we use .values to
+    # get out a raw array.
+    for i, (param, attr) in enumerate(param_dict.iteritems()):
+        ax = fig.add_subplot(rows, cols, i + 1)
+        # plt.scatter(x=df[param].values, y=df[yvar].values, color=attr.color, **kwargs)
+        plt.hexbin(x=df[param].values, y=df[yvar].values, **kwargs)
+        ax.set_xlabel(attr.label)
+        # ax.set_xlim(attr.range)
+        ax.set_ylabel(ylabel)
+        if yrange:
+            ax.set_ylim(yrange)
+        plt.minorticks_on()
+        if attr.interval != -1:
+            set_major_tick_interval('X', attr.interval)
+
+
+def plot_input_params_hist2d(df, yvar, ylabel, yrange=None, title="", param_dict=nmssm_params, cols=3, **kwargs):
+    """Make 2d histogram plots for each input parameter against variable var,
+    using dataframe df"""
+
+    # Calculate sensible number of rows & columns.
+    rows = (len(param_dict.keys()) / cols) + (len(param_dict.keys()) % cols)
+    # Setup plotting ares
+    fig = plt.figure()
+    fig.suptitle(title)
+    fig.set_size_inches(6 * cols, 6 * rows)
+    plt.subplots_adjust(wspace=0.3)
+    plt.subplots_adjust(hspace=0.3)
+
+    # Make a subplot for each param, then plot it
+    # Need to use Series (aka numpy array), can't use df.plot() as x labels
+    # do not show up except on final row.
+    # And since the np array must be indexed properly, we use .values to
+    # get out a raw array.
+    for i, (param, attr) in enumerate(param_dict.iteritems()):
+        ax = fig.add_subplot(rows, cols, i + 1)
+
+        plot_histogram2d(ax=ax, df=df, xvar=param, yvar=yvar, **kwargs)
+
         ax.set_xlabel(attr.label)
         # ax.set_xlim(attr.range)
         ax.set_ylabel(ylabel)
