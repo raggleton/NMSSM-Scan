@@ -116,7 +116,7 @@ def plot_scan_exclusions(scan_dicts, experimental_dicts, y_var, x_label, y_label
             colname = entry.get('yvar', y_var)
             plt.plot(df[mass_key].values, df[colname].values,
                      entry.get('shape', 'o'),
-                     label=entry['label'],
+                     label=entry['label'], mew=0,
                      color=entry['color'], alpha=0.8)
 
     if experimental_dicts:
