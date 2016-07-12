@@ -121,20 +121,24 @@ def subset_pass_constraints(df):
     and see what's left over.
     """
     # All the constraints strings to test against. Must follow regex.
-    accept_constraints = [
-        r"Muon magn\. mom\. more than 2 sigma away",
-        r"Relic density too small \(Planck\)",
-        r"b \-> c tau nu more than 2 sigma away \(as SM\)",
-        r"chi2\(H\->ZZ\) > 6\.18",
-        r"chi2\(H\->bb\) > 6\.18",
-        r"chi2\(H\->gg\) > 6\.18"
-    ]
+    # Keys: user-firendly constraint name, used for pass/fail bool column
+    # Values: strings to test against
+    accept_constraints = {
+        "pass_del_a_mu": r"Muon magn\. mom\. more than 2 sigma away",
+        "pass_relic": r"Relic density too small \(Planck\)",
+        "pass_bctaunu": r"b \-> c tau nu more than 2 sigma away \(as SM\)",
+        "pass_chi2zz": r"chi2\(H\->ZZ\) > 6\.18",
+        "pass_chi2bb": r"chi2\(H\->bb\) > 6\.18",
+        "pass_chi2gg": r"chi2\(H\->gg\) > 6\.18"
+    }
+    for k, v in accept_constraints.iteritems():
+        df[k] = ~df.constraints.str.contains(v)
 
     # We want a bitmask, so for each entry we simply want a True or False
     # First make a copy of the constraints Series
     con_series = df.constraints.copy(deep=True)
     # Now for each entry we remove the constraints we don't mind failing
-    for c in accept_constraints:
+    for c in accept_constraints.values():
         con_series = con_series.str.replace(c, "")
     # con_series = con_series.str.replace(r"^\|+$", "")  # Any leftover separators
     con_series = con_series.apply(lambda x: x.strip('|'))
