@@ -100,14 +100,14 @@ def store_channel_xsec(df):
                 if name not in process_scaled:
                     # store scaled total XS * BR
                     process_scaled.append(name)
-                    common_part = df["Br"+x+y+y] * df["Br"+y+f1] * df["Br"+y+f2]
+                    common_part = df[x+coupling] * df["Br"+x+y+y] * df["Br"+y+f1] * df["Br"+y+f2]
                     df[name] = common_part * factor
                     # store actual XS * BR
                     name = name.replace("_scaled", "_13")
                     # process.append(name)
-                    df[name] = df["xsec_"+production+"13_"+x] * common_part * factor
+                    df[name] = df["xsec_"+production+"13_"+x] * common_part * factor / df[x+coupling]
                     name = name.replace("13", "8")
-                    df[name] = df["xsec_"+production+"8_"+x] * common_part * factor
+                    df[name] = df["xsec_"+production+"8_"+x] * common_part * factor / df[x+coupling]
 
     # More for middle mass channels, ZA1, etc
     # prod = {'ggf': 'ggrc2', 'vbf': 'vvrc2', 'zh':'vvrc2', 'wh':'vvrc2'}
