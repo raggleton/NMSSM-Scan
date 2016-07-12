@@ -549,6 +549,39 @@ def plot_input_params_hists(df, ylabel, title, errorbars=True, param_dict=nmssm_
         ax.set_ylabel(ylabel)
         plt.minorticks_on()
 
+
+def plot_input_params_hists_multiple(dfs, ylabel, title, errorbars=True, param_dict=nmssm_params, cols=3, kwargs=None):
+    """Make histograms for each input parameter using dataframe df"""
+    # Calculate sensible number of rows & columns.
+    rows = (len(param_dict.keys()) / cols) + (len(param_dict.keys()) % cols)
+    # Setup plotting ares
+    fig = plt.figure()
+    fig.suptitle(title)
+    fig.set_size_inches(6 * cols, 6 * rows)
+    plt.subplots_adjust(wspace=0.3)
+    plt.subplots_adjust(hspace=0.3)
+
+    # Make a subplot for each param, then plot it
+    # Need to use Series (aka numpy array), can't use df.plot() as x labels
+    # do not show up except on final row.
+    # And since the np array must be indexed properly, we use .values to
+    # get out a raw array.
+    for i, (param, attr) in enumerate(param_dict.items()):
+        ax = fig.add_subplot(rows, cols, i + 1)
+        for df, kw in zip(dfs, kwargs):
+            if 'color' not in kw:
+                kw['color'] = attr.color
+            if 'range' not in kw:
+                kw['range'] = attr.range
+            vals = df.query('%f<%s<%f' % (attr.range[0], param, attr.range[1]))[param].values
+            if len(vals) > 0:
+                y, bins, patches = ax.hist(vals, **kw)
+
+        # # put error bars on
+        # bincenters = 0.5 * (bins[1:] + bins[:-1])
+        # menStd = np.sqrt(y)
+        # width = 0.0
+        # plt.bar(bincenters, y, width=width, yerr=menStd, alpha=0, ecolor="black", error_kw=dict(elinewidth=2, capthick=2))
         ax.set_xlabel(attr.label)
         ax.set_ylabel(ylabel)
         plt.minorticks_on()
@@ -575,6 +608,42 @@ def plot_input_params_scatters(df, yvar, ylabel, yrange=None, title="", param_di
     for i, (param, attr) in enumerate(param_dict.iteritems()):
         ax = fig.add_subplot(rows, cols, i + 1)
         plt.scatter(x=df[param].values, y=df[yvar].values, color=attr.color, **kwargs)
+        ax.set_xlabel(attr.label)
+        # ax.set_xlim(attr.range)
+        ax.set_ylabel(ylabel)
+        if yrange:
+            ax.set_ylim(yrange)
+        plt.minorticks_on()
+        if attr.interval != -1:
+            set_major_tick_interval('X', attr.interval)
+
+
+def plot_input_params_scatters_multiple(dfs, yvar, ylabel, yrange=None, title="",
+                                        param_dict=nmssm_params, cols=3, kwargs=None):
+    """Make scatter plots for each input parameter against variable var,
+    using dataframe df"""
+
+    # Calculate sensible number of rows & columns.
+    rows = (len(param_dict.keys()) / cols) + (len(param_dict.keys()) % cols)
+    # Setup plotting ares
+    fig = plt.figure()
+    fig.suptitle(title)
+    fig.set_size_inches(6 * cols, 6 * rows)
+    plt.subplots_adjust(wspace=0.3)
+    plt.subplots_adjust(hspace=0.3)
+
+    # Make a subplot for each param, then plot it
+    # Need to use Series (aka numpy array), can't use df.plot() as x labels
+    # do not show up except on final row.
+    # And since the np array must be indexed properly, we use .values to
+    # get out a raw array.
+    for i, (param, attr) in enumerate(param_dict.iteritems()):
+        ax = fig.add_subplot(rows, cols, i + 1)
+        for df, kw in zip(dfs, kwargs):
+            if kw and 'color' not in kw:
+                kw['color'] = attr.color
+            plt.scatter(x=df[param].values, y=df[yvar].values, **kw)
+
         ax.set_xlabel(attr.label)
         # ax.set_xlim(attr.range)
         ax.set_ylabel(ylabel)
