@@ -22,37 +22,27 @@ Param = namedtuple('Param', ['label', 'color', 'bins', 'range', 'interval'])
 
 nmssm_params = {
     "lambda_": Param(label=r"$\lambda$", color="orange", bins=25, range=[0, 0.7], interval=0.1),
-    "mueff": Param(label=r"$\mu_{eff}\ \mathrm{[GeV]}$", color="green", bins=25, range=[100, 300], interval=50),
+    "mueff": Param(label=r"$\mu_{eff}\ \mathrm{[GeV]}$", color="green", bins=25, range=[100, 300], interval=25),
     "kappa": Param(label=r"$\kappa$", color="steelblue", bins=25, range=[0, 0.7], interval=0.1),
     "alambda": Param(label=r"$A_{\lambda}\ \mathrm{[GeV]}$", color="salmon", bins=25, range=[-1000, 4000], interval=1000),
-    "akappa": Param(label=r"$A_{\kappa}\ \mathrm{[GeV]}$", color="red", bins=25, range=[-30, 2.5], interval=10),
+    "akappa": Param(label=r"$A_{\kappa}\ \mathrm{[GeV]}$", color="red", bins=25, range=[-15, 2.5], interval=10),
     "tgbeta": Param(label=r"$\tan\beta$", color="purple", bins=25, range=[0, 50], interval=10),
 }
 
-nmssm_params_extended = {
-    "lambda_": Param(label=r"$\lambda$", color="orange", bins=25, range=[0, 0.7], interval=0.1),
-    "mueff": Param(label=r"$\mu_{eff}\ \mathrm{[GeV]}$", color="green", bins=25, range=[100, 300], interval=50),
-    "kappa": Param(label=r"$\kappa$", color="steelblue", bins=25, range=[0, 0.7], interval=0.1),
-    "alambda": Param(label=r"$A_{\lambda}\ \mathrm{[GeV]}$", color="salmon", bins=25, range=[-1000, 4000], interval=1000),
-    "akappa": Param(label=r"$A_{\kappa}\ \mathrm{[GeV]}$", color="red", bins=25, range=[-30, 2.5], interval=10),
-    "tgbeta": Param(label=r"$\tan\beta$", color="purple", bins=25, range=[0, 50], interval=10),
-    "m3": Param(label=r"$M_3$", color="olive", bins=25, range=[0, 2000], interval=-1),
-    "mq3": Param(label=r"$MQ3$", color="darksage", bins=25, range=[0, 2000], interval=-1),
-    "mu3": Param(label=r"$MU3$", color="darksage", bins=25, range=[0, 2000], interval=-1),
-    "au3": Param(label=r"$AU3$", color="cyan", bins=25, range=[0, 2000], interval=-1),
-    "md3": Param(label=r"$MD3$", color="purple", bins=25, range=[0, 2000], interval=-1),
-    "ad3": Param(label=r"$AD3$", color="purple", bins=25, range=[0, 2000], interval=-1),
+nmssm_params_extended = nmssm_params.copy()
+nmssm_params_extended.update({
+    "m3": Param(label=r"$M_3\ \mathrm{[GeV]}$", color="olive", bins=25, range=[0, 2000], interval=500),
+    "mq3": Param(label=r"$MQ3\ \mathrm{[GeV]}$", color="darksage", bins=25, range=[0, 2000], interval=500),
+    "mu3": Param(label=r"$MU3\ \mathrm{[GeV]}$", color="darksage", bins=25, range=[0, 2000], interval=500),
+    "au3": Param(label=r"$AU3\ \mathrm{[GeV]}$", color="cyan", bins=25, range=[0, 2000], interval=1000),
+    "md3": Param(label=r"$MD3\ \mathrm{[GeV]}$", color="purple", bins=25, range=[0, 2000], interval=500),
+    "ad3": Param(label=r"$AD3\ \mathrm{[GeV]}$", color="purple", bins=25, range=[0, 2000], interval=500),
     # "m0": Param(label=r"$M0$", color="purple", bins=25, range=[0, 2000], interval=-1),
     # "m12": Param(label=r"$M12$", color="purple", bins=25, range=[0, 2000], interval=-1),
-}
+})
 
-nmssm_params_all = {
-    "lambda_": Param(label=r"$\lambda$", color="orange", bins=25, range=[0, 0.7], interval=0.1),
-    "mueff": Param(label=r"$\mu_{eff}\ \mathrm{[GeV]}$", color="green", bins=25, range=[100, 300], interval=50),
-    "kappa": Param(label=r"$\kappa$", color="steelblue", bins=25, range=[0, 0.7], interval=0.1),
-    "alambda": Param(label=r"$A_{\lambda}\ \mathrm{[GeV]}$", color="salmon", bins=25, range=[-1000, 4000], interval=1000),
-    "akappa": Param(label=r"$A_{\kappa}\ \mathrm{[GeV]}$", color="red", bins=25, range=[-30, 2.5], interval=10),
-    "tgbeta": Param(label=r"$\tan\beta$", color="purple", bins=25, range=[0, 50], interval=10),
+nmssm_params_all = nmssm_params.copy()
+nmssm_params_all.update({
     "m3": Param(label=r"$M_3$", color="olive", bins=25, range=[500, 3000], interval=-1),
     "m2": Param(label=r"$M_2$", color="olive", bins=25, range=[50, 1000], interval=-1),
     "m1": Param(label=r"$M_1$", color="olive", bins=25, range=[50, 500], interval=-1),
@@ -72,7 +62,7 @@ nmssm_params_all = {
     "ae2": Param(label=r"$AE2$", color="purple", bins=25, range=[0, 2000], interval=-1),
     # "m0": Param(label=r"$M0$", color="purple", bins=25, range=[0, 2000], interval=-1),
     # "m12": Param(label=r"$M12$", color="purple", bins=25, range=[0, 2000], interval=-1),
-}
+})
 
 param_dict = dict(lambda_=r"$\lambda$", mueff=r"$\mu_{eff}\ \mathrm{[GeV]}$",
                   kappa=r"$\kappa$", alambda=r"$A_{\lambda}\ \mathrm{[GeV]}$",
