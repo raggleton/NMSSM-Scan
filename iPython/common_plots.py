@@ -224,7 +224,7 @@ def plot_histogram2d(ax=None,
     else:
         raise Exception("plot_hist2d needs numpy arrays or variable names + dataframe")
 
-    arr, xedges, yedges = np.histogram2d(vals_x, vals_y, bins=bins, range=range)
+    arr, xedges, yedges = np.histogram2d(vals_x.copy(), vals_y.copy(), bins=bins, range=range)
 
 
     # normalise bins along one axis,
@@ -235,18 +235,11 @@ def plot_histogram2d(ax=None,
     if norm_axis:
         if norm_axis.lower() == 'y':
             arr = arr.T
-        maxes = []
-        for ind, xbin in enumerate(arr):
-            if xbin.sum() > 0:
-                arr[ind] = xbin / xbin.sum()
-            maxes.append(arr[ind].max())
-        maxes = np.array(maxes)
-        the_max = maxes.max()
-        ratios = the_max / maxes
-        # now set so the maximum in each bin is the same
+        # now set so the maximum in each bin is the same,
+        # scale other bins accordingly
         for ind, xbin in enumerate(arr):
             if xbin.max() > 0:
-                arr[ind] = xbin * ratios[ind]
+                arr[ind] = xbin / xbin.max()
         if norm_axis.lower() == 'y':
             arr = arr.T
 
