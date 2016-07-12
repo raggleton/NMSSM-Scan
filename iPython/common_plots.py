@@ -539,11 +539,16 @@ def plot_input_params_hists(df, ylabel, title, errorbars=True, param_dict=nmssm_
     for i, (param, attr) in enumerate(param_dict.items()):
         ax = fig.add_subplot(rows, cols, i + 1)
         y, bins, patches = plt.hist(df[param].values, color=attr.color, **kwargs)
-        # put error bars on
-        bincenters = 0.5 * (bins[1:] + bins[:-1])
-        menStd = np.sqrt(y)
-        width = 0.0
-        plt.bar(bincenters, y, width=width, yerr=menStd, alpha=0, ecolor="black", error_kw=dict(elinewidth=2, capthick=2))
+        if errorbars:
+            # put error bars on
+            bincenters = 0.5 * (bins[1:] + bins[:-1])
+            menStd = np.sqrt(y)
+            width = 0.0
+            plt.bar(bincenters, y, width=width, yerr=menStd, alpha=0, ecolor="black", error_kw=dict(elinewidth=2, capthick=2))
+        ax.set_xlabel(attr.label)
+        ax.set_ylabel(ylabel)
+        plt.minorticks_on()
+
         ax.set_xlabel(attr.label)
         ax.set_ylabel(ylabel)
         plt.minorticks_on()
