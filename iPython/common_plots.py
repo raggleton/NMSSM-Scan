@@ -250,7 +250,7 @@ def plot_histogram2d(ax=None,
     zlabel = zlabel or ''
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
-    plt.gcf().colorbar(qm, label=zlabel)
+    plt.gcf().colorbar(qm, ax=ax, label=zlabel)
 
     return ax, qm, arr
 
