@@ -67,7 +67,8 @@ def save_scan_exclusions_br(filename, ext, *args, **kwargs):
 
 
 def plot_scan_exclusions(scan_dicts, experimental_dicts, y_var, x_label, y_label,
-                         x_range=None, y_range=None, title=None, shade=True,
+                         x_var='ma1', x_range=None, y_range=None,
+                         title=None, shade=True,
                          text=None, text_coords=[0.6, 0.1], leg_loc=0):
     """Make a plot of exclusion regions on top of scan points.
 
@@ -110,7 +111,8 @@ def plot_scan_exclusions(scan_dicts, experimental_dicts, y_var, x_label, y_label
             df = entry['df']
             if len(df.index) == 0:
                 continue
-            mass_key = 'm_a' if 'm_a' in df.columns.values else 'ma1'
+            mass_key_default = 'm_a' if 'm_a' in df.columns.values else 'ma1'
+            mass_key = x_var or mass_key_default
             colname = entry.get('yvar', y_var)
             plt.plot(df[mass_key].values, df[colname].values,
                      entry.get('shape', 'o'),
