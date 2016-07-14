@@ -2,6 +2,13 @@ M_A1_STR = r"$m_{a_1}\ \mathrm{[GeV]}$"
 M_H1_STR = r"$m_{h_1}\ \mathrm{[GeV]}$"
 M_H2_STR = r"$m_{h_2}\ \mathrm{[GeV]}$"
 
+M_N1_STR = r"$m_{\tilde{\chi}_{1}}\ \mathrm{[GeV]}$"
+M_N2_STR = r"$m_{\tilde{\chi}_{2}}\ \mathrm{[GeV]}$"
+
+M_STOP1_STR = r"$m_{\tilde{t}_{1}}\ \mathrm{[GeV]}$"
+M_STOP2_STR = r"$m_{\tilde{t}_{2}}\ \mathrm{[GeV]}$"
+M_GLUINO_STR = r"$m_{\tilde{g}}\ \mathrm{[GeV]}$"
+
 DEL_A_MU_STR = r"$\Delta a_{\mu}$"
 OMEGA_STR = r"$\Omega h^2$"
 BSMUMU_STR = r"$BR(B_S \to \mu\mu)$"
