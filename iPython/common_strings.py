@@ -14,6 +14,8 @@ LAMBDA_STR = r"$\lambda$"
 KAPPA_STR = r"$\kappa$"
 AKAPPA_STR = r"$A_{\kappa}\ \mathrm{[GeV]}$"
 ALAMBDA_STR = r"$A_{\lambda}\ \mathrm{[GeV]}$"
+KAPPA_LAMBDA_STR = r"$\kappa + \lambda$"
+KAPPA_LAMBDA_SQ_STR = r"$\kappa^2 + \lambda^2$"
 
 DEL_A_MU_LIM = [8.77E-10, 4.61E-9]
 OMEGA_LIM = [0.107, 0.131]
