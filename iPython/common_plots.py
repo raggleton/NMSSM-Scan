@@ -811,15 +811,15 @@ def pass_limit(m_a, xsec, limits_dict):
 
     m_a: mass of a
     xsec: total xsec * BR(h -> aa ->4tau)
-    limits: dict of {mass: limit}
+    limits: ordered dict of {mass: limit}
     """
-    limits = OrderedDict(sorted(limits_dict.items(), key=lambda t: t))
-    if m_a > max(limits.keys()) or m_a < min(limits.keys()):
+    # limits = OrderedDict(sorted(limits_dict.items(), key=lambda t: t))
+    if m_a > max(limits_dict.keys()) or m_a < min(limits_dict.keys()):
         # outside of range of limits - pass
         return True
     else:
-        masses = limits.keys()
-        xsecs = limits.values()
+        masses = limits_dict.keys()
+        xsecs = limits_dict.values()
         ind_upper = bisect(masses, m_a)
         # do linear interpolation to get limit based on closest mass points
         xsec_interp = np.interp(m_a, masses[ind_upper - 1:ind_upper + 1],
