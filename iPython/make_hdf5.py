@@ -129,7 +129,8 @@ def subset_pass_constraints(df):
         "pass_bctaunu": r"b \-> c tau nu more than 2 sigma away \(as SM\)",
         "pass_chi2zz": r"chi2\(H\->ZZ\) > 6\.18",
         "pass_chi2bb": r"chi2\(H\->bb\) > 6\.18",
-        "pass_chi2gg": r"chi2\(H\->gg\) > 6\.18"
+        "pass_chi2gg": r"chi2\(H\->gg\) > 6\.18",
+        "pass_cms4mu": r"Excluded H_125\->AA\->4mu \(CMS\)"
     }
     for k, v in accept_constraints.iteritems():
         df[k] = ~df.constraints.str.contains(v)
