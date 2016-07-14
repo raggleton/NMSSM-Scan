@@ -251,6 +251,8 @@ def plot_histogram2d(ax=None,
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     plt.gcf().colorbar(qm, ax=ax, label=zlabel)
+    plt.minorticks_on()
+    plt.tight_layout()
 
     return ax, qm, arr
 
