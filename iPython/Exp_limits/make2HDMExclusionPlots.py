@@ -65,6 +65,7 @@ def make_all_2HDM_plots():
 
     plotr.save_scan_exclusions_xsec("Daniele_2HDMType2_Plots/xsec_br_4tau_type2", ["pdf", "svg"],
                                     scan_dicts, experimental_dicts,
+                                    x_var='m_a',
                                     y_var='xsec_br_4tau',
                                     x_label=str_mA,
                                     y_label=str_xsec_4tau,
@@ -75,6 +76,7 @@ def make_all_2HDM_plots():
 
     plotr.save_scan_exclusions_xsec("Daniele_2HDMType2_Plots/xsec_br_4tau_type2_all_ma", ["pdf", "svg"],
                                     scan_dicts_all_ma, experimental_dicts_all,
+                                    x_var='m_a',
                                     y_var='xsec_br_4tau',
                                     x_label=str_mA,
                                     y_label=str_xsec_4tau,

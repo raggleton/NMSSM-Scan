@@ -55,6 +55,7 @@ def make_all_nMSSM_plots():
 
     plotr.save_scan_exclusions_xsec("Daniele_Little_nMSSM_Plots/xsec_br_4tau_nMSSM_all", ["pdf", "svg"],
                                     scan_dicts, experimental_dicts,
+                                    x_var='m_a',
                                     y_var='xsec_br_4tau',
                                     x_label=str_ma,
                                     y_label=str_xsec_4tau,
