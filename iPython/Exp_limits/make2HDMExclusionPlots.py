@@ -11,26 +11,27 @@ import commonPlot as plotr
 
 def load_dataframe(filename):
     """Read Daniele's dat file into pandas dataframe"""
-    return pd.read_csv(filename, sep="\t", names=["m_a", "xsec_br_4tau"])
+    return pd.read_csv(filename, sep="\s+", names=["m_a", "xsec_br_4tau"])
 
 
 def make_all_2HDM_plots():
-    # h = h(125)
-    df_2hdm_type2_h125 = load_dataframe("Daniele_2HDMType2_Plots/sigma_4tau_mh125_type2.dat")
-    df_2hdm_type2_h125_all_ma = load_dataframe("Daniele_2HDMType2_Plots/sigma_4tau_mh125_type2_all_ma.dat")
+    # Type I
+    df_2hdm_type1_h125 = load_dataframe("Daniele_2HDM/little_h/sigma_4tau_typeI_mh125.dat")
+    df_2hdm_type1_H125 = load_dataframe("Daniele_2HDM/big_H/sigma_4tau_typeI_mH125.dat")
 
-    # H = h(125)
-    df_2hdm_type2_H125 = load_dataframe("Daniele_2HDMType2_Plots/sigma_4tau_mH125_type2-2.dat")
-
+    # Type II
+    df_2hdm_type2_h125 = load_dataframe("Daniele_2HDM/little_h/sigma_4tau_typeII_mh125.dat")
+    df_2hdm_type2_H125 = load_dataframe("Daniele_2HDM/big_H/sigma_4tau_typeII_mH125.dat")
 
     # Scan contributions to put on plot
-    scan_dicts = [
-        {'df': df_2hdm_type2_h125, 'label': r"$h_{125}$", 'color': 'dodgerblue'},
-        {'df': df_2hdm_type2_H125, 'label': r"$H_{125}$", 'color': 'indigo'},
+    type1_scan_dicts = [
+        {'df': df_2hdm_type1_h125, 'label': r"$h_{125}$", 'color': 'dodgerblue'},
+        {'df': df_2hdm_type1_H125, 'label': r"$H_{125}$", 'color': 'indigo'},
     ]
 
-    scan_dicts_all_ma = [
-        {'df': df_2hdm_type2_h125_all_ma, 'label': r"$h_{125}$", 'color': 'dodgerblue'},
+    type2_scan_dicts = [
+        {'df': df_2hdm_type2_h125, 'label': r"$h_{125}$", 'color': 'dodgerblue'},
+        {'df': df_2hdm_type2_H125, 'label': r"$H_{125}$", 'color': 'indigo'},
     ]
 
     # Get experimental limits
@@ -59,31 +60,53 @@ def make_all_2HDM_plots():
 
     # Make plots
     title = 'Observed exclusion limits ' + r'$\left(\sqrt{s}\ =\ 8\ \mathrm{TeV}\right)$'
-    common_text = '2HDM\nType II'
     str_mA = r'$m_A\ \mathrm{[GeV]}$'
     str_xsec_4tau = r'$\sigma\ \times\ BR\ (h_i\ \to\ 2A\ \to\ 4\tau)\ \mathrm{[pb]}$'
 
-    plotr.save_scan_exclusions_xsec("Daniele_2HDMType2_Plots/xsec_br_4tau_type2", ["pdf", "svg"],
-                                    scan_dicts, experimental_dicts,
+    plotr.save_scan_exclusions_xsec("Daniele_2HDM/xsec_br_4tau_type1", ["pdf"],
+                                    type1_scan_dicts, experimental_dicts,
                                     x_var='m_a',
                                     y_var='xsec_br_4tau',
                                     x_label=str_mA,
                                     y_label=str_xsec_4tau,
-                                    x_range=[2, 14],
-                                    y_range=[0.05, 5E2],
-                                    title=title,
-                                    text=common_text, text_coords=[0.82, 0.1])
+                                    x_range=[2, 15],
+                                    y_range=[0.001, 5E2],
+                                    title=title, leg_loc='upper right',
+                                    text='2HDM\nType I', text_coords=[0.82, 0.1])
 
-    plotr.save_scan_exclusions_xsec("Daniele_2HDMType2_Plots/xsec_br_4tau_type2_all_ma", ["pdf", "svg"],
-                                    scan_dicts_all_ma, experimental_dicts_all,
+    plotr.save_scan_exclusions_xsec("Daniele_2HDM/xsec_br_4tau_type1_allMA", ["pdf"],
+                                    type1_scan_dicts, experimental_dicts_all,
                                     x_var='m_a',
                                     y_var='xsec_br_4tau',
                                     x_label=str_mA,
                                     y_label=str_xsec_4tau,
                                     x_range=[2, 50],
-                                    y_range=[0.001, 5E3],
+                                    y_range=[0.0001, 5E2],
+                                    title=title, leg_loc='upper right',
+                                    text='2HDM\nType I', text_coords=[0.82, 0.1])
+
+    plotr.save_scan_exclusions_xsec("Daniele_2HDM/xsec_br_4tau_type2", ["pdf"],
+                                    type2_scan_dicts, experimental_dicts,
+                                    x_var='m_a',
+                                    y_var='xsec_br_4tau',
+                                    x_label=str_mA,
+                                    y_label=str_xsec_4tau,
+                                    x_range=[2, 15],
+                                    y_range=[0.01, 5E2],
                                     title=title,
-                                    text=common_text, text_coords=[0.82, 0.1])
+                                    text='2HDM\nType II', text_coords=[0.82, 0.1])
+
+    plotr.save_scan_exclusions_xsec("Daniele_2HDM/xsec_br_4tau_type2_allMA", ["pdf"],
+                                    type2_scan_dicts, experimental_dicts_all,
+                                    x_var='m_a',
+                                    y_var='xsec_br_4tau',
+                                    x_label=str_mA,
+                                    y_label=str_xsec_4tau,
+                                    x_range=[2, 50],
+                                    y_range=[0.001, 5E2],
+                                    title=title,
+                                    text='2HDM\nType II', text_coords=[0.82, 0.1])
+
 
 if __name__ == "__main__":
     make_all_2HDM_plots()
