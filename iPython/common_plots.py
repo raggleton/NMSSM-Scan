@@ -577,7 +577,8 @@ def plot_input_params_hists_multiple(dfs, ylabel, title, errorbars=True, param_d
                 kw['range'] = attr.range
             vals = df.query('%f<%s<%f' % (attr.range[0], param, attr.range[1]))[param].values
             if len(vals) > 0:
-                y, bins, patches = ax.hist(vals, **kw)
+                # y, bins, patches = ax.hist(vals, **kw)
+                plot_histogram(ax=ax, array=vals, **kw)
 
         # # put error bars on
         # bincenters = 0.5 * (bins[1:] + bins[:-1])
