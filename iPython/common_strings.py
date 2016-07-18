@@ -53,3 +53,5 @@ XSEC_BR_H2_2A1_2TAU2MU_STR = r'$\sigma\ \times\ BR\ (h_2\ \to\ 2a_1\ \to\ 2\tau 
 BR_Hi_2A1_2TAU2MU_STR = r'$\sigma\ \times\ BR\ (h_i\ \to\ 2a_1\ \to\ 2\tau 2\mu)\ /\ \sigma_{SM}$'
 BR_H1_2A1_2TAU2MU_STR = r'$\sigma\ \times\ BR\ (h_1\ \to\ 2a_1\ \to\ 2\tau 2\mu)\ /\ \sigma_{SM}$'
 BR_H2_2A1_2TAU2MU_STR = r'$\sigma\ \times\ BR\ (h_2\ \to\ 2a_1\ \to\ 2\tau 2\mu)\ /\ \sigma_{SM}$'
+
+BR_A1_TAUTAU_STR = r'$BR(a_1 \to \tau\tau)$'
