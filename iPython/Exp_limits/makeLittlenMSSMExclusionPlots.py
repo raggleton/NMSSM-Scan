@@ -26,8 +26,8 @@ def make_all_nMSSM_plots():
 
     # Scan contributions to put on plot
     scan_dicts = [
-        {'df': df_nMSSM_B, 'label': r"$m_0\ \sim\ 4\ \mathrm{TeV},\ m_{1/2}\ \lesssim\ 500\ \mathrm{GeV}$", 'color': 'mediumvioletred'},
-        {'df': df_nMSSM_A, 'label': r"$m_0\ \lesssim\ 1\ \mathrm{TeV},\ m_{1/2}\ \sim\ 1\ \mathrm{TeV}$", 'color': 'royalblue'},
+        {'df': df_nMSSM_B, 'label': r"$m_0\ \sim\ 4\ \mathrm{TeV},\ m_{1/2}\ \lesssim\ 500\ \mathrm{GeV}$", 'color': 'mediumvioletred', 'shape': 'o'},
+        {'df': df_nMSSM_A, 'label': r"$m_0\ \lesssim\ 1\ \mathrm{TeV},\ m_{1/2}\ \sim\ 1\ \mathrm{TeV}$", 'color': 'royalblue', 'shape': 's'},
         # {'df': df_nMSSM_pam, 'label': "1PAM", 'color': 'chocolate'},
         # {'df': df_nMSSM_pap, 'label': "1PAP", 'color': 'goldenrod'},
         # {'df': df_nMSSM_pbm, 'label': "1PBM", 'color': 'sage'},

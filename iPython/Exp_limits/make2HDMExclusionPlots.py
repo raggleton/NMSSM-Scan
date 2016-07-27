@@ -25,13 +25,13 @@ def make_all_2HDM_plots():
 
     # Scan contributions to put on plot
     type1_scan_dicts = [
-        {'df': df_2hdm_type1_h125, 'label': r"$h_{125}$", 'color': 'dodgerblue'},
-        {'df': df_2hdm_type1_H125, 'label': r"$H_{125}$", 'color': 'indigo'},
+        {'df': df_2hdm_type1_h125, 'label': r"$h_{125}$", 'color': 'dodgerblue', 'shape': 'o'},
+        {'df': df_2hdm_type1_H125, 'label': r"$H_{125}$", 'color': 'indigo', 'shape': 's'},
     ]
 
     type2_scan_dicts = [
-        {'df': df_2hdm_type2_h125, 'label': r"$h_{125}$", 'color': 'dodgerblue'},
-        {'df': df_2hdm_type2_H125, 'label': r"$H_{125}$", 'color': 'indigo'},
+        {'df': df_2hdm_type2_h125, 'label': r"$h_{125}$", 'color': 'dodgerblue', 'shape': 'o'},
+        {'df': df_2hdm_type2_H125, 'label': r"$H_{125}$", 'color': 'indigo', 'shape': 's'},
     ]
 
     # Get experimental limits
