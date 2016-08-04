@@ -16,18 +16,20 @@ def load_dataframe(filename):
 def make_all_nMSSM_plots():
     df_nMSSM_ma = load_dataframe("Daniele_Little_nMSSM_Plots/sigma_4tau_nMSSM_1ma.dat")
     df_nMSSM_mb = load_dataframe("Daniele_Little_nMSSM_Plots/sigma_4tau_nMSSM_1mb.dat")
-    df_nMSSM_pam = load_dataframe("Daniele_Little_nMSSM_Plots/sigma_4tau_nMSSM_1pam.dat")
+    # df_nMSSM_pam = load_dataframe("Daniele_Little_nMSSM_Plots/sigma_4tau_nMSSM_1pam.dat")
     df_nMSSM_pap = load_dataframe("Daniele_Little_nMSSM_Plots/sigma_4tau_nMSSM_1pap.dat")
-    df_nMSSM_pbm = load_dataframe("Daniele_Little_nMSSM_Plots/sigma_4tau_nMSSM_1pbm.dat")
+    # df_nMSSM_pbm = load_dataframe("Daniele_Little_nMSSM_Plots/sigma_4tau_nMSSM_1pbm.dat")
     df_nMSSM_pbp = load_dataframe("Daniele_Little_nMSSM_Plots/sigma_4tau_nMSSM_1pbp.dat")
 
-    df_nMSSM_A = pd.concat([df_nMSSM_ma, df_nMSSM_pam, df_nMSSM_pap], ignore_index=True)
-    df_nMSSM_B = pd.concat([df_nMSSM_mb, df_nMSSM_pbm, df_nMSSM_pbp], ignore_index=True)
+    # df_nMSSM_A = pd.concat([df_nMSSM_ma, df_nMSSM_pam, df_nMSSM_pap], ignore_index=True)
+    df_nMSSM_A = pd.concat([df_nMSSM_ma, df_nMSSM_pap], ignore_index=True)
+    # df_nMSSM_B = pd.concat([df_nMSSM_mb, df_nMSSM_pbm, df_nMSSM_pbp], ignore_index=True)
+    df_nMSSM_B = pd.concat([df_nMSSM_mb, df_nMSSM_pbp], ignore_index=True)
 
     # Scan contributions to put on plot
     scan_dicts = [
-        {'df': df_nMSSM_B, 'label': r"$m_0\ \sim\ 4\ \mathrm{TeV},\ m_{1/2}\ \lesssim\ 500\ \mathrm{GeV}$", 'color': 'mediumvioletred', 'shape': 'o'},
-        {'df': df_nMSSM_A, 'label': r"$m_0\ \lesssim\ 1\ \mathrm{TeV},\ m_{1/2}\ \sim\ 1\ \mathrm{TeV}$", 'color': 'royalblue', 'shape': 's'},
+        {'df': df_nMSSM_A, 'label': r"$1\mathrm{A}:\ m_0\ \lesssim\ 1\ \mathrm{TeV},\ m_{1/2}\ \sim\ 1\ \mathrm{TeV}$", 'color': 'royalblue', 'shape': 's'},
+        {'df': df_nMSSM_B, 'label': r"$1\mathrm{B}:\ m_0\ \sim\ 4\ \mathrm{TeV},\ m_{1/2}\ \lesssim\ 500\ \mathrm{GeV}$", 'color': 'mediumvioletred', 'shape': 'o'},
         # {'df': df_nMSSM_pam, 'label': "1PAM", 'color': 'chocolate'},
         # {'df': df_nMSSM_pap, 'label': "1PAP", 'color': 'goldenrod'},
         # {'df': df_nMSSM_pbm, 'label': "1PBM", 'color': 'sage'},
@@ -43,7 +45,7 @@ def make_all_nMSSM_plots():
     # Experimental contributions to put on plot
     experimental_dicts = [
         {'df': df_hig_14_019, 'label': 'CMS HIG-14-019 ' + r'$(4\tau)$', 'color': 'blue'},
-        {'df': df_hig_14_022, 'label': 'CMS HIG-14-022 ' + r'$(4\tau)$', 'color': 'green'},
+        {'df': df_hig_14_022, 'label': 'CMS HIG-14-022 ' + r'$(4\tau)$', 'color': 'turquoise'},
         {'df': df_atlas_higg_2014_02, 'label': 'ATLAS HIGG-2014-02 ' + r'$(2\tau2\mu)$', 'color': 'red'},
     ]
 
