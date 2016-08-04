@@ -590,7 +590,7 @@ def plot_input_params_hists_multiple(dfs, ylabel, title, errorbars=True, param_d
         plt.minorticks_on()
 
 
-def plot_input_params_scatters(df, yvar, ylabel, yrange=None, title="", param_dict=nmssm_params, cols=3, **kwargs):
+def plot_input_params_scatters(df, yvar, ylabel, yrange=None, title="", param_dict=nmssm_params, cols=3, use_dict_range=False, **kwargs):
     """Make scatter plots for each input parameter against variable var,
     using dataframe df"""
 
@@ -612,7 +612,8 @@ def plot_input_params_scatters(df, yvar, ylabel, yrange=None, title="", param_di
         ax = fig.add_subplot(rows, cols, i + 1)
         plt.scatter(x=df[param].values, y=df[yvar].values, color=attr.color, **kwargs)
         ax.set_xlabel(attr.label)
-        # ax.set_xlim(attr.range)
+        if use_dict_range:
+            ax.set_xlim(attr.range)
         ax.set_ylabel(ylabel)
         if yrange:
             ax.set_ylim(yrange)
@@ -622,7 +623,8 @@ def plot_input_params_scatters(df, yvar, ylabel, yrange=None, title="", param_di
 
 
 def plot_input_params_scatters_multiple(dfs, yvar, ylabel, yrange=None, title="",
-                                        param_dict=nmssm_params, cols=3, kwargs=None):
+                                        param_dict=nmssm_params, cols=3, use_dict_range=False,
+                                        kwargs=None):
     """Make scatter plots for each input parameter against variable var,
     using dataframe df"""
 
@@ -648,7 +650,8 @@ def plot_input_params_scatters_multiple(dfs, yvar, ylabel, yrange=None, title=""
             plt.scatter(x=df[param].values, y=df[yvar].values, **kw)
 
         ax.set_xlabel(attr.label)
-        # ax.set_xlim(attr.range)
+        if use_dict_range:
+          ax.set_xlim(attr.range)
         ax.set_ylabel(ylabel)
         if yrange:
             ax.set_ylim(yrange)
