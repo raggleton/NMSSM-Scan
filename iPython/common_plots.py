@@ -21,22 +21,22 @@ import os
 Param = namedtuple('Param', ['label', 'color', 'bins', 'range', 'interval'])
 
 nmssm_params = {
-    "lambda_": Param(label=r"$\lambda$", color="orange", bins=25, range=[0, 0.7], interval=0.1),
-    "mueff": Param(label=r"$\mu_{eff}\ \mathrm{[GeV]}$", color="green", bins=25, range=[100, 300], interval=25),
-    "kappa": Param(label=r"$\kappa$", color="steelblue", bins=25, range=[0, 0.7], interval=0.1),
-    "alambda": Param(label=r"$A_{\lambda}\ \mathrm{[GeV]}$", color="salmon", bins=25, range=[-1000, 4000], interval=1000),
-    "akappa": Param(label=r"$A_{\kappa}\ \mathrm{[GeV]}$", color="red", bins=25, range=[-15, 2.5], interval=10),
-    "tgbeta": Param(label=r"$\tan\beta$", color="purple", bins=25, range=[0, 50], interval=10),
+    "lambda_": Param(label=r"$\lambda$", color="orange", bins=25, range=[0, 0.3], interval=0.1),
+    "mueff": Param(label=r"$\mu_{eff}\ \mathrm{[GeV]}$", color="green", bins=25, range=[100, 300], interval=20),
+    "kappa": Param(label=r"$\kappa$", color="steelblue", bins=25, range=[0, 0.6], interval=0.1),
+    "alambda": Param(label=r"$A_{\lambda}\ \mathrm{[GeV]}$", color="salmon", bins=25, range=[0, 4000], interval=1000),
+    "akappa": Param(label=r"$A_{\kappa}\ \mathrm{[GeV]}$", color="red", bins=25, range=[-10, 4], interval=10),
+    "tgbeta": Param(label=r"$\tan\beta$", color="purple", bins=25, range=[10, 30], interval=10),
 }
 
 nmssm_params_extended = nmssm_params.copy()
 nmssm_params_extended.update({
-    "m3": Param(label=r"$M_3\ \mathrm{[GeV]}$", color="olive", bins=25, range=[0, 2000], interval=500),
-    "mq3": Param(label=r"$MQ3\ \mathrm{[GeV]}$", color="darksage", bins=25, range=[0, 2000], interval=500),
-    "mu3": Param(label=r"$MU3\ \mathrm{[GeV]}$", color="darksage", bins=25, range=[0, 2000], interval=500),
-    "au3": Param(label=r"$AU3\ \mathrm{[GeV]}$", color="cyan", bins=25, range=[0, 2000], interval=1000),
-    "md3": Param(label=r"$MD3\ \mathrm{[GeV]}$", color="purple", bins=25, range=[0, 2000], interval=500),
-    "ad3": Param(label=r"$AD3\ \mathrm{[GeV]}$", color="purple", bins=25, range=[0, 2000], interval=500),
+    "m3": Param(label=r"$M_3\ \mathrm{[GeV]}$", color="olive", bins=25, range=[250, 2500], interval=500),
+    "mq3": Param(label=r"$MQ3\ \mathrm{[GeV]}$", color="darksage", bins=25, range=[800, 2500], interval=500),
+    "mu3": Param(label=r"$MU3\ \mathrm{[GeV]}$", color="darksage", bins=25, range=[500, 2500], interval=500),
+    "au3": Param(label=r"$AU3\ \mathrm{[GeV]}$", color="cyan", bins=25, range=[1500, 5000], interval=1000),
+    "md3": Param(label=r"$MD3\ \mathrm{[GeV]}$", color="purple", bins=25, range=[500, 2500], interval=500),
+    "ad3": Param(label=r"$AD3\ \mathrm{[GeV]}$", color="purple", bins=25, range=[500, 2500], interval=500),
     # "m0": Param(label=r"$M0$", color="purple", bins=25, range=[0, 2000], interval=-1),
     # "m12": Param(label=r"$M12$", color="purple", bins=25, range=[0, 2000], interval=-1),
 })
