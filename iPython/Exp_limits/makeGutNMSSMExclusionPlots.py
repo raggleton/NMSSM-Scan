@@ -24,7 +24,6 @@ mpl.rcParams['ytick.minor.width'] = 1
 mpl.rcParams['legend.framealpha'] = 0.9
 mpl.rcParams['legend.scatterpoints'] = 1
 mpl.rcParams['legend.numpoints'] = 1
-# mpl.rcParams.update({'font.size': 24, 'font.family': 'STIXGeneral', 'mathtext.fontset': 'stix'})
 mpl.rcParams.update({'font.family': 'STIXGeneral', 'mathtext.fontset': 'stix'})
 pd.set_option('display.max_colwidth', 120)
 pd.set_option('display.max_columns', 200)
@@ -34,11 +33,6 @@ import commonPlot as plotr
 
 mpl.rcParams['xtick.major.pad'] = 8
 mpl.rcParams['ytick.major.pad'] = 8
-
-# import json
-# my_rcParams = json.load(open('../nmssmRcParams.json'))
-# mpl.rcParams.update(my_rcParams)
-
 mpl.rcParams['savefig.dpi'] = 300
 
 
@@ -64,19 +58,22 @@ def make_all_GUT_plots():
     print 'df_gut_h2', df_gut_h2.describe()
 
     df_gut_h1['xsec_br_4tau_h1'] = 19.27 * df_gut_h1['ggh1rc'] * df_gut_h1['ggh1rc'] * df_gut_h1['Brh1a1a1'] * df_gut_h1['Bra1tautau'] * df_gut_h1['Bra1tautau']
-    df_gut_h1['xsec_br_4tau_h2'] = 19.27 * df_gut_h1['ggh2rc'] * df_gut_h1['ggh2rc'] * df_gut_h1['Brh2a1a1'] * df_gut_h1['Bra1tautau'] * df_gut_h1['Bra1tautau']
+    # df_gut_h1['xsec_br_4tau_h2'] = 19.27 * df_gut_h1['ggh2rc'] * df_gut_h1['ggh2rc'] * df_gut_h1['Brh2a1a1'] * df_gut_h1['Bra1tautau'] * df_gut_h1['Bra1tautau']
     df_gut_h2['xsec_br_4tau_h2'] = 19.27 * df_gut_h2['ggh2rc'] * df_gut_h2['ggh2rc'] * df_gut_h2['Brh2a1a1'] * df_gut_h2['Bra1tautau'] * df_gut_h2['Bra1tautau']
-    df_gut_h2['xsec_br_4tau_h1'] = 19.27 * df_gut_h2['ggh1rc'] * df_gut_h2['ggh1rc'] * df_gut_h2['Brh1a1a1'] * df_gut_h2['Bra1tautau'] * df_gut_h2['Bra1tautau']
+    # df_gut_h2['xsec_br_4tau_h1'] = 19.27 * df_gut_h2['ggh1rc'] * df_gut_h2['ggh1rc'] * df_gut_h2['Brh1a1a1'] * df_gut_h2['Bra1tautau'] * df_gut_h2['Bra1tautau']
 
 
     # Scan contributions to put on plot
     scan_dicts = [
         {'df': df_gut_h1, 'label': r"$h_i =\ h_1$", 'color': 'lawngreen', 'shape': '^', 'yvar': 'xsec_br_4tau_h1'},
-        {'df': df_gut_h1, 'label': None, 'color': 'lawngreen', 'shape': '^', 'yvar': 'xsec_br_4tau_h2'},
+        # {'df': df_gut_h1, 'label': None, 'color': 'lawngreen', 'shape': '^', 'yvar': 'xsec_br_4tau_h2'},
+
         # {'df': df_gut_h1, 'label': r"$h_i =\ h_1 =\ h_{125}$", 'color': 'lawngreen', 'shape': '^', 'yvar': 'xsec_br_4tau_h1'},
         # {'df': df_gut_h1, 'label': r"$h_i =\ h_1 \neq\ h_{125}$", 'color': 'green', 'shape': '^', 'yvar': 'xsec_br_4tau_h2'},
+
         {'df': df_gut_h2, 'label': r"$h_i =\ h_2$", 'color': 'dodgerblue', 'shape': 'v', 'yvar': 'xsec_br_4tau_h2'},
-        {'df': df_gut_h2, 'label': None, 'color': 'dodgerblue', 'shape': 'v', 'yvar': 'xsec_br_4tau_h1'},
+        # {'df': df_gut_h2, 'label': None, 'color': 'dodgerblue', 'shape': 'v', 'yvar': 'xsec_br_4tau_h1'},
+
         # {'df': df_gut_h2, 'label': r"$h_i =\ h_2 =\ h_{125}$", 'color': 'dodgerblue', 'shape': 'v', 'yvar': 'xsec_br_4tau_h2'},
         # {'df': df_gut_h2, 'label': r"$h_i =\ h_2 \neq\ h_{125}$", 'color': 'blue', 'shape': 'v', 'yvar': 'xsec_br_4tau_h1'},
     ]

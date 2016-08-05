@@ -5,8 +5,36 @@ Make exclusion plots using Daniele's nMSSM scan points.
 """
 
 
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 import pandas as pd
+
+mpl.rcParams['font.size'] = 26
+mpl.rcParams['figure.figsize'] = (7.0, 4.0)  # default size of plots
+mpl.rcParams['axes.labelsize'] = 26
+mpl.rcParams['xtick.labelsize'] = 22
+mpl.rcParams['ytick.labelsize'] = 22
+mpl.rcParams['xtick.major.size'] = 12
+mpl.rcParams['xtick.major.width'] = 2
+mpl.rcParams['ytick.major.size'] = 12
+mpl.rcParams['ytick.major.width'] = 2
+mpl.rcParams['xtick.minor.size'] = 6
+mpl.rcParams['xtick.minor.width'] = 1
+mpl.rcParams['ytick.minor.size'] = 6
+mpl.rcParams['ytick.minor.width'] = 1
+mpl.rcParams['legend.framealpha'] = 0.9
+mpl.rcParams['legend.scatterpoints'] = 1
+mpl.rcParams['legend.numpoints'] = 1
+mpl.rcParams.update({'font.family': 'STIXGeneral', 'mathtext.fontset': 'stix'})
+pd.set_option('display.max_colwidth', 120)
+pd.set_option('display.max_columns', 200)
+pd.set_option('display.max_rows', 500)
+
 import commonPlot as plotr
+
+mpl.rcParams['xtick.major.pad'] = 8
+mpl.rcParams['ytick.major.pad'] = 8
+mpl.rcParams['savefig.dpi'] = 300
 
 
 def load_dataframe(filename):
@@ -55,7 +83,7 @@ def make_all_nMSSM_plots():
     str_ma = r'$m_{a_1}\ \mathrm{[GeV]}$'
     str_xsec_4tau = r'$\sigma\ \times\ BR\ (h_2\ \to\ 2a_1\ \to\ 4\tau)\ \mathrm{[pb]}$'
 
-    plotr.save_scan_exclusions_xsec("Daniele_Little_nMSSM_Plots/xsec_br_4tau_nMSSM_all", ["pdf", "svg"],
+    plotr.save_scan_exclusions_xsec("Daniele_Little_nMSSM_Plots/xsec_br_4tau_nMSSM_all", ["pdf"],
                                     scan_dicts, experimental_dicts,
                                     x_var='m_a',
                                     y_var='xsec_br_4tau',

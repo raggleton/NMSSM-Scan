@@ -4,9 +4,36 @@
 Make exclusion plots using Daniele's 2HDM Type 2 scan points.
 """
 
-
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 import pandas as pd
+
+mpl.rcParams['font.size'] = 26
+mpl.rcParams['figure.figsize'] = (7.0, 4.0)  # default size of plots
+mpl.rcParams['axes.labelsize'] = 26
+mpl.rcParams['xtick.labelsize'] = 22
+mpl.rcParams['ytick.labelsize'] = 22
+mpl.rcParams['xtick.major.size'] = 12
+mpl.rcParams['xtick.major.width'] = 2
+mpl.rcParams['ytick.major.size'] = 12
+mpl.rcParams['ytick.major.width'] = 2
+mpl.rcParams['xtick.minor.size'] = 6
+mpl.rcParams['xtick.minor.width'] = 1
+mpl.rcParams['ytick.minor.size'] = 6
+mpl.rcParams['ytick.minor.width'] = 1
+mpl.rcParams['legend.framealpha'] = 0.9
+mpl.rcParams['legend.scatterpoints'] = 1
+mpl.rcParams['legend.numpoints'] = 1
+mpl.rcParams.update({'font.family': 'STIXGeneral', 'mathtext.fontset': 'stix'})
+pd.set_option('display.max_colwidth', 120)
+pd.set_option('display.max_columns', 200)
+pd.set_option('display.max_rows', 500)
+
 import commonPlot as plotr
+
+mpl.rcParams['xtick.major.pad'] = 8
+mpl.rcParams['ytick.major.pad'] = 8
+mpl.rcParams['savefig.dpi'] = 300
 
 
 def load_dataframe(filename):
