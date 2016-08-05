@@ -6,17 +6,16 @@ import matplotlib as mpl
 
 
 pd.set_option('precision',7)
+
 mpl.rcParams['figure.figsize'] = (9.0, 6.0)  # default size of plots
 mpl.rcParams['font.size'] = 16
 mpl.rcParams['axes.labelsize'] = 16
-
 mpl.rcParams['xtick.labelsize'] = 14
 mpl.rcParams['ytick.labelsize'] = 14
 mpl.rcParams['xtick.major.size'] = 10
 mpl.rcParams['ytick.major.size'] = 10
 mpl.rcParams['xtick.minor.size'] = 5
 mpl.rcParams['ytick.minor.size'] = 5
-
 mpl.rcParams['legend.fontsize'] = 16
 mpl.rcParams['legend.framealpha'] = 0.95
 mpl.rcParams['legend.scatterpoints'] = 1
@@ -43,6 +42,7 @@ def save_plt(filename, ext):
         Format extenstion(s) to save plot to
 
     """
+    plt.gcf().set_size_inches(9, 6)
     if isinstance(ext, str):
         plt.savefig(filename + "." + ext, format=ext)
     for ex in ext:
@@ -116,6 +116,7 @@ def plot_scan_exclusions(scan_dicts, experimental_dicts, y_var, x_label, y_label
             colname = entry.get('yvar', y_var)
             plt.plot(df[mass_key].values, df[colname].values,
                      entry.get('shape', 'o'),
+                     markersize=8,
                      label=entry['label'], mew=0,
                      color=entry['color'], alpha=0.8,
                      rasterized=rasterized)
@@ -136,7 +137,7 @@ def plot_scan_exclusions(scan_dicts, experimental_dicts, y_var, x_label, y_label
 
     plt.yscale('log')
 
-    if shade:
+    if shade and experimental_dicts:
         y_top = plt.ylim()[1]
         for entry in experimental_dicts:
             df = entry['df']
@@ -151,7 +152,7 @@ def plot_scan_exclusions(scan_dicts, experimental_dicts, y_var, x_label, y_label
     # plt.xlabel(r'$m_a\ \mathrm{[GeV]}$', fontsize=20, labelpad=1)
     plt.xlabel(x_label, fontsize=20, labelpad=1)
     plt.ylabel(y_label, fontsize=20)
-    plt.legend(loc=leg_loc, fontsize=14)
+    plt.legend(loc=leg_loc, fontsize=14, framealpha=0.95)
 #     plt.xscale('log')
 
     if title:
