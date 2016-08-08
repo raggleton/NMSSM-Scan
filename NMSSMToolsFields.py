@@ -1,4 +1,7 @@
-"""Declare all the fields & associated regexes you want for pulling info from NMSSMTools spectrum file"""
+"""Declare all the fields & associated regexes you want for pulling info from NMSSMTools spectrum file
+
+Use ([E\d\.\-\+]+) to capture a floating-point number group.
+"""
 
 
 import re
@@ -10,6 +13,10 @@ class Field(object):
         self.regex = regex
         self.name = name
         self.type = type
+        # comment field is to make parsing MUCH quicker by looking for a
+        # key phrase on the line instead of always regex-ing
+        # we generate this automatically using the regex pattern if one is
+        # not specified
         if comment == '' or comment is None:
           self.comment = regex.pattern.split('#')[1].replace('\\', '')
         else:
@@ -335,6 +342,9 @@ nmssmtools_fields = [
           comment=''),
 
     # a1
+    Field(block='DCINFO', name="a1width", type=float,
+          regex=re.compile(r'DECAY +36 +([E\d\.\-\+]+) +\# Lightest pseudoscalar'),
+          comment=''),
     Field(block='DCINFO', name="Bra1mumu", type=float,
           regex=re.compile(r' +([E\d\.\-\+]+) +2 +13 +\-13 +\# BR\(A_1 \-> muon muon\)'),
           comment=''),
