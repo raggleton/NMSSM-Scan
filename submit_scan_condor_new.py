@@ -115,7 +115,7 @@ def submit_scans(num_jobs, num_points, job_description, card, param_range, stora
     scan_dag.submit(submit_per_interval=25)
 
     print 'Check status with:'
-    print 'DAGstatus.py', scan_dag.status_file
+    print 'DAGstatus', scan_dag.status_file
 
     return 0
 

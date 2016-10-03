@@ -67,7 +67,7 @@ def submit(job_dirs, storage_dir, hdfs_dir):
         maker_dag = ht.DAGMan(filename=os.path.join(storage_dir, jdir, 'makeHDF5.dag'),
                               status_file=os.path.join(storage_dir, jdir, 'makeHDF5.status'))
 
-        final_filename = os.path.basename(jdir).replace("jobs_", "points_") + '.h5'
+        final_filename = os.path.basename(jdir).replace("jobs_", "points_") + '_mini.h5'
         job = ht.Job(name='maker_%s' % jdir,
                      args=[final_filename, csv_dir],
                      hdfs_mirror_dir=csv_dir,
@@ -79,7 +79,7 @@ def submit(job_dirs, storage_dir, hdfs_dir):
         status_files.append(maker_dag.status_file)
 
     print 'Check status with:'
-    print 'DAGstatus.py', ' '.join(status_files)
+    print 'DAGstatus', ' '.join(status_files)
 
     return 0
 

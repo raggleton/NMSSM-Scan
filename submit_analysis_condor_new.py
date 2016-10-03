@@ -86,7 +86,7 @@ def submit_all_analyses(job_dirs, storage_dir, hdfs_dir):
         status_files.append(analysis_dag.status_file)
 
     print 'Check status with:'
-    print 'DAGstatus.py', ' '.join(status_files)
+    print 'DAGstatus', ' '.join(status_files)
 
     return 0
 
