@@ -16,7 +16,7 @@ import contextlib
 from functools import partial
 
 
-N_CPUS = 6
+N_CPUS = 4
 
 HDFS_DIR = '/hdfs/user/%s/NMSSM-Scan/' % os.environ['LOGNAME']
 
