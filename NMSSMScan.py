@@ -138,6 +138,14 @@ def NMSSMScan(in_args=sys.argv[1:]):
         os.chdir(base_dir)
 
         spectr_name = new_card_path.replace('inp', 'spectr')
+        if not os.path.isfile(spectr_name):
+            print 'File %s not produced - skipping' % spectr_name
+            continue
+
+        if not check_if_physical(spectr_name):
+            print 'Skipping %s as unphysical' % spectr_name
+            continue
+
         if args.HB or args.HS:
             # need to add in DMASS block for HB/HS
             # this is somewhat aribitrary
@@ -170,6 +178,23 @@ def NMSSMScan(in_args=sys.argv[1:]):
     print '*' * 40
     print '* Num iterations:', args.number
     print '*' * 40
+
+
+def check_if_physical(spectr):
+    with open(spectr) as f:
+        contents = f.read()
+        constraints = [
+            'M_A1^2<1',
+            'M_H1^2<1',
+            'M_HC^2<1',
+            'Negative sfermion mass squared',
+            'Disallowed parameters: lambda or tan(beta)=0',
+            'Integration problem in RGES',
+            'Integration problem in RGESOFT',
+            'Convergence Problem']
+        if any((x in contents for x in constraints)):
+            return False
+    return True
 
 
 def add_dmass_block(spectr, dmh1=2, dmh2=2):
