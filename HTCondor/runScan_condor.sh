@@ -145,18 +145,18 @@ rm omega*
 nfiles=`ls spectr*.dat | wc -l`
 echo "Zipping up $nfiles files"
 tar -cvzf "spectr${batchNum}.tgz" spectr*.dat
-cp "spectr${batchNum}.tgz" "$jobdir"
+hadoop fs -copyFromLocal spectr${batchNum}.tgz ${jobdir#/hdfs}
 
 # tar -cvzf "omega${batchNum}.tgz" omega*.dat
 # cp "omega${batchNum}.tgz" "$jobdir"
 
-if [[ $doSuperIso == 1 ]]; then
-    tar -cvzf $jobdir/superiso$batchNum.tgz superiso*.dat
-    cp "$jobdir/superiso$batchNum.tgz" "$jobdir"
-fi
-if [[ $doNMSSMCalc == 1 ]]; then
-    tar -cvzf $jobdir/nmssmcalc$batchNum.tgz nmssmcalc_*.dat
-    cp "$jobdir/nmssmcalc$batchNum.tgz" "$jobdir"
-fi
+# if [[ $doSuperIso == 1 ]]; then
+#     tar -cvzf $jobdir/superiso$batchNum.tgz superiso*.dat
+#     cp "$jobdir/superiso$batchNum.tgz" "$jobdir"
+# fi
+# if [[ $doNMSSMCalc == 1 ]]; then
+#     tar -cvzf $jobdir/nmssmcalc$batchNum.tgz nmssmcalc_*.dat
+#     cp "$jobdir/nmssmcalc$batchNum.tgz" "$jobdir"
+# fi
 
 # ls
