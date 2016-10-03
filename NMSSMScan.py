@@ -143,7 +143,8 @@ def NMSSMScan(in_args=sys.argv[1:]):
             continue
 
         if not check_if_physical(spectr_name):
-            print 'Skipping %s as unphysical' % spectr_name
+            print 'Removing %s as unphysical' % spectr_name
+            os.remove(spectr_name)
             continue
 
         if args.HB or args.HS:
