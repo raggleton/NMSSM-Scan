@@ -22,7 +22,7 @@ HSVER="1.4.0"
 
 # Setup NMSSMTools
 # -----------------------------------------------------------------------------
-tar xzf /hdfs/user/ra12451/NMSSM-Scan/zips/NMSSMTools_${NTVER}.tar.gz
+tar xzf /hdfs/user/${LOGNAME}/NMSSM-Scan/zips/NMSSMTools_${NTVER}.t*z
 cd NMSSMTools_${NTVER}
 # patch bug in moving output files due to relpaths eurgh
 # patch run < ../NT.patch
@@ -36,7 +36,7 @@ cd ..
 # -----------------------------------------------------------------------------
 HBOPT=""
 if [[ $doHiggsBounds == 1 ]]; then
-    tar xzf /hdfs/user/ra12451/NMSSM-Scan/zips/HiggsBounds-${HBVER}.tar.gz
+    tar xzf /hdfs/user/${LOGNAME}/NMSSM-Scan/zips/HiggsBounds-${HBVER}.t*z
     HBOPT="--HB $PWD/HiggsBounds-${HBVER}"
     cd HiggsBounds-${HBVER}
     make clean
@@ -51,7 +51,7 @@ fi
 # -----------------------------------------------------------------------------
 HSOPT=""
 if [[ $doHiggsSignals == 1 ]]; then
-    tar xzf /hdfs/user/ra12451/NMSSM-Scan/zips/HiggsSignals-${HSVER}.tar.gz
+    tar xzf /hdfs/user/${LOGNAME}/NMSSM-Scan/zips/HiggsSignals-${HSVER}.t*z
     HSOPT="--HS $PWD/HiggsSignals-${HSVER}"
     cd HiggsSignals-${HSVER}
     make clean
@@ -67,6 +67,7 @@ fi
 
 # Setup NMSSMCALC
 # -----------------------------------------------------------------------------
+NCOPT=""
 if [[ $doNMSSMCalc == 1 ]]; then
     mkdir nmssmcalc
     tar -xvzf nmssmcalc.tar.gz -C nmssmcalc
@@ -84,7 +85,7 @@ fi
 SUSHIOPT=""
 if [[ $doSushi == 1 ]]; then
     SUSHIOPT="--sushi"
-    tar xzf /hdfs/user/ra12451/NMSSM-Scan/zips/SusHi-1.5.0.tar.gz
+    tar xzf /hdfs/user/${LOGNAME}/NMSSM-Scan/zips/SusHi-1.5.0.tar.gz
     cd SusHi-*
     ./configure
 
@@ -96,7 +97,7 @@ fi
 
 # Run NMSSMTools over parameter points
 # -----------------------------------------------------------------------------
-python NMSSMScan.py --card inp_*.dat -n $3 --param paramRange*.json --oDir . --NT NMSSMTools_${NTVER} $HBOPT $HSOPT $SUSHIOPT
+python NMSSMScan.py --card inp_*.dat -n $3 --param paramRange*.json --oDir . --NT NMSSMTools_${NTVER} $HBOPT $HSOPT $SUSHIOPT $NCOPT $SUSHIOPT
 # ls
 
 # Setup SuperIso
