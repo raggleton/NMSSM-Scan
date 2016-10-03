@@ -23,17 +23,18 @@ log = logging.getLogger(__name__)
 
 
 # Number of parallel jobs to submit
-NUM_JOBS = 500
+NUM_JOBS = 5
 
 # Number of points to scan per job
-NUM_POINTS = 5000
+NUM_POINTS = 1000
 
 # Shorthand description for this batch of jobs
 # JOB_DESC = "MICRO_SCAN_NTv491_HBv431_HSv140_all_smallAlambdaMuEff_largeTanBeta"
 # JOB_DESC = "MICRO_SCAN_NTv493_HBv431_HSv140_largeRange_DMass2_fixAssignMass"
-JOB_DESC = "MICRO_SCAN_NTv493_HBv431_HSv140_smallMa1_DMass2_fixAssignMass"
+# JOB_DESC = "MICRO_SCAN_NTv493_HBv431_HSv140_smallMa1_DMass2_fixAssignMass"
+# JOB_DESC = "MICRO_SCAN_NTv493_HBv431_HSv140_smallMa1_smallTgBeta_DMass2_fixAssignMass"
 # JOB_DESC = "MICRO_SCAN_NTv491_HBv431_HSv140_largeRange_DMass2_largeTanBeta"
-# JOB_DESC = "test"
+JOB_DESC = "test_3_Oct_15"
 
 # Input card to use as template for NMSSMTools
 CARD = "Proto_files/inp_PROTO.dat"
@@ -41,6 +42,7 @@ CARD = "Proto_files/inp_PROTO.dat"
 
 # JSON file with range of params to scan over
 PARAM_RANGE = "paramRange_smallMa1.json"
+# PARAM_RANGE = "paramRange_smallMa1_smallTgBeta.json"
 # PARAM_RANGE = "paramRange_largeRange.json"
 # PARAM_RANGE = "paramRange_highTanBeta.json"
 # PARAM_RANGE = "paramRange_all.json"
