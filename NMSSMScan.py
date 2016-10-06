@@ -97,6 +97,7 @@ def NMSSMScan(in_args=sys.argv[1:]):
             del param_dict[k]
 
     # loop over number of points requested, making an input card for each
+    num_physical = 0
     for ind in xrange(args.number):
 
         if ind % 200 == 0:
@@ -147,6 +148,8 @@ def NMSSMScan(in_args=sys.argv[1:]):
             os.remove(spectr_name)
             continue
 
+        num_physical += 1
+
         if args.HB or args.HS:
             # need to add in DMASS block for HB/HS
             # this is somewhat aribitrary
@@ -178,6 +181,7 @@ def NMSSMScan(in_args=sys.argv[1:]):
     # print some stats
     print '*' * 40
     print '* Num iterations:', args.number
+    print '* Num physical:', num_physical
     print '*' * 40
 
 
