@@ -138,7 +138,11 @@ def NMSSMScan(in_args=sys.argv[1:]):
         call(ntools_cmds)
         os.chdir(base_dir)
 
+        # Delete input card - not needed any more
+        os.remove(new_card_path)
+
         spectr_name = new_card_path.replace('inp', 'spectr')
+        omega_name = new_card_path.replace('inp', 'omega')
         if not os.path.isfile(spectr_name):
             print 'File %s not produced - skipping' % spectr_name
             continue
@@ -146,6 +150,7 @@ def NMSSMScan(in_args=sys.argv[1:]):
         if not check_if_physical(spectr_name):
             print 'Removing %s as unphysical' % spectr_name
             os.remove(spectr_name)
+            os.remove(omega_name)
             continue
 
         num_physical += 1
