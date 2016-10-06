@@ -102,7 +102,7 @@ def submit_scans(num_jobs, num_points, job_description, card, param_range, stora
                             common_input_files=common_input_files,
                             transfer_hdfs_input=False,
                             hdfs_store=hdfs_store,
-                            memory='1GB', disk='9GB')
+                            memory='1GB', disk='3GB')
 
     scan_dag = ht.DAGMan(filename=os.path.join(storage_dir, job_dir, 'scan.dag'),
                          status_file=os.path.join(storage_dir, job_dir, 'scan.status'))
