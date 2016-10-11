@@ -695,7 +695,9 @@ def plot_input_params_hexbin(df, yvar, ylabel, yrange=None, title="", param_dict
             set_major_tick_interval('X', attr.interval)
 
 
-def plot_input_params_hist2d(df, yvar, ylabel, yrange=None, title="", param_dict=nmssm_params, cols=3, **kwargs):
+def plot_input_params_hist2d(df, yvar, ylabel, yrange=None, title="",
+                             param_dict=nmssm_params, use_dict_range=False,
+                             cols=3, **kwargs):
     """Make 2d histogram plots for each input parameter against variable var,
     using dataframe df"""
 
@@ -719,7 +721,15 @@ def plot_input_params_hist2d(df, yvar, ylabel, yrange=None, title="", param_dict
         plot_histogram2d(ax=ax, df=df, xvar=param, yvar=yvar, **kwargs)
 
         ax.set_xlabel(attr.label)
-        # ax.set_xlim(attr.range)
+        if use_dict_range:
+          ax.set_xlim(attr.range)
+        ax.set_ylabel(ylabel)
+        if yrange:
+            ax.set_ylim(yrange)
+        plt.minorticks_on()
+        if attr.interval != -1:
+            set_major_tick_interval('X', attr.interval)
+
         ax.set_ylabel(ylabel)
         if yrange:
             ax.set_ylim(yrange)
