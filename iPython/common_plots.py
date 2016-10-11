@@ -590,7 +590,8 @@ def plot_input_params_hists_multiple(dfs, ylabel, title, errorbars=True, param_d
         plt.minorticks_on()
 
 
-def plot_input_params_scatters(df, yvar, ylabel, yrange=None, title="", param_dict=nmssm_params, cols=3, use_dict_range=False, **kwargs):
+def plot_input_params_scatters(df, yvar, ylabel, yrange=None, title="", param_dict=nmssm_params,
+                               cols=3, use_dict_range=False, yshade=None, **kwargs):
     """Make scatter plots for each input parameter against variable var,
     using dataframe df"""
 
@@ -620,6 +621,8 @@ def plot_input_params_scatters(df, yvar, ylabel, yrange=None, title="", param_di
         plt.minorticks_on()
         if attr.interval != -1:
             set_major_tick_interval('X', attr.interval)
+        if yshade:
+            make_highlight_region(ax, yshade, "Y")
 
 
 def plot_input_params_scatters_multiple(dfs, yvar, ylabel, yrange=None, title="",
