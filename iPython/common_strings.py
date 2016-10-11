@@ -28,28 +28,38 @@ DEL_A_MU_LIM = [8.77E-10, 4.61E-9]
 OMEGA_LIM = [0.107, 0.131]
 BSMUMU_LIM = [1.72E-9, 4.5E-9]
 RD_LIM = [2.91E-1, 4.91E-1]
+RD_SM = 0.3
+RD_EXP = 0.397
 RDS_LIM = [2.78E-1, 3.66E-1]
+RDS_SM = 0.252
+RDS_EXP = 0.316
 
+XSEC_BR_H125_2A1_4TAU_STR = r'$\sigma\ \times\ BR\ (h_{125}\ \to\ 2a_1\ \to\ 4\tau)\ \mathrm{[pb]}$'
 XSEC_BR_Hi_2A1_4TAU_STR = r'$\sigma\ \times\ BR\ (h_i\ \to\ 2a_1\ \to\ 4\tau)\ \mathrm{[pb]}$'
 XSEC_BR_H1_2A1_4TAU_STR = r'$\sigma\ \times\ BR\ (h_1\ \to\ 2a_1\ \to\ 4\tau)\ \mathrm{[pb]}$'
 XSEC_BR_H2_2A1_4TAU_STR = r'$\sigma\ \times\ BR\ (h_2\ \to\ 2a_1\ \to\ 4\tau)\ \mathrm{[pb]}$'
 
+BR_H125_2A1_4TAU_STR = r'$\sigma\ \times\ BR\ (h_{125}\ \to\ 2a_1\ \to\ 4\tau)\ /\ \sigma_{SM}$'
 BR_Hi_2A1_4TAU_STR = r'$\sigma\ \times\ BR\ (h_i\ \to\ 2a_1\ \to\ 4\tau)\ /\ \sigma_{SM}$'
 BR_H1_2A1_4TAU_STR = r'$\sigma\ \times\ BR\ (h_1\ \to\ 2a_1\ \to\ 4\tau)\ /\ \sigma_{SM}$'
 BR_H2_2A1_4TAU_STR = r'$\sigma\ \times\ BR\ (h_2\ \to\ 2a_1\ \to\ 4\tau)\ /\ \sigma_{SM}$'
 
+XSEC_BR_H125_2A1_4MU_STR = r'$\sigma\ \times\ BR\ (h_{125}\ \to\ 2a_1\ \to\ 4\mu)\ \mathrm{[pb]}$'
 XSEC_BR_Hi_2A1_4MU_STR = r'$\sigma\ \times\ BR\ (h_i\ \to\ 2a_1\ \to\ 4\mu)\ \mathrm{[pb]}$'
 XSEC_BR_H1_2A1_4MU_STR = r'$\sigma\ \times\ BR\ (h_1\ \to\ 2a_1\ \to\ 4\mu)\ \mathrm{[pb]}$'
 XSEC_BR_H2_2A1_4MU_STR = r'$\sigma\ \times\ BR\ (h_2\ \to\ 2a_1\ \to\ 4\mu)\ \mathrm{[pb]}$'
 
+BR_H125_2A1_4MU_STR = r'$\sigma\ \times\ BR\ (h_{125}\ \to\ 2a_1\ \to\ 4\mu)\ /\ \sigma_{SM}$'
 BR_Hi_2A1_4MU_STR = r'$\sigma\ \times\ BR\ (h_i\ \to\ 2a_1\ \to\ 4\mu)\ /\ \sigma_{SM}$'
 BR_H1_2A1_4MU_STR = r'$\sigma\ \times\ BR\ (h_1\ \to\ 2a_1\ \to\ 4\mu)\ /\ \sigma_{SM}$'
 BR_H2_2A1_4MU_STR = r'$\sigma\ \times\ BR\ (h_2\ \to\ 2a_1\ \to\ 4\mu)\ /\ \sigma_{SM}$'
 
+XSEC_BR_H125_2A1_2TAU2MU_STR = r'$\sigma\ \times\ BR\ (h_{125}\ \to\ 2a_1\ \to\ 2\tau 2\mu)\ \mathrm{[pb]}$'
 XSEC_BR_Hi_2A1_2TAU2MU_STR = r'$\sigma\ \times\ BR\ (h_i\ \to\ 2a_1\ \to\ 2\tau 2\mu)\ \mathrm{[pb]}$'
 XSEC_BR_H1_2A1_2TAU2MU_STR = r'$\sigma\ \times\ BR\ (h_1\ \to\ 2a_1\ \to\ 2\tau 2\mu)\ \mathrm{[pb]}$'
 XSEC_BR_H2_2A1_2TAU2MU_STR = r'$\sigma\ \times\ BR\ (h_2\ \to\ 2a_1\ \to\ 2\tau 2\mu)\ \mathrm{[pb]}$'
 
+BR_H125_2A1_2TAU2MU_STR = r'$\sigma\ \times\ BR\ (h_{125}\ \to\ 2a_1\ \to\ 2\tau 2\mu)\ /\ \sigma_{SM}$'
 BR_Hi_2A1_2TAU2MU_STR = r'$\sigma\ \times\ BR\ (h_i\ \to\ 2a_1\ \to\ 2\tau 2\mu)\ /\ \sigma_{SM}$'
 BR_H1_2A1_2TAU2MU_STR = r'$\sigma\ \times\ BR\ (h_1\ \to\ 2a_1\ \to\ 2\tau 2\mu)\ /\ \sigma_{SM}$'
 BR_H2_2A1_2TAU2MU_STR = r'$\sigma\ \times\ BR\ (h_2\ \to\ 2a_1\ \to\ 2\tau 2\mu)\ /\ \sigma_{SM}$'
